@@ -1,0 +1,36 @@
+modLoader = "javafml"
+loaderVersion = "[39,)"
+#updateJSONURL=""
+issueTrackerURL = "https://github.com/ramidzkh/ae2-mekanism-addons/issues"
+displayURL = "https://github.com/ramidzkh/ae2-mekanism-addons#readme"
+logoFile = "logo.png"
+#credits="Thanks for this example mod goes to Java"
+authors = "ramidzkh"
+license = "See GitHub repository for details"
+
+[[mods]]
+modId = "ae2_mekanism_addons"
+version = "${version}"
+displayName = "AE2 Mekanism Addons"
+description = "Use Mekanism resources through your ME network"
+
+[[dependencies.ae2_mekanism_addons]]
+modId = "forge"
+mandatory = true
+versionRange = "[39.0.0,40.0.0)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ae2_mekanism_addons]]
+modId = "ae2"
+mandatory = true
+versionRange = "[10.0.0,11.0.0)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.ae2_mekanism_addons]]
+modId = "mekanism"
+mandatory = true
+versionRange = "[10.1.1,11.0.0)"
+ordering = "AFTER"
+side = "BOTH"
