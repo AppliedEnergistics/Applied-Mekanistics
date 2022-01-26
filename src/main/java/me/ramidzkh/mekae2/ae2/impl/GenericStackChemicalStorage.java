@@ -7,6 +7,7 @@ import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.me.helpers.BaseActionSource;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
@@ -24,9 +25,7 @@ import mekanism.api.chemical.slurry.ISlurryHandler;
 import mekanism.api.chemical.slurry.Slurry;
 import mekanism.api.chemical.slurry.SlurryStack;
 
-import javax.annotation.Nullable;
-
-public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, S extends ChemicalStack<C>, K extends MekanismKey<S>> implements IChemicalHandler<C, S> {
+public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, S extends ChemicalStack<C>, K extends MekanismKey<S>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
 
     private final AEKeyType type;
     private final GenericStackInv inv;
@@ -36,71 +35,27 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
         this.inv = inv;
     }
 
-    public static final class OfGas extends GenericStackChemicalStorage<Gas, GasStack, MekanismKey.Gas> implements IGasHandler {
+    public static final class OfGas extends GenericStackChemicalStorage<Gas, GasStack, MekanismKey.Gas> implements IGasHandler, ChemicalBridge.OfGas {
         public OfGas(GenericStackInv inv) {
             super(MekanismKeyType.GAS, inv);
         }
-
-        @Nullable
-        @Override
-        protected MekanismKey.Gas of(GasStack stack) {
-            return MekanismKey.Gas.of(stack);
-        }
-
-        @Override
-        protected GasStack withAmount(GasStack stack, long amount) {
-            return new GasStack(stack, amount);
-        }
     }
 
-    public static final class OfInfusion extends GenericStackChemicalStorage<InfuseType, InfusionStack, MekanismKey.Infusion> implements IInfusionHandler {
+    public static final class OfInfusion extends GenericStackChemicalStorage<InfuseType, InfusionStack, MekanismKey.Infusion> implements IInfusionHandler, ChemicalBridge.OfInfusion {
         public OfInfusion(GenericStackInv inv) {
             super(MekanismKeyType.INFUSION, inv);
         }
-
-        @Nullable
-        @Override
-        protected MekanismKey.Infusion of(InfusionStack stack) {
-            return MekanismKey.Infusion.of(stack);
-        }
-
-        @Override
-        protected InfusionStack withAmount(InfusionStack stack, long amount) {
-            return new InfusionStack(stack, amount);
-        }
     }
 
-    public static final class OfPigment extends GenericStackChemicalStorage<Pigment, PigmentStack, MekanismKey.Pigment> implements IPigmentHandler {
+    public static final class OfPigment extends GenericStackChemicalStorage<Pigment, PigmentStack, MekanismKey.Pigment> implements IPigmentHandler, ChemicalBridge.OfPigment {
         public OfPigment(GenericStackInv inv) {
             super(MekanismKeyType.PIGMENT, inv);
         }
-
-        @Nullable
-        @Override
-        protected MekanismKey.Pigment of(PigmentStack stack) {
-            return MekanismKey.Pigment.of(stack);
-        }
-
-        @Override
-        protected PigmentStack withAmount(PigmentStack stack, long amount) {
-            return new PigmentStack(stack, amount);
-        }
     }
 
-    public static final class OfSlurry extends GenericStackChemicalStorage<Slurry, SlurryStack, MekanismKey.Slurry> implements ISlurryHandler {
+    public static final class OfSlurry extends GenericStackChemicalStorage<Slurry, SlurryStack, MekanismKey.Slurry> implements ISlurryHandler, ChemicalBridge.OfSlurry {
         public OfSlurry(GenericStackInv inv) {
             super(MekanismKeyType.SLURRY, inv);
-        }
-
-        @Nullable
-        @Override
-        protected MekanismKey.Slurry of(SlurryStack stack) {
-            return MekanismKey.Slurry.of(stack);
-        }
-
-        @Override
-        protected SlurryStack withAmount(SlurryStack stack, long amount) {
-            return new SlurryStack(stack, amount);
         }
     }
 
@@ -169,11 +124,6 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
 
         return getEmptyStack();
     }
-
-    @Nullable
-    protected abstract K of(S stack);
-
-    protected abstract S withAmount(S stack, long amount);
 
     public static Actionable actionable(Action action) {
         return switch (action) {

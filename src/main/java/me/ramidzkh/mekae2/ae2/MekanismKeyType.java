@@ -7,8 +7,8 @@ import me.ramidzkh.mekae2.AE2MekanismAddons;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public class MekanismKeyType<K extends AEKey> extends AEKeyType {

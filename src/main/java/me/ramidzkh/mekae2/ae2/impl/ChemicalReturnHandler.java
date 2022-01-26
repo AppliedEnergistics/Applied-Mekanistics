@@ -1,12 +1,12 @@
 package me.ramidzkh.mekae2.ae2.impl;
 
 import appeng.api.stacks.AEFluidKey;
-import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
 import appeng.helpers.iface.PatternProviderReturnInventory;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
@@ -24,9 +24,7 @@ import mekanism.api.chemical.slurry.ISlurryHandler;
 import mekanism.api.chemical.slurry.Slurry;
 import mekanism.api.chemical.slurry.SlurryStack;
 
-import javax.annotation.Nullable;
-
-public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S> {
+public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
 
     private final AEKeyType type;
     private final PatternProviderReturnInventory parent;
@@ -36,71 +34,27 @@ public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S exte
         this.parent = parent;
     }
 
-    public static final class OfGas extends ChemicalReturnHandler<Gas, GasStack> implements IGasHandler {
+    public static final class OfGas extends ChemicalReturnHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
         public OfGas(PatternProviderReturnInventory parent) {
             super(MekanismKeyType.GAS, parent);
         }
-
-        @Nullable
-        @Override
-        protected AEKey of(GasStack stack) {
-            return MekanismKey.Gas.of(stack);
-        }
-
-        @Override
-        protected GasStack withAmount(GasStack stack, long amount) {
-            return new GasStack(stack, amount);
-        }
     }
 
-    public static final class OfInfusion extends ChemicalReturnHandler<InfuseType, InfusionStack> implements IInfusionHandler {
+    public static final class OfInfusion extends ChemicalReturnHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
         public OfInfusion(PatternProviderReturnInventory parent) {
             super(MekanismKeyType.INFUSION, parent);
         }
-
-        @Nullable
-        @Override
-        protected AEKey of(InfusionStack stack) {
-            return MekanismKey.Infusion.of(stack);
-        }
-
-        @Override
-        protected InfusionStack withAmount(InfusionStack stack, long amount) {
-            return new InfusionStack(stack, amount);
-        }
     }
 
-    public static final class OfPigment extends ChemicalReturnHandler<Pigment, PigmentStack> implements IPigmentHandler {
+    public static final class OfPigment extends ChemicalReturnHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
         public OfPigment(PatternProviderReturnInventory parent) {
             super(MekanismKeyType.PIGMENT, parent);
         }
-
-        @Nullable
-        @Override
-        protected AEKey of(PigmentStack stack) {
-            return MekanismKey.Pigment.of(stack);
-        }
-
-        @Override
-        protected PigmentStack withAmount(PigmentStack stack, long amount) {
-            return new PigmentStack(stack, amount);
-        }
     }
 
-    public static final class OfSlurry extends ChemicalReturnHandler<Slurry, SlurryStack> implements ISlurryHandler {
+    public static final class OfSlurry extends ChemicalReturnHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
         public OfSlurry(PatternProviderReturnInventory parent) {
             super(MekanismKeyType.SLURRY, parent);
-        }
-
-        @Nullable
-        @Override
-        protected AEKey of(SlurryStack stack) {
-            return MekanismKey.Slurry.of(stack);
-        }
-
-        @Override
-        protected SlurryStack withAmount(SlurryStack stack, long amount) {
-            return new SlurryStack(stack, amount);
         }
     }
 
@@ -161,9 +115,4 @@ public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S exte
     public S extractChemical(int tank, long l, Action action) {
         return getEmptyStack();
     }
-
-    @Nullable
-    protected abstract AEKey of(S stack);
-
-    protected abstract S withAmount(S stack, long amount);
 }
