@@ -8,6 +8,7 @@
     "InterfaceLogicMixin",
     "ListTagMixin",
     "MEStorageMenuMixin",
+    "PatternProviderReturnInventoryMixin",
     "StackInteractionsMixin"
   ],
   "injectors": {
