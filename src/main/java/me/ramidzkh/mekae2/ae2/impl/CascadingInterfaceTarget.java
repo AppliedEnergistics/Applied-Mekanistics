@@ -44,7 +44,7 @@ public class CascadingInterfaceTarget implements IInterfaceTarget {
 
     @Override
     public boolean containsPatternInput(Set<AEKey> patternInputs) {
-        for (ExternalStorageFacade facade : facades.values()) {
+        for (var facade : facades.values()) {
             if (facade.containsAnyFuzzy(patternInputs)) {
                 return true;
             }

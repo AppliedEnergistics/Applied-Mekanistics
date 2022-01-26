@@ -58,6 +58,61 @@ public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>
         return new CascadingInterfaceTarget(in, facades, src);
     }
 
+    private static Action action(Actionable actionable) {
+        return switch (actionable) {
+            case MODULATE -> Action.EXECUTE;
+            case SIMULATE -> Action.SIMULATE;
+        };
+    }
+
+    @Override
+    public int getSlots() {
+        return handler.getTanks();
+    }
+
+    @Nullable
+    @Override
+    public GenericStack getStackInSlot(int slot) {
+        var stack = handler.getChemicalInTank(slot);
+        var key = of(stack);
+        return key == null ? null : new GenericStack(key, stack.getAmount());
+    }
+
+    @Override
+    protected int insertExternal(AEKey what, int amount, Actionable mode) {
+        if (what.getType() != getKeyType()) {
+            return 0;
+        }
+
+        var stack = withAmount(((MekanismKey<S>) what).getStack(), amount);
+        return (int) (amount - handler.insertChemical(stack, action(mode)).getAmount());
+    }
+
+    @Override
+    protected int extractExternal(AEKey what, int amount, Actionable mode) {
+        if (what.getType() != getKeyType()) {
+            return 0;
+        }
+
+        var stack = withAmount(((MekanismKey<S>) what).getStack(), amount);
+        return (int) handler.extractChemical(stack, action(mode)).getAmount();
+    }
+
+    @Override
+    public boolean containsAnyFuzzy(Set<AEKey> keys) {
+        for (var i = 0; i < handler.getTanks(); i++) {
+            var what = of(handler.getChemicalInTank(i));
+
+            if (what != null) {
+                if (keys.contains(what)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public static final class OfGas extends ChemicalExternalStorageFacade<Gas, GasStack, IGasHandler> implements ChemicalBridge.OfGas {
         public OfGas(IGasHandler handler) {
             super(handler);
@@ -100,60 +155,5 @@ public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>
         public AEKeyType getKeyType() {
             return MekanismKeyType.SLURRY;
         }
-    }
-
-    @Override
-    public int getSlots() {
-        return handler.getTanks();
-    }
-
-    @Nullable
-    @Override
-    public GenericStack getStackInSlot(int slot) {
-        var stack = handler.getChemicalInTank(slot);
-        var key = of(stack);
-        return key == null ? null : new GenericStack(key, stack.getAmount());
-    }
-
-    @Override
-    protected int insertExternal(AEKey what, int amount, Actionable mode) {
-        if (what.getType() != getKeyType()) {
-            return 0;
-        }
-
-        var stack = withAmount(((MekanismKey<S>) what).getStack(), amount);
-        return (int) (amount - handler.insertChemical(stack, action(mode)).getAmount());
-    }
-
-    @Override
-    protected int extractExternal(AEKey what, int amount, Actionable mode) {
-        if (what.getType() != getKeyType()) {
-            return 0;
-        }
-
-        var stack = withAmount(((MekanismKey<S>) what).getStack(), amount);
-        return (int) handler.extractChemical(stack, action(mode)).getAmount();
-    }
-
-    @Override
-    public boolean containsAnyFuzzy(Set<AEKey> keys) {
-        for (int i = 0; i < handler.getTanks(); i++) {
-            var what = of(handler.getChemicalInTank(i));
-
-            if (what != null) {
-                if (keys.contains(what)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private static Action action(Actionable actionable) {
-        return switch (actionable) {
-            case MODULATE -> Action.EXECUTE;
-            case SIMULATE -> Action.SIMULATE;
-        };
     }
 }

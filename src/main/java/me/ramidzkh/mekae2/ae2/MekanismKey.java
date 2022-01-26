@@ -26,6 +26,76 @@ public abstract sealed class MekanismKey<S extends ChemicalStack<?>> extends AEK
         this.stack = stack;
     }
 
+    public S getStack() {
+        return stack;
+    }
+
+    @Override
+    public AEKeyType getType() {
+        return type;
+    }
+
+    @Override
+    public AEKey dropSecondary() {
+        return this;
+    }
+
+    @Override
+    public CompoundTag toTag() {
+        return stack.write(new CompoundTag());
+    }
+
+    @Override
+    public Object getPrimaryKey() {
+        return stack.getType();
+    }
+
+    @Override
+    public String getModId() {
+        return stack.getTypeRegistryName().getNamespace();
+    }
+
+    @Override
+    public void writeToPacket(FriendlyByteBuf data) {
+        stack.writeToPacket(data);
+    }
+
+    @Override
+    public ItemStack wrapForDisplayOrFilter() {
+        return wrap(0);
+    }
+
+    @Override
+    public ItemStack wrap(int amount) {
+        return GenericStack.wrapInItemStack(this, amount);
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return stack.getType().getTextComponent();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        var that = (MekanismKey<?>) o;
+        return Objects.equals(type, that.type) && Objects.equals(stack.getType(), that.stack.getType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, stack.getType());
+    }
+
+    @Override
+    public String toString() {
+        return "MekanismKey{" +
+                "type=" + type +
+                ", stack=" + stack +
+                '}';
+    }
+
     public static final class Gas extends MekanismKey<GasStack> {
         private Gas(GasStack stack) {
             super(MekanismKeyType.GAS, stack);
@@ -116,75 +186,5 @@ public abstract sealed class MekanismKey<S extends ChemicalStack<?>> extends AEK
         public static MekanismKey.Slurry fromTag(CompoundTag tag) {
             return new MekanismKey.Slurry(SlurryStack.readFromNBT(tag));
         }
-    }
-
-    public S getStack() {
-        return stack;
-    }
-
-    @Override
-    public AEKeyType getType() {
-        return type;
-    }
-
-    @Override
-    public AEKey dropSecondary() {
-        return this;
-    }
-
-    @Override
-    public CompoundTag toTag() {
-        return stack.write(new CompoundTag());
-    }
-
-    @Override
-    public Object getPrimaryKey() {
-        return stack.getType();
-    }
-
-    @Override
-    public String getModId() {
-        return stack.getTypeRegistryName().getNamespace();
-    }
-
-    @Override
-    public void writeToPacket(FriendlyByteBuf data) {
-        stack.writeToPacket(data);
-    }
-
-    @Override
-    public ItemStack wrapForDisplayOrFilter() {
-        return wrap(0);
-    }
-
-    @Override
-    public ItemStack wrap(int amount) {
-        return GenericStack.wrapInItemStack(this, amount);
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return stack.getType().getTextComponent();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MekanismKey<?> that = (MekanismKey<?>) o;
-        return Objects.equals(type, that.type) && Objects.equals(stack.getType(), that.stack.getType());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, stack.getType());
-    }
-
-    @Override
-    public String toString() {
-        return "MekanismKey{" +
-                "type=" + type +
-                ", stack=" + stack +
-                '}';
     }
 }

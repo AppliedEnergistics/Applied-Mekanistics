@@ -25,14 +25,12 @@ import mekanism.api.chemical.slurry.SlurryStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 
-import java.lang.reflect.Method;
-
 public class MenuIo {
 
     private static long extract(Object accessor, long amount, Actionable mode) {
         try {
-            Class<?> c = Class.forName("appeng.menu.AEBaseMenu$FillingSource");
-            Method m = c.getDeclaredMethod("extract", long.class, Actionable.class);
+            var c = Class.forName("appeng.menu.AEBaseMenu$FillingSource");
+            var m = c.getDeclaredMethod("extract", long.class, Actionable.class);
             m.setAccessible(true);
             return (long) m.invoke(accessor, amount, mode);
         } catch (Throwable e) {
@@ -42,8 +40,8 @@ public class MenuIo {
 
     private static long insert(Object accessor, AEKey what, long amount, Actionable mode) {
         try {
-            Class<?> c = Class.forName("appeng.menu.AEBaseMenu$EmptyingSink");
-            Method m = c.getDeclaredMethod("insert", AEKey.class, long.class, Actionable.class);
+            var c = Class.forName("appeng.menu.AEBaseMenu$EmptyingSink");
+            var m = c.getDeclaredMethod("insert", AEKey.class, long.class, Actionable.class);
             m.setAccessible(true);
             return (long) m.invoke(accessor, what, amount, mode);
         } catch (Throwable e) {
@@ -130,30 +128,6 @@ public class MenuIo {
             this.source = source;
         }
 
-        public static final class OfGas extends FillingChemicalHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
-            public OfGas(MekanismKey.Gas what, Object source) {
-                super(what, source);
-            }
-        }
-
-        public static final class OfInfusion extends FillingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
-            public OfInfusion(MekanismKey.Infusion what, Object source) {
-                super(what, source);
-            }
-        }
-
-        public static final class OfPigment extends FillingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
-            public OfPigment(MekanismKey.Pigment what, Object source) {
-                super(what, source);
-            }
-        }
-
-        public static final class OfSlurry extends FillingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
-            public OfSlurry(MekanismKey.Slurry what, Object source) {
-                super(what, source);
-            }
-        }
-
         @Override
         public int getTanks() {
             return 1;
@@ -189,6 +163,30 @@ public class MenuIo {
             var extracted = extract(source, maxAmount, GenericStackChemicalStorage.actionable(action));
             return withAmount(what.getStack(), extracted);
         }
+
+        public static final class OfGas extends FillingChemicalHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
+            public OfGas(MekanismKey.Gas what, Object source) {
+                super(what, source);
+            }
+        }
+
+        public static final class OfInfusion extends FillingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
+            public OfInfusion(MekanismKey.Infusion what, Object source) {
+                super(what, source);
+            }
+        }
+
+        public static final class OfPigment extends FillingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
+            public OfPigment(MekanismKey.Pigment what, Object source) {
+                super(what, source);
+            }
+        }
+
+        public static final class OfSlurry extends FillingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
+            public OfSlurry(MekanismKey.Slurry what, Object source) {
+                super(what, source);
+            }
+        }
     }
 
     private static abstract sealed class EmptyingChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
@@ -196,30 +194,6 @@ public class MenuIo {
 
         public EmptyingChemicalHandler(Object sink) {
             this.sink = sink;
-        }
-
-        public static final class OfGas extends EmptyingChemicalHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
-            public OfGas(Object source) {
-                super(source);
-            }
-        }
-
-        public static final class OfInfusion extends EmptyingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
-            public OfInfusion(Object source) {
-                super(source);
-            }
-        }
-
-        public static final class OfPigment extends EmptyingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
-            public OfPigment(Object source) {
-                super(source);
-            }
-        }
-
-        public static final class OfSlurry extends EmptyingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
-            public OfSlurry(Object source) {
-                super(source);
-            }
         }
 
         @Override
@@ -261,6 +235,30 @@ public class MenuIo {
         @Override
         public S extractChemical(int tank, long maxAmount, Action action) {
             return getEmptyStack();
+        }
+
+        public static final class OfGas extends EmptyingChemicalHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
+            public OfGas(Object source) {
+                super(source);
+            }
+        }
+
+        public static final class OfInfusion extends EmptyingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
+            public OfInfusion(Object source) {
+                super(source);
+            }
+        }
+
+        public static final class OfPigment extends EmptyingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
+            public OfPigment(Object source) {
+                super(source);
+            }
+        }
+
+        public static final class OfSlurry extends EmptyingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
+            public OfSlurry(Object source) {
+                super(source);
+            }
         }
     }
 }

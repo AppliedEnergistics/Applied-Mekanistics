@@ -12,7 +12,6 @@ import appeng.api.upgrades.Upgrades;
 import appeng.core.AppEng;
 import appeng.core.definitions.AEItems;
 import appeng.core.localization.GuiText;
-import appeng.items.storage.BasicStorageCell;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import appeng.menu.me.common.MEStorageMenu;
@@ -23,7 +22,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -35,18 +35,12 @@ public class AE2MekanismAddons {
 
     public static final String ID = "ae2-mekanism-addons";
 
-    public static ResourceLocation id(String path) {
-        return new ResourceLocation(ID, path);
-    }
-
     public AE2MekanismAddons() {
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         AItems.initialize(bus);
         AMenus.initialize(bus);
-        AChemicalStackRenderer.initialize(bus);
 
-        bus.addListener(this::registerItemColors);
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
         AEKeyTypes.register(MekanismKeyType.GAS);
@@ -58,6 +52,12 @@ public class AE2MekanismAddons {
             event.enqueueWork(this::initializeModels);
             event.enqueueWork(this::initializeUpgrades);
         });
+
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AE2MekanismAddonsClient::new);
+    }
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(ID, path);
     }
 
     private void initializeModels() {
@@ -137,13 +137,5 @@ public class AE2MekanismAddons {
             Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
             Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
         }
-    }
-
-    public void registerItemColors(ColorHandlerEvent.Item event) {
-        event.getItemColors().register(BasicStorageCell::getColor,
-                AItems.GAS_CELL_1K::get, AItems.GAS_CELL_4K::get, AItems.GAS_CELL_16K::get, AItems.GAS_CELL_64K::get,
-                AItems.INFUSION_CELL_1K::get, AItems.INFUSION_CELL_4K::get, AItems.INFUSION_CELL_16K::get, AItems.INFUSION_CELL_64K::get,
-                AItems.PIGMENT_CELL_1K::get, AItems.PIGMENT_CELL_4K::get, AItems.PIGMENT_CELL_16K::get, AItems.PIGMENT_CELL_64K::get,
-                AItems.SLURRY_CELL_1K::get, AItems.SLURRY_CELL_4K::get, AItems.SLURRY_CELL_16K::get, AItems.SLURRY_CELL_64K::get);
     }
 }

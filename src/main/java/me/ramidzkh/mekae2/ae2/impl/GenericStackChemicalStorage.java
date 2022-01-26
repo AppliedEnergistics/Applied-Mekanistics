@@ -1,7 +1,6 @@
 package me.ramidzkh.mekae2.ae2.impl;
 
 import appeng.api.config.Actionable;
-import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.me.helpers.BaseActionSource;
@@ -35,28 +34,11 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
         this.inv = inv;
     }
 
-    public static final class OfGas extends GenericStackChemicalStorage<Gas, GasStack, MekanismKey.Gas> implements IGasHandler, ChemicalBridge.OfGas {
-        public OfGas(GenericStackInv inv) {
-            super(MekanismKeyType.GAS, inv);
-        }
-    }
-
-    public static final class OfInfusion extends GenericStackChemicalStorage<InfuseType, InfusionStack, MekanismKey.Infusion> implements IInfusionHandler, ChemicalBridge.OfInfusion {
-        public OfInfusion(GenericStackInv inv) {
-            super(MekanismKeyType.INFUSION, inv);
-        }
-    }
-
-    public static final class OfPigment extends GenericStackChemicalStorage<Pigment, PigmentStack, MekanismKey.Pigment> implements IPigmentHandler, ChemicalBridge.OfPigment {
-        public OfPigment(GenericStackInv inv) {
-            super(MekanismKeyType.PIGMENT, inv);
-        }
-    }
-
-    public static final class OfSlurry extends GenericStackChemicalStorage<Slurry, SlurryStack, MekanismKey.Slurry> implements ISlurryHandler, ChemicalBridge.OfSlurry {
-        public OfSlurry(GenericStackInv inv) {
-            super(MekanismKeyType.SLURRY, inv);
-        }
+    public static Actionable actionable(Action action) {
+        return switch (action) {
+            case EXECUTE -> Actionable.MODULATE;
+            case SIMULATE -> Actionable.SIMULATE;
+        };
     }
 
     @Override
@@ -66,7 +48,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
 
     @Override
     public S getChemicalInTank(int tank) {
-        AEKey what = inv.getKey(tank);
+        var what = inv.getKey(tank);
 
         if (what != null && what.getType() == type) {
             return withAmount(((K) what).getStack(), inv.getAmount(tank));
@@ -99,7 +81,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
             return stack;
         }
 
-        long remainder = stack.getAmount() - inv.insert(what, stack.getAmount(), actionable(action), new BaseActionSource());
+        var remainder = stack.getAmount() - inv.insert(what, stack.getAmount(), actionable(action), new BaseActionSource());
 
         if (remainder == 0) {
             return getEmptyStack();
@@ -110,7 +92,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
 
     @Override
     public S extractChemical(int tank, long amount, Action action) {
-        AEKey what = inv.getKey(tank);
+        var what = inv.getKey(tank);
 
         if (what == null || what.getType() != type) {
             return getEmptyStack();
@@ -125,10 +107,27 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
         return getEmptyStack();
     }
 
-    public static Actionable actionable(Action action) {
-        return switch (action) {
-            case EXECUTE -> Actionable.MODULATE;
-            case SIMULATE -> Actionable.SIMULATE;
-        };
+    public static final class OfGas extends GenericStackChemicalStorage<Gas, GasStack, MekanismKey.Gas> implements IGasHandler, ChemicalBridge.OfGas {
+        public OfGas(GenericStackInv inv) {
+            super(MekanismKeyType.GAS, inv);
+        }
+    }
+
+    public static final class OfInfusion extends GenericStackChemicalStorage<InfuseType, InfusionStack, MekanismKey.Infusion> implements IInfusionHandler, ChemicalBridge.OfInfusion {
+        public OfInfusion(GenericStackInv inv) {
+            super(MekanismKeyType.INFUSION, inv);
+        }
+    }
+
+    public static final class OfPigment extends GenericStackChemicalStorage<Pigment, PigmentStack, MekanismKey.Pigment> implements IPigmentHandler, ChemicalBridge.OfPigment {
+        public OfPigment(GenericStackInv inv) {
+            super(MekanismKeyType.PIGMENT, inv);
+        }
+    }
+
+    public static final class OfSlurry extends GenericStackChemicalStorage<Slurry, SlurryStack, MekanismKey.Slurry> implements ISlurryHandler, ChemicalBridge.OfSlurry {
+        public OfSlurry(GenericStackInv inv) {
+            super(MekanismKeyType.SLURRY, inv);
+        }
     }
 }

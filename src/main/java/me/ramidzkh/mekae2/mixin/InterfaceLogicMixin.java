@@ -37,8 +37,8 @@ public abstract class InterfaceLogicMixin {
         localPigmentStorage = new GenericStackChemicalStorage.OfPigment(getStorage());
         localSlurryStorage = new GenericStackChemicalStorage.OfSlurry(getStorage());
 
-        long fluidConfigCapacity = getConfig().getCapacity(AEKeyType.fluids());
-        long fluidStorageCapacity = getStorage().getCapacity(AEKeyType.fluids());
+        var fluidConfigCapacity = getConfig().getCapacity(AEKeyType.fluids());
+        var fluidStorageCapacity = getStorage().getCapacity(AEKeyType.fluids());
 
         getConfig().setCapacity(MekanismKeyType.GAS, fluidConfigCapacity);
         getStorage().setCapacity(MekanismKeyType.GAS, fluidStorageCapacity);
