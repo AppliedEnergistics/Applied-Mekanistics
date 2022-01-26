@@ -19,7 +19,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = InterfaceLogic.class, remap = false)
 public abstract class InterfaceLogicMixin {
 
-    private GenericStackChemicalStorage localGasStorage;
+    private GenericStackChemicalStorage.OfGas localGasStorage;
+    private GenericStackChemicalStorage.OfInfusion localInfusionStorage;
+    private GenericStackChemicalStorage.OfPigment localPigmentStorage;
+    private GenericStackChemicalStorage.OfSlurry localSlurryStorage;
 
     @Shadow
     public abstract ConfigInventory getConfig();
@@ -29,7 +32,10 @@ public abstract class InterfaceLogicMixin {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void init(CallbackInfo callbackInfo) {
-        localGasStorage = new GenericStackChemicalStorage(getStorage());
+        localGasStorage = new GenericStackChemicalStorage.OfGas(getStorage());
+        localInfusionStorage = new GenericStackChemicalStorage.OfInfusion(getStorage());
+        localPigmentStorage = new GenericStackChemicalStorage.OfPigment(getStorage());
+        localSlurryStorage = new GenericStackChemicalStorage.OfSlurry(getStorage());
 
         long fluidConfigCapacity = getConfig().getCapacity(AEKeyType.fluids());
         long fluidStorageCapacity = getStorage().getCapacity(AEKeyType.fluids());
@@ -49,8 +55,11 @@ public abstract class InterfaceLogicMixin {
         if (capability == MekCapabilities.GAS_HANDLER_CAPABILITY) {
             callbackInfoReturnable.setReturnValue(LazyOptional.of(() -> localGasStorage).cast());
         } else if (capability == MekCapabilities.INFUSION_HANDLER_CAPABILITY) {
+            callbackInfoReturnable.setReturnValue(LazyOptional.of(() -> localInfusionStorage).cast());
         } else if (capability == MekCapabilities.PIGMENT_HANDLER_CAPABILITY) {
+            callbackInfoReturnable.setReturnValue(LazyOptional.of(() -> localPigmentStorage).cast());
         } else if (capability == MekCapabilities.SLURRY_HANDLER_CAPABILITY) {
+            callbackInfoReturnable.setReturnValue(LazyOptional.of(() -> localSlurryStorage).cast());
         }
     }
 }
