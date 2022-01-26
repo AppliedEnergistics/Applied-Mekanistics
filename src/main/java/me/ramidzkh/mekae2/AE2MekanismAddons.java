@@ -44,6 +44,7 @@ public class AE2MekanismAddons {
 
         AItems.initialize(bus);
         AMenus.initialize(bus);
+        AChemicalStackRenderer.initialize(bus);
 
         bus.addListener(this::registerItemColors);
         bus.addListener(MekAE2DataGenerators::onGatherData);

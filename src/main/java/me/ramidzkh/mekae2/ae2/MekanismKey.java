@@ -13,7 +13,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
+import javax.annotation.Nullable;
+import java.util.Objects;
+
+public abstract sealed class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
 
     private final AEKeyType type;
     private final S stack;
@@ -23,9 +26,18 @@ public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
         this.stack = stack;
     }
 
-    public static class Gas extends MekanismKey<GasStack> {
+    public static final class Gas extends MekanismKey<GasStack> {
         private Gas(GasStack stack) {
             super(MekanismKeyType.GAS, stack);
+        }
+
+        @Nullable
+        public static MekanismKey.Gas of(GasStack stack) {
+            if (stack.isEmpty()) {
+                return null;
+            }
+
+            return new MekanismKey.Gas(stack);
         }
 
         public static MekanismKey.Gas fromPacket(FriendlyByteBuf input) {
@@ -37,9 +49,18 @@ public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
         }
     }
 
-    public static class Infusion extends MekanismKey<InfusionStack> {
+    public static final class Infusion extends MekanismKey<InfusionStack> {
         private Infusion(InfusionStack stack) {
             super(MekanismKeyType.INFUSION, stack);
+        }
+
+        @Nullable
+        public static MekanismKey.Infusion of(InfusionStack stack) {
+            if (stack.isEmpty()) {
+                return null;
+            }
+
+            return new MekanismKey.Infusion(stack);
         }
 
         public static MekanismKey.Infusion fromPacket(FriendlyByteBuf input) {
@@ -51,9 +72,18 @@ public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
         }
     }
 
-    public static class Pigment extends MekanismKey<PigmentStack> {
+    public static final class Pigment extends MekanismKey<PigmentStack> {
         private Pigment(PigmentStack stack) {
             super(MekanismKeyType.PIGMENT, stack);
+        }
+
+        @Nullable
+        public static MekanismKey.Pigment of(PigmentStack stack) {
+            if (stack.isEmpty()) {
+                return null;
+            }
+
+            return new MekanismKey.Pigment(stack);
         }
 
         public static MekanismKey.Pigment fromPacket(FriendlyByteBuf input) {
@@ -65,9 +95,18 @@ public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
         }
     }
 
-    public static class Slurry extends MekanismKey<SlurryStack> {
+    public static final class Slurry extends MekanismKey<SlurryStack> {
         private Slurry(SlurryStack stack) {
             super(MekanismKeyType.SLURRY, stack);
+        }
+
+        @Nullable
+        public static MekanismKey.Slurry of(SlurryStack stack) {
+            if (stack.isEmpty()) {
+                return null;
+            }
+
+            return new MekanismKey.Slurry(stack);
         }
 
         public static MekanismKey.Slurry fromPacket(FriendlyByteBuf input) {
@@ -77,6 +116,10 @@ public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
         public static MekanismKey.Slurry fromTag(CompoundTag tag) {
             return new MekanismKey.Slurry(SlurryStack.readFromNBT(tag));
         }
+    }
+
+    public S getStack() {
+        return stack;
     }
 
     @Override
@@ -122,5 +165,26 @@ public abstract class MekanismKey<S extends ChemicalStack<?>> extends AEKey {
     @Override
     public Component getDisplayName() {
         return stack.getType().getTextComponent();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MekanismKey<?> that = (MekanismKey<?>) o;
+        return Objects.equals(type, that.type) && Objects.equals(stack.getType(), that.stack.getType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, stack.getType());
+    }
+
+    @Override
+    public String toString() {
+        return "MekanismKey{" +
+                "type=" + type +
+                ", stack=" + stack +
+                '}';
     }
 }
