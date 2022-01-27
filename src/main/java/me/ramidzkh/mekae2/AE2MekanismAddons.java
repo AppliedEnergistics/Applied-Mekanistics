@@ -18,11 +18,11 @@ import appeng.menu.locator.MenuLocators;
 import appeng.menu.me.common.MEStorageMenu;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -143,7 +143,10 @@ public class AE2MekanismAddons {
     }
 
     private void initializeAttunement() {
-        P2PTunnelAttunement.addItem(Blocks.TORCH, AItems.CHEMICAL_P2P_TUNNEL::get);
-        P2PTunnelAttunement.addItem(Blocks.GLOWSTONE, AItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "basic_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "advanced_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "elite_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "ultimate_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "creative_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
     }
 }
