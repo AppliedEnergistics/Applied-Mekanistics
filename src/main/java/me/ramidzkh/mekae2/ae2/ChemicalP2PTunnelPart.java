@@ -2,7 +2,10 @@ package me.ramidzkh.mekae2.ae2;
 
 import appeng.api.config.PowerUnits;
 import appeng.api.parts.IPartItem;
+import appeng.api.parts.IPartModel;
+import appeng.items.parts.PartModels;
 import me.ramidzkh.mekae2.MekCapabilities;
+import me.ramidzkh.mekae2.ae2.impl.P2PModels;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
@@ -26,6 +29,8 @@ import java.util.List;
 
 public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<ChemicalP2PTunnelPart> {
 
+    private static final P2PModels MODELS = new P2PModels("part/chemical_p2p_tunnel");
+
     public ChemicalP2PTunnelPart(IPartItem<?> partItem) {
         super(partItem, self -> List.of(
                 new CapabilitySet<>(MekCapabilities.GAS_HANDLER_CAPABILITY, new InputChemicalHandler.OfGas(self), new OutputChemicalHandler.OfGas(self), NullChemicalHandler.GAS),
@@ -33,6 +38,16 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
                 new CapabilitySet<>(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, new InputChemicalHandler.OfPigment(self), new OutputChemicalHandler.OfPigment(self), NullChemicalHandler.PIGMENT),
                 new CapabilitySet<>(MekCapabilities.SLURRY_HANDLER_CAPABILITY, new InputChemicalHandler.OfSlurry(self), new OutputChemicalHandler.OfSlurry(self), NullChemicalHandler.SLURRY)
         ));
+    }
+
+    @PartModels
+    public static List<IPartModel> getModels() {
+        return MODELS.getModels();
+    }
+
+    @Override
+    public IPartModel getStaticModels() {
+        return MODELS.getModel(this.isPowered(), this.isActive());
     }
 
     private static abstract sealed class InputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {

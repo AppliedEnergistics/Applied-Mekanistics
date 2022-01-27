@@ -1,6 +1,7 @@
 package me.ramidzkh.mekae2;
 
 import appeng.api.client.StorageCellModels;
+import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.AEKeyTypes;
@@ -21,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -51,6 +53,7 @@ public class AE2MekanismAddons {
         bus.addListener((FMLCommonSetupEvent event) -> {
             event.enqueueWork(this::initializeModels);
             event.enqueueWork(this::initializeUpgrades);
+            event.enqueueWork(this::initializeAttunement);
         });
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AE2MekanismAddonsClient::initialize);
@@ -137,5 +140,10 @@ public class AE2MekanismAddons {
             Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
             Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
         }
+    }
+
+    private void initializeAttunement() {
+        P2PTunnelAttunement.addItem(Blocks.TORCH, AItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.addItem(Blocks.GLOWSTONE, AItems.CHEMICAL_P2P_TUNNEL::get);
     }
 }

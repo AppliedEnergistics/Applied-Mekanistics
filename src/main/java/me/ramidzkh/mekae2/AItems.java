@@ -1,12 +1,17 @@
 package me.ramidzkh.mekae2;
 
+import appeng.api.parts.PartModels;
 import appeng.core.definitions.AEItems;
 import appeng.items.materials.MaterialItem;
+import appeng.items.parts.PartItem;
+import appeng.items.parts.PartModelsHelper;
 import appeng.items.storage.CreativeCellItem;
 import appeng.items.tools.powered.PortableCellItem;
+import me.ramidzkh.mekae2.ae2.ChemicalP2PTunnelPart;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.item.ChemicalPortableCellItem;
 import me.ramidzkh.mekae2.item.ChemicalStorageCell;
+import net.minecraft.Util;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,20 +27,25 @@ public class AItems {
 
     public static void initialize(IEventBus bus) {
         ITEMS.register(bus);
-    }    public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(AE2MekanismAddons.ID) {
+    }
+
+    private static Item basic() {
+        return new MaterialItem(properties());
+    }
+
+    public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(AE2MekanismAddons.ID) {
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(AItems.GAS_CELL_64K.get());
         }
     };
 
-    private static Item basic() {
-        return new MaterialItem(properties());
-    }    public static final RegistryObject<Item> GAS_CELL_HOUSING = ITEMS.register("gas_cell_housing", AItems::basic);
-
     private static Item.Properties properties() {
         return new Item.Properties().tab(CREATIVE_TAB);
-    }    public static final RegistryObject<Item> INFUSION_CELL_HOUSING = ITEMS.register("infusion_cell_housing", AItems::basic);
+    }
+
+    public static final RegistryObject<Item> GAS_CELL_HOUSING = ITEMS.register("gas_cell_housing", AItems::basic);
+    public static final RegistryObject<Item> INFUSION_CELL_HOUSING = ITEMS.register("infusion_cell_housing", AItems::basic);
     public static final RegistryObject<Item> PIGMENT_CELL_HOUSING = ITEMS.register("pigment_cell_housing", AItems::basic);
     public static final RegistryObject<Item> SLURRY_CELL_HOUSING = ITEMS.register("slurry_cell_housing", AItems::basic);
 
@@ -84,9 +94,8 @@ public class AItems {
     public static final RegistryObject<Item> PORTABLE_SLURRY_CELL_16K = ITEMS.register("portable_slurry_storage_cell_16k", () -> new ChemicalPortableCellItem(MekanismKeyType.SLURRY, AMenus.PORTABLE_SLURRY_CELL_TYPE, PortableCellItem.SIZE_16K, properties().stacksTo(1)));
     public static final RegistryObject<Item> PORTABLE_SLURRY_CELL_64K = ITEMS.register("portable_slurry_storage_cell_64k", () -> new ChemicalPortableCellItem(MekanismKeyType.SLURRY, AMenus.PORTABLE_SLURRY_CELL_TYPE, PortableCellItem.SIZE_64K, properties().stacksTo(1)));
 
-
-
-
-
-
+    public static final RegistryObject<PartItem<ChemicalP2PTunnelPart>> CHEMICAL_P2P_TUNNEL = Util.make(() -> {
+        PartModels.registerModels(PartModelsHelper.createModels(ChemicalP2PTunnelPart.class));
+        return ITEMS.register("chemical_p2p_tunnel", () -> new PartItem<>(properties(), ChemicalP2PTunnelPart.class, ChemicalP2PTunnelPart::new));
+    });
 }

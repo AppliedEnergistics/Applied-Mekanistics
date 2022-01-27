@@ -11,14 +11,20 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
 
+    private static final ResourceLocation P2P_TUNNEL_BASE_ITEM = AppEng.makeId("item/p2p_tunnel_base");
+    private static final ResourceLocation P2P_TUNNEL_BASE_PART = AppEng.makeId("part/p2p/p2p_tunnel_base");
     private static final ResourceLocation STORAGE_CELL_LED = AppEng.makeId("item/storage_cell_led");
     private static final ResourceLocation PORTABLE_CELL_LED = AppEng.makeId("item/portable_cell_led");
+    private static final ResourceLocation OSMIUM_BLOCK = new ResourceLocation("mekanism", "block/block_osmium");
 
     public ItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
         super(generator, AE2MekanismAddons.ID, existingFileHelper);
 
+        existingFileHelper.trackGenerated(P2P_TUNNEL_BASE_ITEM, MODEL);
+        existingFileHelper.trackGenerated(P2P_TUNNEL_BASE_PART, MODEL);
         existingFileHelper.trackGenerated(STORAGE_CELL_LED, TEXTURE);
         existingFileHelper.trackGenerated(PORTABLE_CELL_LED, TEXTURE);
+        existingFileHelper.trackGenerated(OSMIUM_BLOCK, TEXTURE);
     }
 
     @Override
@@ -52,6 +58,11 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         cell(AItems.SLURRY_CELL_4K, AItems.PORTABLE_SLURRY_CELL_4K, "item/slurry_storage_cell_4k");
         cell(AItems.SLURRY_CELL_16K, AItems.PORTABLE_SLURRY_CELL_16K, "item/slurry_storage_cell_16k");
         cell(AItems.SLURRY_CELL_64K, AItems.PORTABLE_SLURRY_CELL_64K, "item/slurry_storage_cell_64k");
+
+        withExistingParent("item/chemical_p2p_tunnel", P2P_TUNNEL_BASE_ITEM)
+                .texture("type", OSMIUM_BLOCK);
+        withExistingParent("part/chemical_p2p_tunnel", P2P_TUNNEL_BASE_PART)
+                .texture("type", OSMIUM_BLOCK);
     }
 
     private void cell(RegistryObject<Item> cell, RegistryObject<Item> portable, String background) {

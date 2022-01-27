@@ -15,31 +15,16 @@ import java.util.stream.Collectors;
 
 public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunnelPart<P>> extends P2PTunnelPart<P> {
 
-    // Prevents recursive block updates.
-    private boolean inBlockUpdate = false;
+    private final Map<Capability<?>, CapabilitySetInner<?, P>> capabilities;
     // Prevents recursive access to the adjacent capability in case P2P input/output faces touch
     int accessDepth = 0;
-    private final Map<Capability<?>, CapabilitySetInner<?, P>> capabilities;
+    // Prevents recursive block updates.
+    private boolean inBlockUpdate = false;
 
     public MultipleCapabilityP2PTunnelPart(IPartItem<?> partItem, Function<P, Collection<CapabilitySet<?>>> capabilities) {
         super(partItem);
         this.capabilities = capabilities.apply((P) this).stream()
                 .collect(Collectors.toMap(CapabilitySet::capability, set -> set.toInner((P) this)));
-    }
-
-    public record CapabilitySet<C>(Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
-        private <P extends MultipleCapabilityP2PTunnelPart<P>> CapabilitySetInner<C, P> toInner(P part) {
-            return new CapabilitySetInner<>(new CapabilityGuard<>(part, capability(), emptyHandler()),
-                    new EmptyCapabilityGuard<>(part, capability(), emptyHandler()),
-                    inputHandler(),
-                    outputHandler());
-        }
-    }
-
-    private record CapabilitySetInner<C, P extends MultipleCapabilityP2PTunnelPart<P>>(CapabilityGuard<C, P> guard,
-                                                                                       CapabilityGuard<C, P> empty,
-                                                                                       C inputHandler,
-                                                                                       C outputHandler) {
     }
 
     @Override
@@ -81,73 +66,11 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
         return input == null ? (CapabilityGuard<C, P>) capabilities.get(capability).empty() : input.getAdjacentCapability(capability);
     }
 
-    protected static class CapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> implements AutoCloseable {
-        private final P part;
-        private final Capability<C> capability;
-        protected final C emptyHandler;
-
-        public CapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
-            this.part = part;
-            this.capability = capability;
-            this.emptyHandler = emptyHandler;
-        }
-
-        /**
-         * Get the capability, or a null handler if not available. Use within the scope of the enclosing AdjCapability.
-         */
-        protected C get() {
-            if (part.accessDepth == 0) {
-                throw new IllegalStateException("get was called after closing the wrapper");
-            } else if (part.accessDepth == 1) {
-                if (part.isActive()) {
-                    var self = part.getBlockEntity();
-                    var te = self.getLevel().getBlockEntity(part.getFacingPos());
-
-                    if (te != null) {
-                        return te.getCapability(capability, part.getSide().getOpposite())
-                                .orElse(emptyHandler);
-                    }
-                }
-
-                return emptyHandler;
-            } else {
-                // This capability is already in use (as the nesting is > 1), so we return an empty handler to prevent
-                // infinite recursion.
-                return emptyHandler;
-            }
-        }
-
-        @Override
-        public void close() {
-            if (--part.accessDepth < 0) {
-                throw new IllegalStateException("Close has been called multiple times");
-            }
-        }
-    }
-
     /**
      * The position right in front of this P2P tunnel.
      */
     BlockPos getFacingPos() {
         return getHost().getLocation().getPos().relative(getSide());
-    }
-
-    /**
-     * This specialization is used when the tunnel is not connected.
-     */
-    private static class EmptyCapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> extends CapabilityGuard<C, P> implements AutoCloseable {
-        public EmptyCapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
-            super(part, capability, emptyHandler);
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        protected C get() {
-            return emptyHandler;
-        }
     }
 
     // Send a block update on p2p status change, or any update on another endpoint.
@@ -202,6 +125,83 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
             } finally {
                 inBlockUpdate = false;
             }
+        }
+    }
+
+    public record CapabilitySet<C>(Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
+        private <P extends MultipleCapabilityP2PTunnelPart<P>> CapabilitySetInner<C, P> toInner(P part) {
+            return new CapabilitySetInner<>(new CapabilityGuard<>(part, capability(), emptyHandler()),
+                    new EmptyCapabilityGuard<>(part, capability(), emptyHandler()),
+                    inputHandler(),
+                    outputHandler());
+        }
+    }
+
+    private record CapabilitySetInner<C, P extends MultipleCapabilityP2PTunnelPart<P>>(CapabilityGuard<C, P> guard,
+                                                                                       CapabilityGuard<C, P> empty,
+                                                                                       C inputHandler,
+                                                                                       C outputHandler) {
+    }
+
+    protected static class CapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> implements AutoCloseable {
+        protected final C emptyHandler;
+        private final P part;
+        private final Capability<C> capability;
+
+        public CapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
+            this.part = part;
+            this.capability = capability;
+            this.emptyHandler = emptyHandler;
+        }
+
+        /**
+         * Get the capability, or a null handler if not available. Use within the scope of the enclosing AdjCapability.
+         */
+        public C get() {
+            if (part.accessDepth == 0) {
+                throw new IllegalStateException("get was called after closing the wrapper");
+            } else if (part.accessDepth == 1) {
+                if (part.isActive()) {
+                    var self = part.getBlockEntity();
+                    var te = self.getLevel().getBlockEntity(part.getFacingPos());
+
+                    if (te != null) {
+                        return te.getCapability(capability, part.getSide().getOpposite())
+                                .orElse(emptyHandler);
+                    }
+                }
+
+                return emptyHandler;
+            } else {
+                // This capability is already in use (as the nesting is > 1), so we return an empty handler to prevent
+                // infinite recursion.
+                return emptyHandler;
+            }
+        }
+
+        @Override
+        public void close() {
+            if (--part.accessDepth < 0) {
+                throw new IllegalStateException("Close has been called multiple times");
+            }
+        }
+    }
+
+    /**
+     * This specialization is used when the tunnel is not connected.
+     */
+    private static class EmptyCapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> extends CapabilityGuard<C, P> implements AutoCloseable {
+        public EmptyCapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
+            super(part, capability, emptyHandler);
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public C get() {
+            return emptyHandler;
         }
     }
 }

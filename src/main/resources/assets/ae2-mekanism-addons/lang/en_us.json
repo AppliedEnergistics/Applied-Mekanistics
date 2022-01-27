@@ -54,5 +54,7 @@
   "item.ae2-mekanism-addons.portable_slurry_storage_cell_16k": "16k Portable Slurry Cell",
   "item.ae2-mekanism-addons.portable_slurry_storage_cell_1k": "1k Portable Slurry Cell",
   "item.ae2-mekanism-addons.portable_slurry_storage_cell_4k": "4k Portable Slurry Cell",
-  "item.ae2-mekanism-addons.portable_slurry_storage_cell_64k": "64k Portable Slurry Cell"
+  "item.ae2-mekanism-addons.portable_slurry_storage_cell_64k": "64k Portable Slurry Cell",
+
+  "item.ae2-mekanism-addons.chemical_p2p_tunnel": "Chemical P2P Tunnel"
 }

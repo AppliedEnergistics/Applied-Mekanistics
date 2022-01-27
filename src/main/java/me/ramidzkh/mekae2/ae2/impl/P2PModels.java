@@ -1,6 +1,7 @@
 package me.ramidzkh.mekae2.ae2.impl;
 
 import appeng.api.parts.IPartModel;
+import appeng.core.AppEng;
 import appeng.parts.PartModel;
 import me.ramidzkh.mekae2.AE2MekanismAddons;
 import net.minecraft.resources.ResourceLocation;
@@ -10,10 +11,10 @@ import java.util.List;
 
 public class P2PModels {
 
-    public static final ResourceLocation MODEL_STATUS_OFF = AE2MekanismAddons.id("part/p2p/p2p_tunnel_status_off");
-    public static final ResourceLocation MODEL_STATUS_ON = AE2MekanismAddons.id("part/p2p/p2p_tunnel_status_on");
-    public static final ResourceLocation MODEL_STATUS_HAS_CHANNEL = AE2MekanismAddons.id("part/p2p/p2p_tunnel_status_has_channel");
-    public static final ResourceLocation MODEL_FREQUENCY = AE2MekanismAddons.id("part/p2p/p2p_tunnel_frequency");
+    public static final ResourceLocation MODEL_STATUS_OFF = AppEng.makeId("part/p2p/p2p_tunnel_status_off");
+    public static final ResourceLocation MODEL_STATUS_ON = AppEng.makeId("part/p2p/p2p_tunnel_status_on");
+    public static final ResourceLocation MODEL_STATUS_HAS_CHANNEL = AppEng.makeId("part/p2p/p2p_tunnel_status_has_channel");
+    public static final ResourceLocation MODEL_FREQUENCY = AppEng.makeId("part/p2p/p2p_tunnel_frequency");
 
     private final IPartModel modelsOff;
     private final IPartModel modelsOn;
