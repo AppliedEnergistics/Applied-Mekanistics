@@ -2,12 +2,7 @@ package me.ramidzkh.mekae2.ae2;
 
 import appeng.api.config.PowerUnits;
 import appeng.api.parts.IPartItem;
-import appeng.api.parts.IPartModel;
-import appeng.items.parts.PartModels;
-import appeng.parts.p2p.CapabilityP2PTunnelPart;
 import me.ramidzkh.mekae2.MekCapabilities;
-import me.ramidzkh.mekae2.ae2.impl.P2PModels;
-import me.ramidzkh.mekae2.mixin.CapabilityGuardAccessor;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
@@ -29,67 +24,24 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.List;
 
-public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>, SELF extends ChemicalP2PTunnelPart<C, S, H, SELF>> extends CapabilityP2PTunnelPart<SELF, H> implements ChemicalBridge<S> {
+public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<ChemicalP2PTunnelPart> {
 
-    private static final P2PModels MODELS = new P2PModels("part/p2p/p2p_tunnel_chemical");
-
-    private ChemicalP2PTunnelPart(IPartItem<?> partItem, Capability<H> capability) {
-        super(partItem, capability);
+    public ChemicalP2PTunnelPart(IPartItem<?> partItem) {
+        super(partItem, self -> List.of(
+                new CapabilitySet<>(MekCapabilities.GAS_HANDLER_CAPABILITY, new InputChemicalHandler.OfGas(self), new OutputChemicalHandler.OfGas(self), NullChemicalHandler.GAS),
+                new CapabilitySet<>(MekCapabilities.INFUSION_HANDLER_CAPABILITY, new InputChemicalHandler.OfInfusion(self), new OutputChemicalHandler.OfInfusion(self), NullChemicalHandler.INFUSION),
+                new CapabilitySet<>(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, new InputChemicalHandler.OfPigment(self), new OutputChemicalHandler.OfPigment(self), NullChemicalHandler.PIGMENT),
+                new CapabilitySet<>(MekCapabilities.SLURRY_HANDLER_CAPABILITY, new InputChemicalHandler.OfSlurry(self), new OutputChemicalHandler.OfSlurry(self), NullChemicalHandler.SLURRY)
+        ));
     }
 
-    @PartModels
-    public static List<IPartModel> getModels() {
-        return MODELS.getModels();
-    }
+    private static abstract sealed class InputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
+        private final ChemicalP2PTunnelPart part;
+        private final Capability<H> capability;
 
-    @Override
-    public IPartModel getStaticModels() {
-        return MODELS.getModel(this.isPowered(), this.isActive());
-    }
-
-    protected void init(H inputHandler, H outputHandler, H emptyHandler) {
-        this.inputHandler = inputHandler;
-        this.outputHandler = outputHandler;
-        this.emptyHandler = emptyHandler;
-    }
-
-    private H get(CapabilityGuard guard) {
-        return ((CapabilityGuardAccessor<H>) guard).callGet();
-    }
-
-    public static final class GasP2PTunnelPart extends ChemicalP2PTunnelPart<Gas, GasStack, IGasHandler, GasP2PTunnelPart> implements ChemicalBridge.OfGas {
-        public GasP2PTunnelPart(IPartItem<?> partItem) {
-            super(partItem, MekCapabilities.GAS_HANDLER_CAPABILITY);
-            init(new InputChemicalHandler.OfGas(this), new OutputChemicalHandler.OfGas(this), new NullChemicalHandler.OfGas());
-        }
-    }
-
-    public static final class InfusionP2PTunnelPart extends ChemicalP2PTunnelPart<InfuseType, InfusionStack, IInfusionHandler, InfusionP2PTunnelPart> implements ChemicalBridge.OfInfusion {
-        public InfusionP2PTunnelPart(IPartItem<?> partItem) {
-            super(partItem, MekCapabilities.INFUSION_HANDLER_CAPABILITY);
-            init(new InputChemicalHandler.OfInfusion(this), new OutputChemicalHandler.OfInfusion(this), new NullChemicalHandler.OfInfusion());
-        }
-    }
-
-    public static final class PigmentP2PTunnelPart extends ChemicalP2PTunnelPart<Pigment, PigmentStack, IPigmentHandler, PigmentP2PTunnelPart> implements ChemicalBridge.OfPigment {
-        public PigmentP2PTunnelPart(IPartItem<?> partItem) {
-            super(partItem, MekCapabilities.PIGMENT_HANDLER_CAPABILITY);
-            init(new InputChemicalHandler.OfPigment(this), new OutputChemicalHandler.OfPigment(this), new NullChemicalHandler.OfPigment());
-        }
-    }
-
-    public static final class SlurryP2PTunnelPart extends ChemicalP2PTunnelPart<Slurry, SlurryStack, ISlurryHandler, SlurryP2PTunnelPart> implements ChemicalBridge.OfSlurry {
-        public SlurryP2PTunnelPart(IPartItem<?> partItem) {
-            super(partItem, MekCapabilities.SLURRY_HANDLER_CAPABILITY);
-            init(new InputChemicalHandler.OfSlurry(this), new OutputChemicalHandler.OfSlurry(this), new NullChemicalHandler.OfSlurry());
-        }
-    }
-
-    private static abstract sealed class InputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>, P extends ChemicalP2PTunnelPart<C, S, H, P>> implements IChemicalHandler<C, S> {
-        private final ChemicalP2PTunnelPart<C, S, H, P> part;
-
-        protected InputChemicalHandler(ChemicalP2PTunnelPart<C, S, H, P> part) {
+        protected InputChemicalHandler(ChemicalP2PTunnelPart part, Capability<H> capability) {
             this.part = part;
+            this.capability = capability;
         }
 
         @Override
@@ -132,11 +84,11 @@ public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S exte
             var overflow = amountPerOutput == 0 ? amount : amount % amountPerOutput;
 
             for (var target : part.getOutputs()) {
-                try (var capabilityGuard = target.getAdjacentCapability()) {
-                    var output = part.get(capabilityGuard);
+                try (var capabilityGuard = target.getAdjacentCapability(capability)) {
+                    var output = capabilityGuard.get();
                     var toSend = amountPerOutput + overflow;
 
-                    overflow = output.insertChemical(part.withAmount(stack, toSend), action).getAmount();
+                    overflow = output.insertChemical(withAmount(stack, toSend), action).getAmount();
                     total += toSend - overflow;
                 }
             }
@@ -145,7 +97,7 @@ public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S exte
                 part.queueTunnelDrain(PowerUnits.RF, total);
             }
 
-            return part.withAmount(stack, stack.getAmount() - total);
+            return withAmount(stack, stack.getAmount() - total);
         }
 
         @Override
@@ -153,49 +105,51 @@ public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S exte
             return getEmptyStack();
         }
 
-        private static final class OfGas extends InputChemicalHandler<Gas, GasStack, IGasHandler, GasP2PTunnelPart> implements IGasHandler {
-            private OfGas(ChemicalP2PTunnelPart<Gas, GasStack, IGasHandler, GasP2PTunnelPart> part) {
-                super(part);
+        private static final class OfGas extends InputChemicalHandler<Gas, GasStack, IGasHandler> implements IGasHandler, ChemicalBridge.OfGas {
+            private OfGas(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.GAS_HANDLER_CAPABILITY);
             }
         }
 
-        private static final class OfInfusion extends InputChemicalHandler<InfuseType, InfusionStack, IInfusionHandler, InfusionP2PTunnelPart> implements IInfusionHandler {
-            private OfInfusion(ChemicalP2PTunnelPart<InfuseType, InfusionStack, IInfusionHandler, InfusionP2PTunnelPart> part) {
-                super(part);
+        private static final class OfInfusion extends InputChemicalHandler<InfuseType, InfusionStack, IInfusionHandler> implements IInfusionHandler, ChemicalBridge.OfInfusion {
+            private OfInfusion(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.INFUSION_HANDLER_CAPABILITY);
             }
         }
 
-        private static final class OfPigment extends InputChemicalHandler<Pigment, PigmentStack, IPigmentHandler, PigmentP2PTunnelPart> implements IPigmentHandler {
-            private OfPigment(ChemicalP2PTunnelPart<Pigment, PigmentStack, IPigmentHandler, PigmentP2PTunnelPart> part) {
-                super(part);
+        private static final class OfPigment extends InputChemicalHandler<Pigment, PigmentStack, IPigmentHandler> implements IPigmentHandler, ChemicalBridge.OfPigment {
+            private OfPigment(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.PIGMENT_HANDLER_CAPABILITY);
             }
         }
 
-        private static final class OfSlurry extends InputChemicalHandler<Slurry, SlurryStack, ISlurryHandler, SlurryP2PTunnelPart> implements ISlurryHandler {
-            private OfSlurry(ChemicalP2PTunnelPart<Slurry, SlurryStack, ISlurryHandler, SlurryP2PTunnelPart> part) {
-                super(part);
+        private static final class OfSlurry extends InputChemicalHandler<Slurry, SlurryStack, ISlurryHandler> implements ISlurryHandler, ChemicalBridge.OfSlurry {
+            private OfSlurry(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.SLURRY_HANDLER_CAPABILITY);
             }
         }
     }
 
-    private static abstract sealed class OutputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>, P extends ChemicalP2PTunnelPart<C, S, H, P>> implements IChemicalHandler<C, S> {
-        private final ChemicalP2PTunnelPart<C, S, H, P> part;
+    private static abstract sealed class OutputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>> implements IChemicalHandler<C, S> {
+        private final ChemicalP2PTunnelPart part;
+        private final Capability<H> capability;
 
-        private OutputChemicalHandler(ChemicalP2PTunnelPart<C, S, H, P> part) {
+        private OutputChemicalHandler(ChemicalP2PTunnelPart part, Capability<H> capability) {
             this.part = part;
+            this.capability = capability;
         }
 
         @Override
         public int getTanks() {
-            try (var input = part.getInputCapability()) {
-                return part.get(input).getTanks();
+            try (var input = part.getInputCapability(capability)) {
+                return input.get().getTanks();
             }
         }
 
         @Override
         public S getChemicalInTank(int tank) {
-            try (var input = part.getInputCapability()) {
-                return part.get(input).getChemicalInTank(tank);
+            try (var input = part.getInputCapability(capability)) {
+                return input.get().getChemicalInTank(tank);
             }
         }
 
@@ -206,15 +160,15 @@ public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S exte
 
         @Override
         public long getTankCapacity(int tank) {
-            try (var input = part.getInputCapability()) {
-                return part.get(input).getTankCapacity(tank);
+            try (var input = part.getInputCapability(capability)) {
+                return input.get().getTankCapacity(tank);
             }
         }
 
         @Override
         public boolean isValid(int tank, S stack) {
-            try (var input = part.getInputCapability()) {
-                return part.get(input).isValid(tank, stack);
+            try (var input = part.getInputCapability(capability)) {
+                return input.get().isValid(tank, stack);
             }
         }
 
@@ -225,8 +179,8 @@ public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S exte
 
         @Override
         public S extractChemical(int tank, long maxAmount, Action action) {
-            try (var input = part.getInputCapability()) {
-                var result = part.get(input).extractChemical(tank, maxAmount, action);
+            try (var input = part.getInputCapability(capability)) {
+                var result = input.get().extractChemical(tank, maxAmount, action);
 
                 if (action.execute()) {
                     part.queueTunnelDrain(PowerUnits.RF, result.getAmount());
@@ -236,32 +190,37 @@ public abstract sealed class ChemicalP2PTunnelPart<C extends Chemical<C>, S exte
             }
         }
 
-        private static final class OfGas extends OutputChemicalHandler<Gas, GasStack, IGasHandler, GasP2PTunnelPart> implements IGasHandler {
-            private OfGas(ChemicalP2PTunnelPart<Gas, GasStack, IGasHandler, GasP2PTunnelPart> part) {
-                super(part);
+        private static final class OfGas extends OutputChemicalHandler<Gas, GasStack, IGasHandler> implements IGasHandler {
+            private OfGas(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.GAS_HANDLER_CAPABILITY);
             }
         }
 
-        private static final class OfInfusion extends OutputChemicalHandler<InfuseType, InfusionStack, IInfusionHandler, InfusionP2PTunnelPart> implements IInfusionHandler {
-            private OfInfusion(ChemicalP2PTunnelPart<InfuseType, InfusionStack, IInfusionHandler, InfusionP2PTunnelPart> part) {
-                super(part);
+        private static final class OfInfusion extends OutputChemicalHandler<InfuseType, InfusionStack, IInfusionHandler> implements IInfusionHandler {
+            private OfInfusion(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.INFUSION_HANDLER_CAPABILITY);
             }
         }
 
-        private static final class OfPigment extends OutputChemicalHandler<Pigment, PigmentStack, IPigmentHandler, PigmentP2PTunnelPart> implements IPigmentHandler {
-            private OfPigment(ChemicalP2PTunnelPart<Pigment, PigmentStack, IPigmentHandler, PigmentP2PTunnelPart> part) {
-                super(part);
+        private static final class OfPigment extends OutputChemicalHandler<Pigment, PigmentStack, IPigmentHandler> implements IPigmentHandler {
+            private OfPigment(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.PIGMENT_HANDLER_CAPABILITY);
             }
         }
 
-        private static final class OfSlurry extends OutputChemicalHandler<Slurry, SlurryStack, ISlurryHandler, SlurryP2PTunnelPart> implements ISlurryHandler {
-            private OfSlurry(ChemicalP2PTunnelPart<Slurry, SlurryStack, ISlurryHandler, SlurryP2PTunnelPart> part) {
-                super(part);
+        private static final class OfSlurry extends OutputChemicalHandler<Slurry, SlurryStack, ISlurryHandler> implements ISlurryHandler {
+            private OfSlurry(ChemicalP2PTunnelPart part) {
+                super(part, MekCapabilities.SLURRY_HANDLER_CAPABILITY);
             }
         }
     }
 
     private static abstract sealed class NullChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S> {
+
+        private static final IGasHandler GAS = new OfGas();
+        private static final IInfusionHandler INFUSION = new OfInfusion();
+        private static final IPigmentHandler PIGMENT = new OfPigment();
+        private static final ISlurryHandler SLURRY = new OfSlurry();
 
         @Override
         public int getTanks() {
