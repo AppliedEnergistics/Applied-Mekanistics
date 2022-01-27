@@ -53,7 +53,7 @@ public class AE2MekanismAddons {
             event.enqueueWork(this::initializeUpgrades);
         });
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AE2MekanismAddonsClient::new);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AE2MekanismAddonsClient::initialize);
     }
 
     public static ResourceLocation id(String path) {

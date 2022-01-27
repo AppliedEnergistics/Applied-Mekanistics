@@ -22,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -42,17 +41,7 @@ public final class ChemicalUtil<C extends Chemical<C>, S extends ChemicalStack<C
         this.capability = capability;
     }
 
-    /**
-     * {@link net.minecraftforge.fluids.FluidUtil#tryFillContainer(ItemStack, IFluidHandler, int, Player, boolean)}
-     *
-     * @param container
-     * @param chemicalSource
-     * @param maxAmount
-     * @param player
-     * @param doFill
-     * @return
-     */
-    public FluidActionResult tryFillContainer(ItemStack container, H chemicalSource, long maxAmount, @Nullable Player player, boolean doFill) {
+    public FluidActionResult tryFillContainer(ItemStack container, H chemicalSource, long maxAmount, boolean doFill) {
         var containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1);
 
         return getChemicalHandler(containerCopy).map(containerChemicalHandler -> {
@@ -70,7 +59,7 @@ public final class ChemicalUtil<C extends Chemical<C>, S extends ChemicalStack<C
         }).orElse(FluidActionResult.FAILURE);
     }
 
-    public FluidActionResult tryEmptyContainer(ItemStack container, H chemicalDestination, long maxAmount, @Nullable Player player, boolean doDrain) {
+    public FluidActionResult tryEmptyContainer(ItemStack container, H chemicalDestination, long maxAmount) {
         var containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1);
 
         return getChemicalHandler(containerCopy).map(containerChemicalHandler -> {
@@ -90,22 +79,22 @@ public final class ChemicalUtil<C extends Chemical<C>, S extends ChemicalStack<C
         }
 
         if (player != null && player.getAbilities().instabuild) {
-            var filledReal = tryFillContainer(container, chemicalSource, maxAmount, player, doFill);
+            var filledReal = tryFillContainer(container, chemicalSource, maxAmount, doFill);
 
             if (filledReal.isSuccess()) {
                 return new FluidActionResult(container);
             }
         } else if (container.getCount() == 1) {
-            var filledReal = tryFillContainer(container, chemicalSource, maxAmount, player, doFill);
+            var filledReal = tryFillContainer(container, chemicalSource, maxAmount, doFill);
 
             if (filledReal.isSuccess()) {
                 return filledReal;
             }
         } else {
-            var filledSimulated = tryFillContainer(container, chemicalSource, maxAmount, player, false);
+            var filledSimulated = tryFillContainer(container, chemicalSource, maxAmount, false);
 
             if (filledSimulated.isSuccess() && (ItemHandlerHelper.insertItemStacked(inventory, filledSimulated.getResult(), true).isEmpty() || player != null)) {
-                var filledReal = tryFillContainer(container, chemicalSource, maxAmount, player, doFill);
+                var filledReal = tryFillContainer(container, chemicalSource, maxAmount, doFill);
                 var remainder = ItemHandlerHelper.insertItemStacked(inventory, filledReal.getResult(), !doFill);
 
                 if (!remainder.isEmpty() && player != null && doFill) {
@@ -128,22 +117,22 @@ public final class ChemicalUtil<C extends Chemical<C>, S extends ChemicalStack<C
         }
 
         if (player != null && player.getAbilities().instabuild) {
-            var emptiedReal = tryEmptyContainer(container, chemicalDestination, maxAmount, player, doDrain);
+            var emptiedReal = tryEmptyContainer(container, chemicalDestination, maxAmount);
 
             if (emptiedReal.isSuccess()) {
                 return new FluidActionResult(container);
             }
         } else if (container.getCount() == 1) {
-            var emptiedReal = tryEmptyContainer(container, chemicalDestination, maxAmount, player, doDrain);
+            var emptiedReal = tryEmptyContainer(container, chemicalDestination, maxAmount);
 
             if (emptiedReal.isSuccess()) {
                 return emptiedReal;
             }
         } else {
-            var emptiedSimulated = tryEmptyContainer(container, chemicalDestination, maxAmount, player, false);
+            var emptiedSimulated = tryEmptyContainer(container, chemicalDestination, maxAmount);
 
             if (emptiedSimulated.isSuccess() && (ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), true).isEmpty() || player != null)) {
-                var emptiedReal = tryEmptyContainer(container, chemicalDestination, maxAmount, player, doDrain);
+                var emptiedReal = tryEmptyContainer(container, chemicalDestination, maxAmount);
                 var remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), !doDrain);
 
                 if (!remainder.isEmpty() && player != null && doDrain) {
@@ -161,9 +150,11 @@ public final class ChemicalUtil<C extends Chemical<C>, S extends ChemicalStack<C
 
     public S tryChemicalTransfer(H chemicalDestination, H chemicalSource, long maxAmount, boolean doTransfer) {
         var drainable = chemicalSource.extractChemical(maxAmount, Action.SIMULATE);
+
         if (!drainable.isEmpty()) {
             return tryFluidTransfer_Internal(chemicalDestination, chemicalSource, drainable, doTransfer);
         }
+
         return chemicalDestination.getEmptyStack();
     }
 
