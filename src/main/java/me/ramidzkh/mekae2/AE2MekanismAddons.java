@@ -18,7 +18,6 @@ import appeng.menu.locator.MenuLocators;
 import appeng.menu.me.common.MEStorageMenu;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,8 +28,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import java.util.List;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod("ae2_mekanism_addons")
 public class AE2MekanismAddons {
@@ -84,30 +82,25 @@ public class AE2MekanismAddons {
         StorageCells.addCellGuiHandler(new CellGuiHandler(MekanismKeyType.PIGMENT));
         StorageCells.addCellGuiHandler(new CellGuiHandler(MekanismKeyType.SLURRY));
 
-        StorageCellModels.registerModel(AItems.GAS_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
-        StorageCellModels.registerModel(AItems.INFUSION_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
-        StorageCellModels.registerModel(AItems.PIGMENT_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
-        StorageCellModels.registerModel(AItems.SLURRY_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
+        for (var type : AItems.Type.values()) {
+            for (var tier : AItems.Tier.values()) {
+                if (tier == AItems.Tier.HOUSING) {
+                    continue;
+                }
 
-        registerCell(AItems.GAS_CELL_1K::get, AItems.PORTABLE_GAS_CELL_1K::get, "1k_gas_cell");
-        registerCell(AItems.GAS_CELL_4K::get, AItems.PORTABLE_GAS_CELL_4K::get, "4k_gas_cell");
-        registerCell(AItems.GAS_CELL_16K::get, AItems.PORTABLE_GAS_CELL_16K::get, "16k_gas_cell");
-        registerCell(AItems.GAS_CELL_64K::get, AItems.PORTABLE_GAS_CELL_64K::get, "64k_gas_cell");
+                var cell = AItems.get(type, tier);
+                var portable = AItems.getPortableCellNullable(type, tier);
 
-        registerCell(AItems.INFUSION_CELL_1K::get, AItems.PORTABLE_INFUSION_CELL_1K::get, "1k_infusion_cell");
-        registerCell(AItems.INFUSION_CELL_4K::get, AItems.PORTABLE_INFUSION_CELL_4K::get, "4k_infusion_cell");
-        registerCell(AItems.INFUSION_CELL_16K::get, AItems.PORTABLE_INFUSION_CELL_16K::get, "16k_infusion_cell");
-        registerCell(AItems.INFUSION_CELL_64K::get, AItems.PORTABLE_INFUSION_CELL_64K::get, "64k_infusion_cell");
-
-        registerCell(AItems.PIGMENT_CELL_1K::get, AItems.PORTABLE_PIGMENT_CELL_1K::get, "1k_pigment_cell");
-        registerCell(AItems.PIGMENT_CELL_4K::get, AItems.PORTABLE_PIGMENT_CELL_4K::get, "4k_pigment_cell");
-        registerCell(AItems.PIGMENT_CELL_16K::get, AItems.PORTABLE_PIGMENT_CELL_16K::get, "16k_pigment_cell");
-        registerCell(AItems.PIGMENT_CELL_64K::get, AItems.PORTABLE_PIGMENT_CELL_64K::get, "64k_pigment_cell");
-
-        registerCell(AItems.SLURRY_CELL_1K::get, AItems.PORTABLE_SLURRY_CELL_1K::get, "1k_slurry_cell");
-        registerCell(AItems.SLURRY_CELL_4K::get, AItems.PORTABLE_SLURRY_CELL_4K::get, "4k_slurry_cell");
-        registerCell(AItems.SLURRY_CELL_16K::get, AItems.PORTABLE_SLURRY_CELL_16K::get, "16k_slurry_cell");
-        registerCell(AItems.SLURRY_CELL_64K::get, AItems.PORTABLE_SLURRY_CELL_64K::get, "64k_slurry_cell");
+                if (portable != null) {
+                    registerCell(cell::get, portable::get, cell.getId().getPath());
+                } else if (tier == AItems.Tier.CREATIVE) {
+                    StorageCellModels.registerModel(cell::get, AppEng.makeId("block/drive/cells/creative_cell"));
+                } else {
+                    // Tier must be HOUSING, CREATIVE, or have a portable cell equivalent
+                    throw new IllegalStateException();
+                }
+            }
+        }
     }
 
     private void registerCell(ItemLike cell, ItemLike portableCell, String path) {
@@ -119,34 +112,46 @@ public class AE2MekanismAddons {
         var storageCellGroup = GuiText.StorageCells.getTranslationKey();
         var portableStorageCellGroup = GuiText.PortableCells.getTranslationKey();
 
-        var cells = List.of(
-                AItems.GAS_CELL_1K, AItems.GAS_CELL_4K, AItems.GAS_CELL_16K, AItems.GAS_CELL_64K,
-                AItems.INFUSION_CELL_1K, AItems.INFUSION_CELL_4K, AItems.INFUSION_CELL_16K, AItems.INFUSION_CELL_64K,
-                AItems.PIGMENT_CELL_1K, AItems.PIGMENT_CELL_4K, AItems.PIGMENT_CELL_16K, AItems.PIGMENT_CELL_64K,
-                AItems.SLURRY_CELL_1K, AItems.SLURRY_CELL_4K, AItems.SLURRY_CELL_16K, AItems.SLURRY_CELL_64K
-        );
-
-        for (var cell : cells) {
-            Upgrades.add(AEItems.INVERTER_CARD, cell::get, 1, storageCellGroup);
+        for (var type : AItems.Type.values()) {
+            for (var tier : AItems.Tier.PORTABLE) {
+                Upgrades.add(AEItems.INVERTER_CARD, AItems.getPortableCell(type, tier)::get, 1, storageCellGroup);
+            }
         }
 
-        var portableCells = List.of(
-                AItems.PORTABLE_GAS_CELL_1K, AItems.PORTABLE_GAS_CELL_4K, AItems.PORTABLE_GAS_CELL_16K, AItems.PORTABLE_GAS_CELL_64K,
-                AItems.PORTABLE_INFUSION_CELL_1K, AItems.PORTABLE_INFUSION_CELL_4K, AItems.PORTABLE_INFUSION_CELL_16K, AItems.PORTABLE_INFUSION_CELL_64K,
-                AItems.PORTABLE_PIGMENT_CELL_1K, AItems.PORTABLE_PIGMENT_CELL_4K, AItems.PORTABLE_PIGMENT_CELL_16K, AItems.PORTABLE_PIGMENT_CELL_64K,
-                AItems.PORTABLE_SLURRY_CELL_1K, AItems.PORTABLE_SLURRY_CELL_4K, AItems.PORTABLE_SLURRY_CELL_16K, AItems.PORTABLE_SLURRY_CELL_64K);
-
-        for (var portableCell : portableCells) {
-            Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
-            Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
+        for (var type : AItems.Type.values()) {
+            for (var tier : AItems.Tier.PORTABLE) {
+                var portableCell = AItems.getPortableCell(type, tier);
+                Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
+                Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
+            }
         }
     }
 
     private void initializeAttunement() {
-        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "basic_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
-        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "advanced_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
-        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "elite_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
-        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "ultimate_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
-        P2PTunnelAttunement.addItem(Registry.ITEM.get(new ResourceLocation("mekanism", "creative_chemical_tank")), AItems.CHEMICAL_P2P_TUNNEL::get);
+        var basic = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "basic_chemical_tank"));
+        var advanced = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "advanced_chemical_tank"));
+        var elite = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "elite_chemical_tank"));
+        var ultimate = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "ultimate_chemical_tank"));
+        var creative = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "creative_chemical_tank"));
+
+        if (basic != null) {
+            P2PTunnelAttunement.addItem(basic, AItems.CHEMICAL_P2P_TUNNEL::get);
+        }
+
+        if (advanced != null) {
+            P2PTunnelAttunement.addItem(advanced, AItems.CHEMICAL_P2P_TUNNEL::get);
+        }
+
+        if (elite != null) {
+            P2PTunnelAttunement.addItem(elite, AItems.CHEMICAL_P2P_TUNNEL::get);
+        }
+
+        if (ultimate != null) {
+            P2PTunnelAttunement.addItem(ultimate, AItems.CHEMICAL_P2P_TUNNEL::get);
+        }
+
+        if (creative != null) {
+            P2PTunnelAttunement.addItem(creative, AItems.CHEMICAL_P2P_TUNNEL::get);
+        }
     }
 }

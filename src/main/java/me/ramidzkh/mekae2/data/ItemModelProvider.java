@@ -9,6 +9,8 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.List;
+
 public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
 
     private static final ResourceLocation P2P_TUNNEL_BASE_ITEM = AppEng.makeId("item/p2p_tunnel_base");
@@ -29,35 +31,21 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
 
     @Override
     protected void registerModels() {
-        flatSingleLayer(AItems.GAS_CELL_HOUSING, "item/gas_cell_housing");
-        flatSingleLayer(AItems.INFUSION_CELL_HOUSING, "item/infusion_cell_housing");
-        flatSingleLayer(AItems.PIGMENT_CELL_HOUSING, "item/pigment_cell_housing");
-        flatSingleLayer(AItems.SLURRY_CELL_HOUSING, "item/slurry_cell_housing");
+        for (var type : AItems.Type.values()) {
+            var housing = AItems.get(type, AItems.Tier.HOUSING);
+            flatSingleLayer(housing, "item/" + housing.getId().getPath());
 
-        flatSingleLayer(AItems.GAS_CELL_CREATIVE, "item/creative_gas_cell");
-        flatSingleLayer(AItems.INFUSION_CELL_CREATIVE, "item/creative_infusion_cell");
-        flatSingleLayer(AItems.PIGMENT_CELL_CREATIVE, "item/creative_pigment_cell");
-        flatSingleLayer(AItems.SLURRY_CELL_CREATIVE, "item/creative_slurry_cell");
+            var creative = AItems.get(type, AItems.Tier.CREATIVE);
+            flatSingleLayer(creative, "item/" + creative.getId().getPath());
+        }
 
-        cell(AItems.GAS_CELL_1K, AItems.PORTABLE_GAS_CELL_1K, "item/gas_storage_cell_1k");
-        cell(AItems.GAS_CELL_4K, AItems.PORTABLE_GAS_CELL_4K, "item/gas_storage_cell_4k");
-        cell(AItems.GAS_CELL_16K, AItems.PORTABLE_GAS_CELL_16K, "item/gas_storage_cell_16k");
-        cell(AItems.GAS_CELL_64K, AItems.PORTABLE_GAS_CELL_64K, "item/gas_storage_cell_64k");
-
-        cell(AItems.INFUSION_CELL_1K, AItems.PORTABLE_INFUSION_CELL_1K, "item/infusion_storage_cell_1k");
-        cell(AItems.INFUSION_CELL_4K, AItems.PORTABLE_INFUSION_CELL_4K, "item/infusion_storage_cell_4k");
-        cell(AItems.INFUSION_CELL_16K, AItems.PORTABLE_INFUSION_CELL_16K, "item/infusion_storage_cell_16k");
-        cell(AItems.INFUSION_CELL_64K, AItems.PORTABLE_INFUSION_CELL_64K, "item/infusion_storage_cell_64k");
-
-        cell(AItems.PIGMENT_CELL_1K, AItems.PORTABLE_PIGMENT_CELL_1K, "item/pigment_storage_cell_1k");
-        cell(AItems.PIGMENT_CELL_4K, AItems.PORTABLE_PIGMENT_CELL_4K, "item/pigment_storage_cell_4k");
-        cell(AItems.PIGMENT_CELL_16K, AItems.PORTABLE_PIGMENT_CELL_16K, "item/pigment_storage_cell_16k");
-        cell(AItems.PIGMENT_CELL_64K, AItems.PORTABLE_PIGMENT_CELL_64K, "item/pigment_storage_cell_64k");
-
-        cell(AItems.SLURRY_CELL_1K, AItems.PORTABLE_SLURRY_CELL_1K, "item/slurry_storage_cell_1k");
-        cell(AItems.SLURRY_CELL_4K, AItems.PORTABLE_SLURRY_CELL_4K, "item/slurry_storage_cell_4k");
-        cell(AItems.SLURRY_CELL_16K, AItems.PORTABLE_SLURRY_CELL_16K, "item/slurry_storage_cell_16k");
-        cell(AItems.SLURRY_CELL_64K, AItems.PORTABLE_SLURRY_CELL_64K, "item/slurry_storage_cell_64k");
+        for (var type : AItems.Type.values()) {
+            for (var tier : AItems.Tier.PORTABLE) {
+                var cell = AItems.get(type, tier);
+                var portableCell = AItems.getPortableCell(type, tier);
+                cell(cell, portableCell, "item/" + cell.getId().getPath());
+            }
+        }
 
         withExistingParent("item/chemical_p2p_tunnel", P2P_TUNNEL_BASE_ITEM)
                 .texture("type", OSMIUM_BLOCK);

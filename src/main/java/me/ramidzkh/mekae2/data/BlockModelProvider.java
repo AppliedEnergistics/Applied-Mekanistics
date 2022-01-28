@@ -2,9 +2,12 @@ package me.ramidzkh.mekae2.data;
 
 import appeng.core.AppEng;
 import me.ramidzkh.mekae2.AE2MekanismAddons;
+import me.ramidzkh.mekae2.AItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
+
+import java.util.Locale;
 
 public class BlockModelProvider extends net.minecraftforge.client.model.generators.BlockModelProvider {
 
@@ -18,25 +21,11 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
 
     @Override
     protected void registerModels() {
-        cell("1k_gas_cell");
-        cell("4k_gas_cell");
-        cell("16k_gas_cell");
-        cell("64k_gas_cell");
-
-        cell("1k_infusion_cell");
-        cell("4k_infusion_cell");
-        cell("16k_infusion_cell");
-        cell("64k_infusion_cell");
-
-        cell("1k_pigment_cell");
-        cell("4k_pigment_cell");
-        cell("16k_pigment_cell");
-        cell("64k_pigment_cell");
-
-        cell("1k_slurry_cell");
-        cell("4k_slurry_cell");
-        cell("16k_slurry_cell");
-        cell("64k_slurry_cell");
+        for (var type : AItems.Type.values()) {
+            for (var tier : AItems.Tier.PORTABLE) {
+                cell(type.toString().toLowerCase(Locale.ROOT) + "_storage_cell" + tier.toString().toLowerCase(Locale.ROOT));
+            }
+        }
     }
 
     private void cell(String path) {

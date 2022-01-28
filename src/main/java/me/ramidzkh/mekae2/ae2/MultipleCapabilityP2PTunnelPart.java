@@ -62,7 +62,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
      * return a dummy capability.
      */
     protected final <C> CapabilityGuard<C, P> getInputCapability(Capability<C> capability) {
-        P input = getInput();
+        var input = getInput();
         return input == null ? (CapabilityGuard<C, P>) capabilities.get(capability).empty() : input.getAdjacentCapability(capability);
     }
 
@@ -112,13 +112,13 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
 
             try {
                 if (isOutput()) {
-                    P input = getInput();
+                    var input = getInput();
 
                     if (input != null) {
                         input.sendBlockUpdate();
                     }
                 } else {
-                    for (P output : getOutputs()) {
+                    for (var output : getOutputs()) {
                         output.sendBlockUpdate();
                     }
                 }

@@ -4,6 +4,8 @@ import appeng.items.storage.BasicStorageCell;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.List;
+
 public class AE2MekanismAddonsClient {
 
     public static void initialize() {
@@ -14,10 +16,10 @@ public class AE2MekanismAddonsClient {
     }
 
     private static void registerItemColors(ColorHandlerEvent.Item event) {
-        event.getItemColors().register(BasicStorageCell::getColor,
-                AItems.GAS_CELL_1K::get, AItems.GAS_CELL_4K::get, AItems.GAS_CELL_16K::get, AItems.GAS_CELL_64K::get,
-                AItems.INFUSION_CELL_1K::get, AItems.INFUSION_CELL_4K::get, AItems.INFUSION_CELL_16K::get, AItems.INFUSION_CELL_64K::get,
-                AItems.PIGMENT_CELL_1K::get, AItems.PIGMENT_CELL_4K::get, AItems.PIGMENT_CELL_16K::get, AItems.PIGMENT_CELL_64K::get,
-                AItems.SLURRY_CELL_1K::get, AItems.SLURRY_CELL_4K::get, AItems.SLURRY_CELL_16K::get, AItems.SLURRY_CELL_64K::get);
+        for (var type : AItems.Type.values()) {
+            for (var tier : List.of(AItems.Tier._1K, AItems.Tier._4K, AItems.Tier._16K, AItems.Tier._64K)) {
+                event.getItemColors().register(BasicStorageCell::getColor, AItems.get(type, tier)::get);
+            }
+        }
     }
 }

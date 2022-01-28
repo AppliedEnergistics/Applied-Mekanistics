@@ -90,7 +90,7 @@ tasks {
         manifest {
             attributes(
                 mapOf(
-                    "Specification-Title" to "ae2-mekanism-addons",
+                    "Specification-Title" to project.name,
                     "Specification-Vendor" to "ramidzkh",
                     "Specification-Version" to "1",
                     "Implementation-Title" to project.name,
