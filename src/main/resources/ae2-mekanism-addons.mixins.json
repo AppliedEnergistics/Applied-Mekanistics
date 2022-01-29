@@ -8,6 +8,7 @@
     "GenericEntryStackHelperMixin",
     "IInterfaceTargetMixin",
     "InterfaceLogicMixin",
+    "JEIPlugin1Mixin",
     "ListTagMixin",
     "MEStorageMenuMixin",
     "PatternProviderReturnInventoryMixin",
