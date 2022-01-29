@@ -20,6 +20,15 @@ repositories {
     }
 
     maven {
+        name = "Progwml6 maven"
+        url = uri("https://dvs1.progwml6.com/files/maven/")
+
+        content {
+            includeGroup("mezz.jei")
+        }
+    }
+
+    maven {
         name = "Local"
         url = file("libs").toURI()
     }
@@ -35,6 +44,9 @@ dependencies {
 
     modCompileOnly("mekanism", "Mekanism", "1.18.1-10.1.1.homebaked", classifier = "api")
     modRuntimeOnly("mekanism", "Mekanism", "1.18.1-10.1.1.homebaked", classifier = "all")
+
+    // modCompileOnly("mezz.jei", "jei-1.18.1", "9.2.3.82", classifier = "api")
+    modRuntimeOnly("mezz.jei", "jei-1.18.1", "9.2.3.82")
 }
 
 sourceSets {
