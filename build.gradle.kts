@@ -1,13 +1,17 @@
+import com.matthewprenger.cursegradle.CurseArtifact
+import com.matthewprenger.cursegradle.CurseProject
+import com.matthewprenger.cursegradle.CurseRelation
 import java.text.SimpleDateFormat
 import java.util.Date
 
 plugins {
     id("dev.architectury.loom") version "0.10.0-SNAPSHOT"
+    id("com.matthewprenger.cursegradle") version "1.4.0"
     `maven-publish`
 }
 
 group = "me.ramidzkh"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.${System.getenv("BUILD_NUMBER") ?: "0-SNAPSHOT"}"
 
 repositories {
     maven {
@@ -37,8 +41,10 @@ repositories {
 dependencies {
     minecraft("net.minecraft", "minecraft", "1.18.1")
     mappings(loom.officialMojangMappings())
-    forge("net.minecraftforge", "forge", "1.18.1-39.0.59")
+    forge("net.minecraftforge", "forge", "1.18.1-39.0.61")
 
+    // We depend on many AE2 internals, such as using their basic cell drive, to straight out implementation details
+    // (addressed by https://github.com/AppliedEnergistics/Applied-Energistics-2/pull/6041)
     // modCompileOnly("appeng", "appliedenergistics2", "10.0.1", classifier = "api")
     modImplementation("appeng", "appliedenergistics2", "10.0.1")
 
@@ -129,5 +135,33 @@ publishing {
             name = "Project"
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
         }
+    }
+}
+
+////////////////
+// CurseForge
+System.getenv("CURSEFORGE")?.let {
+    apply(plugin = "curseforge")
+
+    curseforge {
+        apiKey = it
+
+        project(closureOf<CurseProject> {
+            id = "574300"
+            changelogType = "markdown"
+            changelog = System.getenv("CHANGELOG")
+            releaseType = if (System.getenv("CHANGELOG").contains("[beta]")) "beta" else "alpha"
+            addGameVersion("1.18.1")
+            addGameVersion("Forge")
+
+            mainArtifact(tasks.remapJar.flatMap { it.archiveFile }, closureOf<CurseArtifact> {
+                displayName = "${project.version}"
+
+                relations(closureOf<CurseRelation> {
+                    requiredDependency("applied-energistics-2")
+                    requiredDependency("mekanism")
+                })
+            })
+        })
     }
 }
