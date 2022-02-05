@@ -40,14 +40,8 @@ public abstract class InterfaceLogicMixin {
         var fluidConfigCapacity = getConfig().getCapacity(AEKeyType.fluids());
         var fluidStorageCapacity = getStorage().getCapacity(AEKeyType.fluids());
 
-        getConfig().setCapacity(MekanismKeyType.GAS, fluidConfigCapacity);
-        getStorage().setCapacity(MekanismKeyType.GAS, fluidStorageCapacity);
-        getConfig().setCapacity(MekanismKeyType.INFUSION, fluidConfigCapacity);
-        getStorage().setCapacity(MekanismKeyType.INFUSION, fluidStorageCapacity);
-        getConfig().setCapacity(MekanismKeyType.PIGMENT, fluidConfigCapacity);
-        getStorage().setCapacity(MekanismKeyType.PIGMENT, fluidStorageCapacity);
-        getConfig().setCapacity(MekanismKeyType.SLURRY, fluidConfigCapacity);
-        getStorage().setCapacity(MekanismKeyType.SLURRY, fluidStorageCapacity);
+        getConfig().setCapacity(MekanismKeyType.TYPE, fluidConfigCapacity);
+        getStorage().setCapacity(MekanismKeyType.TYPE, fluidStorageCapacity);
     }
 
     @Inject(method = "getCapability", at = @At("HEAD"), cancellable = true)

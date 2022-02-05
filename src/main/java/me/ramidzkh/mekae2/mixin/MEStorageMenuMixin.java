@@ -19,7 +19,7 @@ public class MEStorageMenuMixin {
 
     @Redirect(method = "handleNetworkInteraction", at = @At(value = "INVOKE", target = "Lappeng/api/stacks/AEFluidKey;is(Lappeng/api/stacks/AEKey;)Z"))
     private boolean isFluid(AEKey key) {
-        return AEFluidKey.is(key) || key instanceof MekanismKey<?>;
+        return AEFluidKey.is(key) || key instanceof MekanismKey;
     }
 
     @Redirect(method = "handleNetworkInteraction", at = @At(value = "INVOKE", target = "Lappeng/helpers/FluidContainerHelper;getContainedStack(Lnet/minecraft/world/item/ItemStack;)Lappeng/api/stacks/GenericStack;"))

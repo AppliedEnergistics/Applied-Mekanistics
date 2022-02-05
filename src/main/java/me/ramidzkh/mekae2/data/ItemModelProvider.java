@@ -9,8 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.List;
-
 public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
 
     private static final ResourceLocation P2P_TUNNEL_BASE_ITEM = AppEng.makeId("item/p2p_tunnel_base");
@@ -31,20 +29,16 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
 
     @Override
     protected void registerModels() {
-        for (var type : AItems.Type.values()) {
-            var housing = AItems.get(type, AItems.Tier.HOUSING);
-            flatSingleLayer(housing, "item/" + housing.getId().getPath());
+        var housing = AItems.CHEMICAL_CELL_HOUSING;
+        flatSingleLayer(housing, "item/" + housing.getId().getPath());
 
-            var creative = AItems.get(type, AItems.Tier.CREATIVE);
-            flatSingleLayer(creative, "item/" + creative.getId().getPath());
-        }
+        var creative = AItems.CHEMICAL_CELL_CREATIVE;
+        flatSingleLayer(creative, "item/" + creative.getId().getPath());
 
-        for (var type : AItems.Type.values()) {
-            for (var tier : AItems.Tier.PORTABLE) {
-                var cell = AItems.get(type, tier);
-                var portableCell = AItems.getPortableCell(type, tier);
-                cell(cell, portableCell, "item/" + cell.getId().getPath());
-            }
+        for (var tier : AItems.Tier.values()) {
+            var cell = AItems.get(tier);
+            var portableCell = AItems.getPortableCell(tier);
+            cell(cell, portableCell, "item/" + cell.getId().getPath());
         }
 
         withExistingParent("item/chemical_p2p_tunnel", P2P_TUNNEL_BASE_ITEM)

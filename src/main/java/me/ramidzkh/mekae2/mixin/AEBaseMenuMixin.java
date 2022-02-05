@@ -15,7 +15,7 @@ public class AEBaseMenuMixin {
 
     @Inject(method = "handleFillingHeldItem", at = @At("HEAD"), cancellable = true)
     private void hookHandleFillingHeldItem(@Coerce Object source, AEKey what, CallbackInfo info) {
-        if (what instanceof MekanismKey<?> key && MenuIo.fill((AEBaseMenu) (Object) this, source, key)) {
+        if (what instanceof MekanismKey key && MenuIo.fill((AEBaseMenu) (Object) this, source, key)) {
             info.cancel();
         }
     }

@@ -1,10 +1,8 @@
 package me.ramidzkh.mekae2.ae2.impl;
 
 import appeng.api.stacks.AEFluidKey;
-import appeng.api.stacks.AEKeyType;
 import appeng.helpers.iface.PatternProviderReturnInventory;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
@@ -23,13 +21,11 @@ import mekanism.api.chemical.slurry.ISlurryHandler;
 import mekanism.api.chemical.slurry.Slurry;
 import mekanism.api.chemical.slurry.SlurryStack;
 
-public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
+public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S> {
 
-    private final AEKeyType type;
     private final PatternProviderReturnInventory parent;
 
-    private ChemicalReturnHandler(AEKeyType type, PatternProviderReturnInventory parent) {
-        this.type = type;
+    private ChemicalReturnHandler(PatternProviderReturnInventory parent) {
         this.parent = parent;
     }
 
@@ -42,8 +38,8 @@ public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S exte
     public S getChemicalInTank(int tank) {
         var stack = parent.getStack(tank);
 
-        if (stack != null && stack.what().getType() == type) {
-            return withAmount(((MekanismKey<S>) stack.what()).getStack(), stack.amount());
+        if (stack != null && stack.what() instanceof MekanismKey key) {
+            return (S) ChemicalBridge.withAmount(key.getStack(), stack.amount());
         }
 
         return getEmptyStack();
@@ -71,7 +67,7 @@ public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S exte
             return stack;
         }
 
-        var what = of(stack);
+        var what = MekanismKey.of(stack);
 
         if (what == null) {
             return stack;
@@ -83,7 +79,7 @@ public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S exte
             filled += parent.insert(i, what, stack.getAmount() - filled, GenericStackChemicalStorage.actionable(action));
         }
 
-        return withAmount(stack, stack.getAmount() - filled);
+        return ChemicalBridge.withAmount(stack, stack.getAmount() - filled);
     }
 
     @Override
@@ -91,27 +87,27 @@ public abstract sealed class ChemicalReturnHandler<C extends Chemical<C>, S exte
         return getEmptyStack();
     }
 
-    public static final class OfGas extends ChemicalReturnHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
+    public static final class OfGas extends ChemicalReturnHandler<Gas, GasStack> implements IGasHandler {
         public OfGas(PatternProviderReturnInventory parent) {
-            super(MekanismKeyType.GAS, parent);
+            super(parent);
         }
     }
 
-    public static final class OfInfusion extends ChemicalReturnHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
+    public static final class OfInfusion extends ChemicalReturnHandler<InfuseType, InfusionStack> implements IInfusionHandler {
         public OfInfusion(PatternProviderReturnInventory parent) {
-            super(MekanismKeyType.INFUSION, parent);
+            super(parent);
         }
     }
 
-    public static final class OfPigment extends ChemicalReturnHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
+    public static final class OfPigment extends ChemicalReturnHandler<Pigment, PigmentStack> implements IPigmentHandler {
         public OfPigment(PatternProviderReturnInventory parent) {
-            super(MekanismKeyType.PIGMENT, parent);
+            super(parent);
         }
     }
 
-    public static final class OfSlurry extends ChemicalReturnHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
+    public static final class OfSlurry extends ChemicalReturnHandler<Slurry, SlurryStack> implements ISlurryHandler {
         public OfSlurry(PatternProviderReturnInventory parent) {
-            super(MekanismKeyType.SLURRY, parent);
+            super(parent);
         }
     }
 }

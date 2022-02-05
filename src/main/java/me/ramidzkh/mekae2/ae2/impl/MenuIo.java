@@ -50,22 +50,24 @@ public class MenuIo {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static boolean fill(AEBaseMenu menu, Object source, MekanismKey<?> what) {
+    public static boolean fill(AEBaseMenu menu, Object source, MekanismKey what) {
         IChemicalHandler sourceHandler;
         ChemicalUtil util;
 
+        var stack = what.getStack();
+
         // Use switch feature once out of preview
-        if (what instanceof MekanismKey.Gas gas) {
-            sourceHandler = new FillingChemicalHandler.OfGas(gas, source);
+        if (stack instanceof GasStack) {
+            sourceHandler = new FillingChemicalHandler.OfGas(what, source);
             util = ChemicalUtil.GAS;
-        } else if (what instanceof MekanismKey.Infusion infusion) {
-            sourceHandler = new FillingChemicalHandler.OfInfusion(infusion, source);
+        } else if (stack instanceof InfusionStack) {
+            sourceHandler = new FillingChemicalHandler.OfInfusion(what, source);
             util = ChemicalUtil.INFUSION;
-        } else if (what instanceof MekanismKey.Pigment pigment) {
-            sourceHandler = new FillingChemicalHandler.OfPigment(pigment, source);
+        } else if (stack instanceof PigmentStack) {
+            sourceHandler = new FillingChemicalHandler.OfPigment(what, source);
             util = ChemicalUtil.PIGMENT;
-        } else if (what instanceof MekanismKey.Slurry slurry) {
-            sourceHandler = new FillingChemicalHandler.OfSlurry(slurry, source);
+        } else if (stack instanceof SlurryStack) {
+            sourceHandler = new FillingChemicalHandler.OfSlurry(what, source);
             util = ChemicalUtil.SLURRY;
         } else {
             throw new UnsupportedOperationException();
@@ -119,11 +121,11 @@ public class MenuIo {
         return false;
     }
 
-    private static abstract sealed class FillingChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
-        private final MekanismKey<S> what;
+    private static abstract sealed class FillingChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S> {
+        private final MekanismKey what;
         private final Object source;
 
-        private FillingChemicalHandler(MekanismKey<S> what, Object source) {
+        private FillingChemicalHandler(MekanismKey what, Object source) {
             this.what = what;
             this.source = source;
         }
@@ -135,7 +137,7 @@ public class MenuIo {
 
         @Override
         public S getChemicalInTank(int tank) {
-            return what.getStack();
+            return (S) what.getStack();
         }
 
         @Override
@@ -150,7 +152,7 @@ public class MenuIo {
 
         @Override
         public boolean isValid(int tank, S stack) {
-            return stack.isTypeEqual(what.getStack());
+            return stack.getType().equals(what.getStack().getType());
         }
 
         @Override
@@ -161,35 +163,35 @@ public class MenuIo {
         @Override
         public S extractChemical(int tank, long maxAmount, Action action) {
             var extracted = extract(source, maxAmount, GenericStackChemicalStorage.actionable(action));
-            return withAmount(what.getStack(), extracted);
+            return (S) ChemicalBridge.withAmount(what.getStack(), extracted);
         }
 
-        public static final class OfGas extends FillingChemicalHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
-            public OfGas(MekanismKey.Gas what, Object source) {
+        public static final class OfGas extends FillingChemicalHandler<Gas, GasStack> implements IGasHandler {
+            public OfGas(MekanismKey what, Object source) {
                 super(what, source);
             }
         }
 
-        public static final class OfInfusion extends FillingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
-            public OfInfusion(MekanismKey.Infusion what, Object source) {
+        public static final class OfInfusion extends FillingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler {
+            public OfInfusion(MekanismKey what, Object source) {
                 super(what, source);
             }
         }
 
-        public static final class OfPigment extends FillingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
-            public OfPigment(MekanismKey.Pigment what, Object source) {
+        public static final class OfPigment extends FillingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler {
+            public OfPigment(MekanismKey what, Object source) {
                 super(what, source);
             }
         }
 
-        public static final class OfSlurry extends FillingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
-            public OfSlurry(MekanismKey.Slurry what, Object source) {
+        public static final class OfSlurry extends FillingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler {
+            public OfSlurry(MekanismKey what, Object source) {
                 super(what, source);
             }
         }
     }
 
-    private static abstract sealed class EmptyingChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S>, ChemicalBridge<S> {
+    private static abstract sealed class EmptyingChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S> {
         private final Object sink;
 
         public EmptyingChemicalHandler(Object sink) {
@@ -223,10 +225,10 @@ public class MenuIo {
 
         @Override
         public S insertChemical(int tank, S stack, Action action) {
-            var gasKey = of(stack);
+            var gasKey = MekanismKey.of(stack);
 
             if (gasKey != null) {
-                return withAmount(stack, stack.getAmount() - insert(sink, gasKey, stack.getAmount(), GenericStackChemicalStorage.actionable(action)));
+                return ChemicalBridge.withAmount(stack, stack.getAmount() - insert(sink, gasKey, stack.getAmount(), GenericStackChemicalStorage.actionable(action)));
             }
 
             return stack;
@@ -237,25 +239,25 @@ public class MenuIo {
             return getEmptyStack();
         }
 
-        public static final class OfGas extends EmptyingChemicalHandler<Gas, GasStack> implements IGasHandler, ChemicalBridge.OfGas {
+        public static final class OfGas extends EmptyingChemicalHandler<Gas, GasStack> implements IGasHandler {
             public OfGas(Object source) {
                 super(source);
             }
         }
 
-        public static final class OfInfusion extends EmptyingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler, ChemicalBridge.OfInfusion {
+        public static final class OfInfusion extends EmptyingChemicalHandler<InfuseType, InfusionStack> implements IInfusionHandler {
             public OfInfusion(Object source) {
                 super(source);
             }
         }
 
-        public static final class OfPigment extends EmptyingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler, ChemicalBridge.OfPigment {
+        public static final class OfPigment extends EmptyingChemicalHandler<Pigment, PigmentStack> implements IPigmentHandler {
             public OfPigment(Object source) {
                 super(source);
             }
         }
 
-        public static final class OfSlurry extends EmptyingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler, ChemicalBridge.OfSlurry {
+        public static final class OfSlurry extends EmptyingChemicalHandler<Slurry, SlurryStack> implements ISlurryHandler {
             public OfSlurry(Object source) {
                 super(source);
             }

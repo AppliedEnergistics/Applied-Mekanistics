@@ -15,19 +15,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-public class AChemicalStackRenderer<T extends MekanismKey<?>> implements IAEStackRenderHandler<T> {
+public class AChemicalStackRenderer implements IAEStackRenderHandler<MekanismKey> {
 
     public static void initialize(IEventBus bus) {
         bus.addListener((FMLClientSetupEvent event) -> event.enqueueWork(() -> {
-            AEStackRendering.register(MekanismKeyType.GAS, MekanismKey.Gas.class, new AChemicalStackRenderer<>());
-            AEStackRendering.register(MekanismKeyType.INFUSION, MekanismKey.Infusion.class, new AChemicalStackRenderer<>());
-            AEStackRendering.register(MekanismKeyType.PIGMENT, MekanismKey.Pigment.class, new AChemicalStackRenderer<>());
-            AEStackRendering.register(MekanismKeyType.SLURRY, MekanismKey.Slurry.class, new AChemicalStackRenderer<>());
+            AEStackRendering.register(MekanismKeyType.TYPE, MekanismKey.class, new AChemicalStackRenderer());
         }));
     }
 
     @Override
-    public void drawInGui(Minecraft minecraft, PoseStack poseStack, int x, int y, int zIndex, T what) {
+    public void drawInGui(Minecraft minecraft, PoseStack poseStack, int x, int y, int zIndex, MekanismKey what) {
         var stack = what.getStack();
 
         Blitter.sprite(Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stack.getType().getIcon()))
@@ -39,7 +36,7 @@ public class AChemicalStackRenderer<T extends MekanismKey<?>> implements IAEStac
     }
 
     @Override
-    public void drawOnBlockFace(PoseStack poseStack, MultiBufferSource buffers, T what, float scale, int combinedLight) {
+    public void drawOnBlockFace(PoseStack poseStack, MultiBufferSource buffers, MekanismKey what, float scale, int combinedLight) {
         var stack = what.getStack();
         var sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stack.getType().getIcon());
         var color = stack.getChemicalTint();
@@ -93,7 +90,7 @@ public class AChemicalStackRenderer<T extends MekanismKey<?>> implements IAEStac
     }
 
     @Override
-    public Component getDisplayName(T stack) {
+    public Component getDisplayName(MekanismKey stack) {
         return stack.getDisplayName();
     }
 }

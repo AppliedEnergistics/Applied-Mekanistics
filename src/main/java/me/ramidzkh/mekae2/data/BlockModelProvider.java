@@ -21,10 +21,8 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
 
     @Override
     protected void registerModels() {
-        for (var type : AItems.Type.values()) {
-            for (var tier : AItems.Tier.PORTABLE) {
-                cell(type.toString().toLowerCase(Locale.ROOT) + "_storage_cell" + tier.toString().toLowerCase(Locale.ROOT));
-            }
+        for (var tier : AItems.Tier.values()) {
+            cell("chemical_storage_cell" + tier.toString().toLowerCase(Locale.ROOT));
         }
     }
 

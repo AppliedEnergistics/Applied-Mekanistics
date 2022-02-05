@@ -33,8 +33,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.function.Predicate;
 
-public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>> extends ExternalStorageFacade implements ChemicalBridge<S> {
+public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>> extends ExternalStorageFacade {
 
     private final H handler;
 
@@ -44,12 +45,12 @@ public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>
 
     @Nullable
     public static IInterfaceTarget get(BlockEntity be, Direction side, IActionSource src, @Nullable IInterfaceTarget in) {
-        var facades = new HashMap<AEKeyType, ExternalStorageFacade>();
+        var facades = new HashMap<Predicate<AEKey>, ExternalStorageFacade>();
 
-        be.getCapability(MekCapabilities.GAS_HANDLER_CAPABILITY, side).map(ChemicalExternalStorageFacade.OfGas::new).ifPresent(x -> facades.put(MekanismKeyType.GAS, x));
-        be.getCapability(MekCapabilities.INFUSION_HANDLER_CAPABILITY, side).map(ChemicalExternalStorageFacade.OfInfusion::new).ifPresent(x -> facades.put(MekanismKeyType.INFUSION, x));
-        be.getCapability(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, side).map(ChemicalExternalStorageFacade.OfPigment::new).ifPresent(x -> facades.put(MekanismKeyType.PIGMENT, x));
-        be.getCapability(MekCapabilities.SLURRY_HANDLER_CAPABILITY, side).map(ChemicalExternalStorageFacade.OfSlurry::new).ifPresent(x -> facades.put(MekanismKeyType.SLURRY, x));
+        be.getCapability(MekCapabilities.GAS_HANDLER_CAPABILITY, side).ifPresent(x -> facades.put(key -> key instanceof MekanismKey k && k.getStack() instanceof GasStack, new OfGas(x)));
+        be.getCapability(MekCapabilities.INFUSION_HANDLER_CAPABILITY, side).ifPresent(x -> facades.put(key -> key instanceof MekanismKey k && k.getStack() instanceof InfusionStack, new OfInfusion(x)));
+        be.getCapability(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, side).ifPresent(x -> facades.put(key -> key instanceof MekanismKey k && k.getStack() instanceof PigmentStack, new OfPigment(x)));
+        be.getCapability(MekCapabilities.SLURRY_HANDLER_CAPABILITY, side).ifPresent(x -> facades.put(key -> key instanceof MekanismKey k && k.getStack() instanceof SlurryStack, new OfSlurry(x)));
 
         if (facades.isEmpty()) {
             return in;
@@ -74,34 +75,34 @@ public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>
     @Override
     public GenericStack getStackInSlot(int slot) {
         var stack = handler.getChemicalInTank(slot);
-        var key = of(stack);
+        var key = MekanismKey.of(stack);
         return key == null ? null : new GenericStack(key, stack.getAmount());
     }
 
     @Override
     protected int insertExternal(AEKey what, int amount, Actionable mode) {
-        if (what.getType() != getKeyType()) {
+        if (!(what instanceof MekanismKey key)) {
             return 0;
         }
 
-        var stack = withAmount(((MekanismKey<S>) what).getStack(), amount);
+        var stack = (S) ChemicalBridge.withAmount(key.getStack(), amount);
         return (int) (amount - handler.insertChemical(stack, action(mode)).getAmount());
     }
 
     @Override
     protected int extractExternal(AEKey what, int amount, Actionable mode) {
-        if (what.getType() != getKeyType()) {
+        if (!(what instanceof MekanismKey key)) {
             return 0;
         }
 
-        var stack = withAmount(((MekanismKey<S>) what).getStack(), amount);
+        var stack = (S) ChemicalBridge.withAmount(key.getStack(), amount);
         return (int) handler.extractChemical(stack, action(mode)).getAmount();
     }
 
     @Override
     public boolean containsAnyFuzzy(Set<AEKey> keys) {
         for (var i = 0; i < handler.getTanks(); i++) {
-            var what = of(handler.getChemicalInTank(i));
+            var what = MekanismKey.of(handler.getChemicalInTank(i));
 
             if (what != null) {
                 if (keys.contains(what)) {
@@ -113,47 +114,32 @@ public abstract sealed class ChemicalExternalStorageFacade<C extends Chemical<C>
         return false;
     }
 
-    public static final class OfGas extends ChemicalExternalStorageFacade<Gas, GasStack, IGasHandler> implements ChemicalBridge.OfGas {
+    @Override
+    public AEKeyType getKeyType() {
+        return MekanismKeyType.TYPE;
+    }
+
+    public static final class OfGas extends ChemicalExternalStorageFacade<Gas, GasStack, IGasHandler> {
         public OfGas(IGasHandler handler) {
             super(handler);
         }
-
-        @Override
-        public AEKeyType getKeyType() {
-            return MekanismKeyType.GAS;
-        }
     }
 
-    public static final class OfInfusion extends ChemicalExternalStorageFacade<InfuseType, InfusionStack, IInfusionHandler> implements ChemicalBridge.OfInfusion {
+    public static final class OfInfusion extends ChemicalExternalStorageFacade<InfuseType, InfusionStack, IInfusionHandler> {
         public OfInfusion(IInfusionHandler handler) {
             super(handler);
         }
-
-        @Override
-        public AEKeyType getKeyType() {
-            return MekanismKeyType.INFUSION;
-        }
     }
 
-    public static final class OfPigment extends ChemicalExternalStorageFacade<Pigment, PigmentStack, IPigmentHandler> implements ChemicalBridge.OfPigment {
+    public static final class OfPigment extends ChemicalExternalStorageFacade<Pigment, PigmentStack, IPigmentHandler> {
         public OfPigment(IPigmentHandler handler) {
             super(handler);
         }
-
-        @Override
-        public AEKeyType getKeyType() {
-            return MekanismKeyType.PIGMENT;
-        }
     }
 
-    public static final class OfSlurry extends ChemicalExternalStorageFacade<Slurry, SlurryStack, ISlurryHandler> implements ChemicalBridge.OfSlurry {
+    public static final class OfSlurry extends ChemicalExternalStorageFacade<Slurry, SlurryStack, ISlurryHandler> {
         public OfSlurry(ISlurryHandler handler) {
             super(handler);
-        }
-
-        @Override
-        public AEKeyType getKeyType() {
-            return MekanismKeyType.SLURRY;
         }
     }
 }

@@ -1,60 +1,20 @@
 {
   "itemGroup.ae2-mekanism-addons": "AE2 Mekanism Addons",
 
-  "gui.ae2-mekanism-addons.gas": "Gas",
-  "gui.ae2-mekanism-addons.infusion": "Infusion",
-  "gui.ae2-mekanism-addons.pigment": "Pigment",
-  "gui.ae2-mekanism-addons.slurry": "Slurry",
+  "gui.ae2-mekanism-addons.chemical": "Chemical",
 
-  "item.ae2-mekanism-addons.gas_cell_housing": "ME Gas Cell Housing",
-  "item.ae2-mekanism-addons.infusion_cell_housing": "ME Infusion Cell Housing",
-  "item.ae2-mekanism-addons.pigment_cell_housing": "ME Pigment Cell Housing",
-  "item.ae2-mekanism-addons.slurry_cell_housing": "ME Slurry Cell Housing",
+  "item.ae2-mekanism-addons.chemical_cell_housing": "ME Chemical Cell Housing",
+  "item.ae2-mekanism-addons.creative_chemical_cell": "Creative ME Chemical Cell",
 
-  "item.ae2-mekanism-addons.creative_gas_cell": "Creative ME Gas Cell",
-  "item.ae2-mekanism-addons.creative_infusion_cell": "Creative ME Infusion Cell",
-  "item.ae2-mekanism-addons.creative_pigment_cell": "Creative ME Pigment Cell",
-  "item.ae2-mekanism-addons.creative_slurry_cell": "Creative ME Slurry Cell",
+  "item.ae2-mekanism-addons.chemical_storage_cell_1k": "1k ME Chemical Storage Cell",
+  "item.ae2-mekanism-addons.chemical_storage_cell_4k": "4k ME Chemical Storage Cell",
+  "item.ae2-mekanism-addons.chemical_storage_cell_16k": "16k ME Chemical Storage Cell",
+  "item.ae2-mekanism-addons.chemical_storage_cell_64k": "64k ME Chemical Storage Cell",
 
-  "item.ae2-mekanism-addons.gas_storage_cell_1k": "1k ME Gas Storage Cell",
-  "item.ae2-mekanism-addons.gas_storage_cell_4k": "4k ME Gas Storage Cell",
-  "item.ae2-mekanism-addons.gas_storage_cell_16k": "16k ME Gas Storage Cell",
-  "item.ae2-mekanism-addons.gas_storage_cell_64k": "64k ME Gas Storage Cell",
-
-  "item.ae2-mekanism-addons.infusion_storage_cell_1k": "1k ME Infusion Storage Cell",
-  "item.ae2-mekanism-addons.infusion_storage_cell_4k": "4k ME Infusion Storage Cell",
-  "item.ae2-mekanism-addons.infusion_storage_cell_16k": "16k ME Infusion Storage Cell",
-  "item.ae2-mekanism-addons.infusion_storage_cell_64k": "64k ME Infusion Storage Cell",
-
-  "item.ae2-mekanism-addons.pigment_storage_cell_1k": "1k ME Pigment Storage Cell",
-  "item.ae2-mekanism-addons.pigment_storage_cell_4k": "4k ME Pigment Storage Cell",
-  "item.ae2-mekanism-addons.pigment_storage_cell_16k": "16k ME Pigment Storage Cell",
-  "item.ae2-mekanism-addons.pigment_storage_cell_64k": "64k ME Pigment Storage Cell",
-
-  "item.ae2-mekanism-addons.slurry_storage_cell_1k": "1k ME Slurry Storage Cell",
-  "item.ae2-mekanism-addons.slurry_storage_cell_4k": "4k ME Slurry Storage Cell",
-  "item.ae2-mekanism-addons.slurry_storage_cell_16k": "16k ME Slurry Storage Cell",
-  "item.ae2-mekanism-addons.slurry_storage_cell_64k": "64k ME Slurry Storage Cell",
-
-  "item.ae2-mekanism-addons.portable_gas_storage_cell_16k": "16k Portable Gas Cell",
-  "item.ae2-mekanism-addons.portable_gas_storage_cell_1k": "1k Portable Gas Cell",
-  "item.ae2-mekanism-addons.portable_gas_storage_cell_4k": "4k Portable Gas Cell",
-  "item.ae2-mekanism-addons.portable_gas_storage_cell_64k": "64k Portable Gas Cell",
-
-  "item.ae2-mekanism-addons.portable_infusion_storage_cell_16k": "16k Portable Infusion Cell",
-  "item.ae2-mekanism-addons.portable_infusion_storage_cell_1k": "1k Portable Infusion Cell",
-  "item.ae2-mekanism-addons.portable_infusion_storage_cell_4k": "4k Portable Infusion Cell",
-  "item.ae2-mekanism-addons.portable_infusion_storage_cell_64k": "64k Portable Infusion Cell",
-
-  "item.ae2-mekanism-addons.portable_pigment_storage_cell_16k": "16k Portable Pigment Cell",
-  "item.ae2-mekanism-addons.portable_pigment_storage_cell_1k": "1k Portable Pigment Cell",
-  "item.ae2-mekanism-addons.portable_pigment_storage_cell_4k": "4k Portable Pigment Cell",
-  "item.ae2-mekanism-addons.portable_pigment_storage_cell_64k": "64k Portable Pigment Cell",
-
-  "item.ae2-mekanism-addons.portable_slurry_storage_cell_16k": "16k Portable Slurry Cell",
-  "item.ae2-mekanism-addons.portable_slurry_storage_cell_1k": "1k Portable Slurry Cell",
-  "item.ae2-mekanism-addons.portable_slurry_storage_cell_4k": "4k Portable Slurry Cell",
-  "item.ae2-mekanism-addons.portable_slurry_storage_cell_64k": "64k Portable Slurry Cell",
+  "item.ae2-mekanism-addons.portable_chemical_storage_cell_16k": "16k Portable Chemical Cell",
+  "item.ae2-mekanism-addons.portable_chemical_storage_cell_1k": "1k Portable Chemical Cell",
+  "item.ae2-mekanism-addons.portable_chemical_storage_cell_4k": "4k Portable Chemical Cell",
+  "item.ae2-mekanism-addons.portable_chemical_storage_cell_64k": "64k Portable Chemical Cell",
 
   "item.ae2-mekanism-addons.chemical_p2p_tunnel": "Chemical P2P Tunnel"
 }

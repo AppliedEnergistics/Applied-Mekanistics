@@ -14,7 +14,7 @@ public class JEIPlugin1Mixin {
     private void hookGetIngredientUnderMouse(AEBaseScreen<?> screen, double mouseX, double mouseY, CallbackInfoReturnable<Object> callbackInfoReturnable) {
         var stack = screen.getStackUnderMouse(mouseX, mouseY);
 
-        if (stack != null && stack.what() instanceof MekanismKey<?> key) {
+        if (stack != null && stack.what() instanceof MekanismKey key) {
             callbackInfoReturnable.setReturnValue(key.getStack());
         }
     }

@@ -3,23 +3,23 @@ package me.ramidzkh.mekae2.ae2.impl;
 import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
 import appeng.helpers.iface.IInterfaceTarget;
 import appeng.me.storage.ExternalStorageFacade;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class CascadingInterfaceTarget implements IInterfaceTarget {
 
     @Nullable
     private final IInterfaceTarget parent;
-    private final Map<AEKeyType, ExternalStorageFacade> facades;
+    private final Map<Predicate<AEKey>, ExternalStorageFacade> facades;
     private final IActionSource actionSource;
 
-    public CascadingInterfaceTarget(@Nullable IInterfaceTarget parent, Map<AEKeyType, ExternalStorageFacade> facades, IActionSource actionSource) {
+    public CascadingInterfaceTarget(@Nullable IInterfaceTarget parent, Map<Predicate<AEKey>, ExternalStorageFacade> facades, IActionSource actionSource) {
         this.parent = parent;
         this.facades = facades;
         this.actionSource = actionSource;
@@ -33,10 +33,10 @@ public class CascadingInterfaceTarget implements IInterfaceTarget {
             return inserted;
         }
 
-        var facade = facades.get(what.getType());
-
-        if (facade != null) {
-            return facade.insert(what, amount, type, actionSource);
+        for (var entry : facades.entrySet()) {
+            if (entry.getKey().test(what)) {
+                return entry.getValue().insert(what, amount, type, actionSource);
+            }
         }
 
         return 0;

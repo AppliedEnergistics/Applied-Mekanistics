@@ -3,7 +3,6 @@ package me.ramidzkh.mekae2;
 import appeng.api.client.StorageCellModels;
 import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.implementations.blockentities.IChestOrDrive;
-import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.api.storage.StorageCells;
 import appeng.api.storage.cells.IBasicCellItem;
@@ -43,10 +42,7 @@ public class AE2MekanismAddons {
 
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
-        AEKeyTypes.register(MekanismKeyType.GAS);
-        AEKeyTypes.register(MekanismKeyType.INFUSION);
-        AEKeyTypes.register(MekanismKeyType.PIGMENT);
-        AEKeyTypes.register(MekanismKeyType.SLURRY);
+        AEKeyTypes.register(MekanismKeyType.TYPE);
 
         bus.addListener((FMLCommonSetupEvent event) -> {
             event.enqueueWork(this::initializeModels);
@@ -62,11 +58,11 @@ public class AE2MekanismAddons {
     }
 
     private void initializeModels() {
-        record CellGuiHandler(AEKeyType type) implements ICellGuiHandler {
+        StorageCells.addCellGuiHandler(new ICellGuiHandler() {
             @Override
             public boolean isSpecializedFor(ItemStack cell) {
                 return cell.getItem() instanceof IBasicCellItem basicCellItem
-                        && basicCellItem.getKeyType() == type;
+                        && basicCellItem.getKeyType() == MekanismKeyType.TYPE;
             }
 
             @Override
@@ -75,31 +71,15 @@ public class AE2MekanismAddons {
                 MenuOpener.open(MEStorageMenu.TYPE, player,
                         MenuLocators.forBlockEntity((BlockEntity) chest));
             }
-        }
+        });
 
-        StorageCells.addCellGuiHandler(new CellGuiHandler(MekanismKeyType.GAS));
-        StorageCells.addCellGuiHandler(new CellGuiHandler(MekanismKeyType.INFUSION));
-        StorageCells.addCellGuiHandler(new CellGuiHandler(MekanismKeyType.PIGMENT));
-        StorageCells.addCellGuiHandler(new CellGuiHandler(MekanismKeyType.SLURRY));
+        StorageCellModels.registerModel(AItems.CHEMICAL_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
 
-        for (var type : AItems.Type.values()) {
-            for (var tier : AItems.Tier.values()) {
-                if (tier == AItems.Tier.HOUSING) {
-                    continue;
-                }
+        for (var tier : AItems.Tier.values()) {
+            var cell = AItems.get(tier);
+            var portable = AItems.getPortableCell(tier);
 
-                var cell = AItems.get(type, tier);
-                var portable = AItems.getPortableCellNullable(type, tier);
-
-                if (portable != null) {
-                    registerCell(cell::get, portable::get, cell.getId().getPath());
-                } else if (tier == AItems.Tier.CREATIVE) {
-                    StorageCellModels.registerModel(cell::get, AppEng.makeId("block/drive/cells/creative_cell"));
-                } else {
-                    // Tier must be HOUSING, CREATIVE, or have a portable cell equivalent
-                    throw new IllegalStateException();
-                }
-            }
+            registerCell(cell::get, portable::get, cell.getId().getPath());
         }
     }
 
@@ -112,18 +92,14 @@ public class AE2MekanismAddons {
         var storageCellGroup = GuiText.StorageCells.getTranslationKey();
         var portableStorageCellGroup = GuiText.PortableCells.getTranslationKey();
 
-        for (var type : AItems.Type.values()) {
-            for (var tier : AItems.Tier.PORTABLE) {
-                Upgrades.add(AEItems.INVERTER_CARD, AItems.getPortableCell(type, tier)::get, 1, storageCellGroup);
-            }
+        for (var tier : AItems.Tier.values()) {
+            Upgrades.add(AEItems.INVERTER_CARD, AItems.getPortableCell(tier)::get, 1, storageCellGroup);
         }
 
-        for (var type : AItems.Type.values()) {
-            for (var tier : AItems.Tier.PORTABLE) {
-                var portableCell = AItems.getPortableCell(type, tier);
-                Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
-                Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
-            }
+        for (var tier : AItems.Tier.values()) {
+            var portableCell = AItems.getPortableCell(tier);
+            Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
+            Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
         }
     }
 

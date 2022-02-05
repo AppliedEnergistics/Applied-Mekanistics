@@ -12,30 +12,18 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class AMenus {
 
-    public static final MenuType<MEStorageMenu> PORTABLE_GAS_CELL_TYPE = MenuTypeBuilder
+    public static final MenuType<MEStorageMenu> PORTABLE_CHEMICAL_CELL_TYPE = MenuTypeBuilder
             .create(MEStorageMenu::new, IPortableTerminal.class)
-            .build("portable_gas_cell");
-    public static final MenuType<MEStorageMenu> PORTABLE_INFUSION_CELL_TYPE = MenuTypeBuilder
-            .create(MEStorageMenu::new, IPortableTerminal.class)
-            .build("portable_infusion_cell");
-    public static final MenuType<MEStorageMenu> PORTABLE_PIGMENT_CELL_TYPE = MenuTypeBuilder
-            .create(MEStorageMenu::new, IPortableTerminal.class)
-            .build("portable_pigment_cell");
-    public static final MenuType<MEStorageMenu> PORTABLE_SLURRY_CELL_TYPE = MenuTypeBuilder
-            .create(MEStorageMenu::new, IPortableTerminal.class)
-            .build("portable_slurry_cell");
+            .build("portable_chemical_cell");
 
     @SuppressWarnings("RedundantTypeArguments")
     public static void initialize(IEventBus bus) {
         bus.addGenericListener(MenuType.class, (RegistryEvent.Register<MenuType<?>> event) -> {
-            event.getRegistry().registerAll(PORTABLE_GAS_CELL_TYPE, PORTABLE_INFUSION_CELL_TYPE, PORTABLE_PIGMENT_CELL_TYPE, PORTABLE_SLURRY_CELL_TYPE);
+            event.getRegistry().registerAll(PORTABLE_CHEMICAL_CELL_TYPE);
         });
 
         bus.addListener((FMLClientSetupEvent event) -> event.enqueueWork(() -> {
-            InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(PORTABLE_GAS_CELL_TYPE, MEStorageScreen::new, "/screens/terminals/portable_gas_cell.json");
-            InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(PORTABLE_INFUSION_CELL_TYPE, MEStorageScreen::new, "/screens/terminals/portable_infusion_cell.json");
-            InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(PORTABLE_PIGMENT_CELL_TYPE, MEStorageScreen::new, "/screens/terminals/portable_pigment_cell.json");
-            InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(PORTABLE_SLURRY_CELL_TYPE, MEStorageScreen::new, "/screens/terminals/portable_slurry_cell.json");
+            InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(PORTABLE_CHEMICAL_CELL_TYPE, MEStorageScreen::new, "/screens/terminals/portable_chemical_cell.json");
         }));
     }
 }

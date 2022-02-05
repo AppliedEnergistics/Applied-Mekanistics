@@ -1,9 +1,9 @@
 package me.ramidzkh.mekae2.ae2.impl;
 
-import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.menu.me.interaction.EmptyingAction;
 import appeng.menu.me.interaction.StackInteractionHandler;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import mekanism.api.Action;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.IChemicalHandler;
@@ -11,17 +11,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.function.Function;
-
 @SuppressWarnings("ClassCanBeRecord")
 public class MekanismStackInteraction implements StackInteractionHandler {
 
     private final Capability<? extends IChemicalHandler<?, ?>> capability;
-    private final Function<ChemicalStack<?>, AEKey> toKey;
 
-    public MekanismStackInteraction(Capability<? extends IChemicalHandler<?, ?>> capability, Function<ChemicalStack<?>, AEKey> toKey) {
+    public MekanismStackInteraction(Capability<? extends IChemicalHandler<?, ?>> capability) {
         this.capability = capability;
-        this.toKey = toKey;
     }
 
     @Override
@@ -35,7 +31,13 @@ public class MekanismStackInteraction implements StackInteractionHandler {
         ChemicalStack<?> chemical;
 
         if (contained.isPresent() && !(chemical = contained.get()).isEmpty()) {
-            var fluidStack = new GenericStack(toKey.apply(chemical), chemical.getAmount());
+            var key = MekanismKey.of(chemical);
+
+            if (key == null) {
+                return null;
+            }
+
+            var fluidStack = new GenericStack(key, chemical.getAmount());
             var description = fluidStack.what().getDisplayName();
             return new EmptyingAction(description, fluidStack.what(), fluidStack.amount());
         }
