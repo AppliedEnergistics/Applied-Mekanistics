@@ -2,7 +2,6 @@ package me.ramidzkh.mekae2.ae2;
 
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
-import appeng.api.stacks.GenericStack;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
@@ -11,7 +10,6 @@ import mekanism.api.chemical.slurry.SlurryStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -85,16 +83,6 @@ public class MekanismKey extends AEKey {
     }
 
     @Override
-    public ItemStack wrapForDisplayOrFilter() {
-        return wrap(0);
-    }
-
-    @Override
-    public ItemStack wrap(int amount) {
-        return GenericStack.wrapInItemStack(this, amount);
-    }
-
-    @Override
     public Component getDisplayName() {
         return stack.getType().getTextComponent();
     }
@@ -103,7 +91,7 @@ public class MekanismKey extends AEKey {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MekanismKey that = (MekanismKey) o;
+        var that = (MekanismKey) o;
         return Objects.equals(stack.getType(), that.stack.getType());
     }
 

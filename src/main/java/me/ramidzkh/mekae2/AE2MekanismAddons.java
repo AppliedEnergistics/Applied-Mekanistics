@@ -1,5 +1,6 @@
 package me.ramidzkh.mekae2;
 
+import appeng.api.behaviors.ContainerItemStrategy;
 import appeng.api.client.StorageCellModels;
 import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.implementations.blockentities.IChestOrDrive;
@@ -15,6 +16,8 @@ import appeng.core.localization.GuiText;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import appeng.menu.me.common.MEStorageMenu;
+import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -43,6 +47,8 @@ public class AE2MekanismAddons {
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
         AEKeyTypes.register(MekanismKeyType.TYPE);
+
+        ContainerItemStrategy.register(MekanismKeyType.TYPE, MekanismKey.class, new ChemicalContainerItemStrategy());
 
         bus.addListener((FMLCommonSetupEvent event) -> {
             event.enqueueWork(this::initializeModels);

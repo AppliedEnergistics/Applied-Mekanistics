@@ -4,17 +4,12 @@
   "package": "me.ramidzkh.mekae2.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AEBaseMenuMixin",
-    "GenericEntryStackHelperMixin",
-    "IInterfaceTargetMixin",
     "InterfaceLogicMixin",
-    "JEIPlugin1Mixin",
     "ListTagMixin",
     "MEStorageMenuMixin",
     "PatternProviderReturnInventoryMixin",
     "ProcessingPatternEncodingMixin",
-    "ProcessingPatternItemMixin",
-    "StackInteractionsMixin"
+    "ProcessingPatternItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -43,10 +43,8 @@ dependencies {
     mappings(loom.officialMojangMappings())
     forge("net.minecraftforge", "forge", "1.18.1-39.0.61")
 
-    // We depend on many AE2 internals, such as using their basic cell drive, to straight out implementation details
-    // (addressed by https://github.com/AppliedEnergistics/Applied-Energistics-2/pull/6041)
-    // modCompileOnly("appeng", "appliedenergistics2", "10.0.1", classifier = "api")
-    modImplementation("appeng", "appliedenergistics2", "10.0.1")
+    // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
+    modImplementation("appeng", "appliedenergistics2", "10.1.0-beta.2")
 
     modCompileOnly("mekanism", "Mekanism", "1.18.1-10.1.1.homebaked", classifier = "api")
     modRuntimeOnly("mekanism", "Mekanism", "1.18.1-10.1.1.homebaked", classifier = "all")
