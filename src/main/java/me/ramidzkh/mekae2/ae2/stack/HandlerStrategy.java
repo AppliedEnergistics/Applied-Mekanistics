@@ -44,7 +44,7 @@ class HandlerStrategy {
 
             @Override
             public void getAvailableStacks(KeyCounter out) {
-                for (int i = 0; i < handler.getTanks(); i++) {
+                for (var i = 0; i < handler.getTanks(); i++) {
                     // Skip resources that cannot be extracted if that filter was enabled
                     var stack = handler.getChemicalInTank(i);
                     var key = MekanismKey.of(stack);
@@ -68,7 +68,7 @@ class HandlerStrategy {
 
             @Override
             public boolean containsAnyFuzzy(Set<AEKey> keys) {
-                for (int i = 0; i < handler.getTanks(); i++) {
+                for (var i = 0; i < handler.getTanks(); i++) {
                     var what = MekanismKey.of(handler.getChemicalInTank(i));
 
                     if (what != null && keys.contains(what.dropSecondary())) {

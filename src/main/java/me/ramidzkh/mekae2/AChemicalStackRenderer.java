@@ -3,6 +3,7 @@ package me.ramidzkh.mekae2;
 import appeng.api.client.AEStackRendering;
 import appeng.api.client.IAEStackRenderHandler;
 import appeng.client.gui.style.Blitter;
+import appeng.util.Platform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
@@ -12,8 +13,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AChemicalStackRenderer implements IAEStackRenderHandler<MekanismKey> {
 
@@ -92,5 +97,17 @@ public class AChemicalStackRenderer implements IAEStackRenderHandler<MekanismKey
     @Override
     public Component getDisplayName(MekanismKey stack) {
         return stack.getDisplayName();
+    }
+
+    @Override
+    public List<Component> getTooltip(MekanismKey stack) {
+        var list = new ArrayList<Component>();
+        list.add(getDisplayName(stack));
+
+        stack.getStack().getAttributes().forEach(attribute -> attribute.addTooltipText(list));
+
+        // Append the name of the mod by default as mods such as REI would also add that
+        list.add(new TextComponent(Platform.formatModName(stack.getModId())));
+        return list;
     }
 }

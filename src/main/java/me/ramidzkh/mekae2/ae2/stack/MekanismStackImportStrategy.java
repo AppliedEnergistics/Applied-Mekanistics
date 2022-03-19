@@ -42,13 +42,13 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
                 continue;
             }
 
-            long remainingTransferAmount = context.getOperationsRemaining()
+            var remainingTransferAmount = context.getOperationsRemaining()
                     * (long) MekanismKeyType.TYPE.getAmountPerOperation();
 
             var inv = context.getInternalStorage();
 
             // Try to find an extractable resource that fits our filter
-            for (int i = 0; i < adjacentHandler.getTanks(); i++) {
+            for (var i = 0; i < adjacentHandler.getTanks(); i++) {
                 var resource = HandlerStrategy.getStackInTank(i, adjacentHandler);
 
                 if (resource == null

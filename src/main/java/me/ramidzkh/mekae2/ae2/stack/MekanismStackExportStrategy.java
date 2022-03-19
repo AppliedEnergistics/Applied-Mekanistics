@@ -52,7 +52,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                     context.getActionSource(),
                     Actionable.SIMULATE);
 
-            long wasInserted = HandlerStrategy.insert(adjacentStorage, what, extracted, mode);
+            var wasInserted = HandlerStrategy.insert(adjacentStorage, what, extracted, mode);
 
             if (wasInserted > 0) {
                 if (mode == Actionable.MODULATE) {

@@ -5,8 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "InitCapabilitiesMixin",
+    "InterfaceLogicMixin",
     "ListTagMixin",
     "MEStorageMenuMixin",
+    "PatternProviderLogicMixin",
     "ProcessingPatternEncodingMixin",
     "ProcessingPatternItemMixin"
   ],
