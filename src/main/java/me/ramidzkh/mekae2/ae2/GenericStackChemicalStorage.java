@@ -1,10 +1,7 @@
-package me.ramidzkh.mekae2.ae2.impl;
+package me.ramidzkh.mekae2.ae2;
 
+import appeng.api.behaviors.GenericInternalInventory;
 import appeng.api.config.Actionable;
-import appeng.helpers.externalstorage.GenericStackInv;
-import appeng.me.helpers.BaseActionSource;
-import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
@@ -25,9 +22,9 @@ import mekanism.api.chemical.slurry.SlurryStack;
 
 public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, S extends ChemicalStack<C>> implements IChemicalHandler<C, S> {
 
-    private final GenericStackInv inv;
+    private final GenericInternalInventory inv;
 
-    private GenericStackChemicalStorage(GenericStackInv inv) {
+    private GenericStackChemicalStorage(GenericInternalInventory inv) {
         this.inv = inv;
     }
 
@@ -76,7 +73,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
             return stack;
         }
 
-        var remainder = stack.getAmount() - inv.insert(what, stack.getAmount(), actionable(action), new BaseActionSource());
+        var remainder = stack.getAmount() - inv.insert(tank, what, stack.getAmount(), actionable(action));
 
         if (remainder == 0) {
             return getEmptyStack();
@@ -91,7 +88,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
             return getEmptyStack();
         }
 
-        var extracted = inv.extract(what, amount, actionable(action), new BaseActionSource());
+        var extracted = inv.extract(tank, what, amount, actionable(action));
 
         if (extracted > 0) {
             return (S) ChemicalBridge.withAmount(what.getStack(), extracted);
@@ -101,25 +98,25 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
     }
 
     public static final class OfGas extends GenericStackChemicalStorage<Gas, GasStack> implements IGasHandler {
-        public OfGas(GenericStackInv inv) {
+        public OfGas(GenericInternalInventory inv) {
             super(inv);
         }
     }
 
     public static final class OfInfusion extends GenericStackChemicalStorage<InfuseType, InfusionStack> implements IInfusionHandler {
-        public OfInfusion(GenericStackInv inv) {
+        public OfInfusion(GenericInternalInventory inv) {
             super(inv);
         }
     }
 
     public static final class OfPigment extends GenericStackChemicalStorage<Pigment, PigmentStack> implements IPigmentHandler {
-        public OfPigment(GenericStackInv inv) {
+        public OfPigment(GenericInternalInventory inv) {
             super(inv);
         }
     }
 
     public static final class OfSlurry extends GenericStackChemicalStorage<Slurry, SlurryStack> implements ISlurryHandler {
-        public OfSlurry(GenericStackInv inv) {
+        public OfSlurry(GenericInternalInventory inv) {
             super(inv);
         }
     }
