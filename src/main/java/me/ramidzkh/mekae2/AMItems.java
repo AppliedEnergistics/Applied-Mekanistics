@@ -20,9 +20,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-public class AItems {
+public class AMItems {
 
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AE2MekanismAddons.ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AppliedMekanistics.ID);
 
     public static void initialize(IEventBus bus) {
         ITEMS.register(bus);
@@ -32,10 +32,10 @@ public class AItems {
         return new MaterialItem(properties());
     }
 
-    public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(AE2MekanismAddons.ID) {
+    public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(AppliedMekanistics.ID) {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(AItems.CHEMICAL_CELL_64K.get());
+            return new ItemStack(AMItems.CHEMICAL_CELL_64K.get());
         }
     };
 
@@ -43,7 +43,7 @@ public class AItems {
         return new Item.Properties().tab(CREATIVE_TAB);
     }
 
-    public static final RegistryObject<Item> CHEMICAL_CELL_HOUSING = ITEMS.register("chemical_cell_housing", AItems::basic);
+    public static final RegistryObject<Item> CHEMICAL_CELL_HOUSING = ITEMS.register("chemical_cell_housing", AMItems::basic);
 
     public static final RegistryObject<Item> CHEMICAL_CELL_CREATIVE = ITEMS.register("creative_chemical_cell", () -> new CreativeCellItem(properties().stacksTo(1).rarity(Rarity.EPIC)));
 
@@ -52,10 +52,10 @@ public class AItems {
     public static final RegistryObject<Item> CHEMICAL_CELL_16K = ITEMS.register("chemical_storage_cell_16k", () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.CELL_COMPONENT_16K, CHEMICAL_CELL_HOUSING.get(), 1.5f, 16, 128, 5));
     public static final RegistryObject<Item> CHEMICAL_CELL_64K = ITEMS.register("chemical_storage_cell_64k", () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.CELL_COMPONENT_64K, CHEMICAL_CELL_HOUSING.get(), 2.0f, 64, 512, 5));
 
-    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_1K = ITEMS.register("portable_chemical_storage_cell_1k", () -> new ChemicalPortableCellItem(AMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_1K, properties().stacksTo(1)));
-    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_4K = ITEMS.register("portable_chemical_storage_cell_4k", () -> new ChemicalPortableCellItem(AMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_4K, properties().stacksTo(1)));
-    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_16K = ITEMS.register("portable_chemical_storage_cell_16k", () -> new ChemicalPortableCellItem(AMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_16K, properties().stacksTo(1)));
-    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_64K = ITEMS.register("portable_chemical_storage_cell_64k", () -> new ChemicalPortableCellItem(AMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_64K, properties().stacksTo(1)));
+    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_1K = ITEMS.register("portable_chemical_storage_cell_1k", () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_1K, properties().stacksTo(1)));
+    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_4K = ITEMS.register("portable_chemical_storage_cell_4k", () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_4K, properties().stacksTo(1)));
+    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_16K = ITEMS.register("portable_chemical_storage_cell_16k", () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_16K, properties().stacksTo(1)));
+    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_64K = ITEMS.register("portable_chemical_storage_cell_64k", () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_64K, properties().stacksTo(1)));
 
     public static final RegistryObject<PartItem<ChemicalP2PTunnelPart>> CHEMICAL_P2P_TUNNEL = Util.make(() -> {
         PartModels.registerModels(PartModelsHelper.createModels(ChemicalP2PTunnelPart.class));

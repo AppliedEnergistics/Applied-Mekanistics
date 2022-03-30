@@ -1,34 +1,34 @@
 modLoader = "javafml"
 loaderVersion = "[39,)"
 #updateJSONURL=""
-issueTrackerURL = "https://github.com/ramidzkh/ae2-mekanism-addons/issues"
-displayURL = "https://github.com/ramidzkh/ae2-mekanism-addons#readme"
+issueTrackerURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics/issues"
+displayURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics#readme"
 logoFile = "logo.png"
 #credits="Thanks for this example mod goes to Java"
 authors = "ramidzkh"
 license = "See GitHub repository for details"
 
 [[mods]]
-modId = "ae2_mekanism_addons"
+modId = "applied_mekanistics"
 version = "${version}"
-displayName = "AE2 Mekanism Addons"
+displayName = "Applied Mekanistics"
 description = "Use Mekanism resources through your ME network"
 
-[[dependencies.ae2_mekanism_addons]]
+[[dependencies.applied_mekanistics]]
 modId = "forge"
 mandatory = true
 versionRange = "[40.0.0,41.0.0)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.ae2_mekanism_addons]]
+[[dependencies.applied_mekanistics]]
 modId = "ae2"
 mandatory = true
 versionRange = "[11.0.0,12.0.0)"
 ordering = "AFTER"
 side = "BOTH"
 
-[[dependencies.ae2_mekanism_addons]]
+[[dependencies.applied_mekanistics]]
 modId = "mekanism"
 mandatory = true
 versionRange = "[10.1.2,11.0.0)"

@@ -3,7 +3,7 @@ package me.ramidzkh.mekae2.ae2.impl;
 import appeng.api.parts.IPartModel;
 import appeng.core.AppEng;
 import appeng.parts.PartModel;
-import me.ramidzkh.mekae2.AE2MekanismAddons;
+import me.ramidzkh.mekae2.AppliedMekanistics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class P2PModels {
     private final IPartModel modelsHasChannel;
 
     public P2PModels(String frontModelPath) {
-        var frontModel = AE2MekanismAddons.id(frontModelPath);
+        var frontModel = AppliedMekanistics.id(frontModelPath);
 
         this.modelsOff = new PartModel(MODEL_STATUS_OFF, MODEL_FREQUENCY, frontModel);
         this.modelsOn = new PartModel(MODEL_STATUS_ON, MODEL_FREQUENCY, frontModel);

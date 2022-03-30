@@ -70,10 +70,10 @@ loom {
     silentMojangMappingsLicense()
 
     forge {
-        mixinConfigs("ae2-mekanism-addons.mixins.json")
+        mixinConfigs("applied-mekanistics.mixins.json")
 
         dataGen {
-            mod("ae2_mekanism_addons")
+            mod("applied_mekanistics")
         }
     }
 

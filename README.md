@@ -1,4 +1,4 @@
-# AE2 Mekanism Addons
+# Applied Mekanistics
 
 Use Mekanism resources through your ME network
 

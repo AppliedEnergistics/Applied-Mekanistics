@@ -10,7 +10,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-public class AMenus {
+public class AMMenus {
 
     public static final MenuType<MEStorageMenu> PORTABLE_CHEMICAL_CELL_TYPE = MenuTypeBuilder
             .create(MEStorageMenu::new, IPortableTerminal.class)

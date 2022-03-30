@@ -1,8 +1,8 @@
 package me.ramidzkh.mekae2.data;
 
 import appeng.core.AppEng;
-import me.ramidzkh.mekae2.AE2MekanismAddons;
-import me.ramidzkh.mekae2.AItems;
+import me.ramidzkh.mekae2.AppliedMekanistics;
+import me.ramidzkh.mekae2.AMItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -18,7 +18,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private static final ResourceLocation OSMIUM_BLOCK = new ResourceLocation("mekanism", "block/block_osmium");
 
     public ItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, AE2MekanismAddons.ID, existingFileHelper);
+        super(generator, AppliedMekanistics.ID, existingFileHelper);
 
         existingFileHelper.trackGenerated(P2P_TUNNEL_BASE_ITEM, MODEL);
         existingFileHelper.trackGenerated(P2P_TUNNEL_BASE_PART, MODEL);
@@ -29,15 +29,15 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
 
     @Override
     protected void registerModels() {
-        var housing = AItems.CHEMICAL_CELL_HOUSING;
+        var housing = AMItems.CHEMICAL_CELL_HOUSING;
         flatSingleLayer(housing, "item/" + housing.getId().getPath());
 
-        var creative = AItems.CHEMICAL_CELL_CREATIVE;
+        var creative = AMItems.CHEMICAL_CELL_CREATIVE;
         flatSingleLayer(creative, "item/" + creative.getId().getPath());
 
-        for (var tier : AItems.Tier.values()) {
-            var cell = AItems.get(tier);
-            var portableCell = AItems.getPortableCell(tier);
+        for (var tier : AMItems.Tier.values()) {
+            var cell = AMItems.get(tier);
+            var portableCell = AMItems.getPortableCell(tier);
             cell(cell, "item/" + cell.getId().getPath());
             portableCell(portableCell, "item/portable_" + cell.getId().getPath());
         }
@@ -49,16 +49,16 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     }
 
     private void cell(RegistryObject<Item> cell, String background) {
-        singleTexture(cell.getId().getPath(), mcLoc("item/generated"), "layer0", AE2MekanismAddons.id(background))
+        singleTexture(cell.getId().getPath(), mcLoc("item/generated"), "layer0", AppliedMekanistics.id(background))
                 .texture("layer1", STORAGE_CELL_LED);
     }
 
     private void portableCell(RegistryObject<Item> portable, String background) {
-        singleTexture(portable.getId().getPath(), mcLoc("item/generated"), "layer0", AE2MekanismAddons.id(background))
+        singleTexture(portable.getId().getPath(), mcLoc("item/generated"), "layer0", AppliedMekanistics.id(background))
                 .texture("layer1", PORTABLE_CELL_LED);
     }
 
     private void flatSingleLayer(RegistryObject<Item> item, String texture) {
-        singleTexture(item.getId().getPath(), mcLoc("item/generated"), "layer0", AE2MekanismAddons.id(texture));
+        singleTexture(item.getId().getPath(), mcLoc("item/generated"), "layer0", AppliedMekanistics.id(texture));
     }
 }

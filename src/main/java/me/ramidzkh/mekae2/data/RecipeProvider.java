@@ -2,8 +2,8 @@ package me.ramidzkh.mekae2.data;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
-import me.ramidzkh.mekae2.AE2MekanismAddons;
-import me.ramidzkh.mekae2.AItems;
+import me.ramidzkh.mekae2.AppliedMekanistics;
+import me.ramidzkh.mekae2.AMItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -23,7 +23,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(AItems.CHEMICAL_CELL_HOUSING::get)
+        ShapedRecipeBuilder.shaped(AMItems.CHEMICAL_CELL_HOUSING::get)
                 .pattern("QRQ")
                 .pattern("R R")
                 .pattern("OOO")
@@ -31,11 +31,11 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('R', Tags.Items.DUSTS_REDSTONE)
                 .define('O', ItemTags.create(new ResourceLocation("forge", "ingots/osmium")))
                 .unlockedBy("has_dusts/redstone", has(Tags.Items.DUSTS_REDSTONE))
-                .save(consumer, AE2MekanismAddons.id("chemical_cell_housing"));
+                .save(consumer, AppliedMekanistics.id("chemical_cell_housing"));
 
-        var housing = AItems.CHEMICAL_CELL_HOUSING.get();
+        var housing = AMItems.CHEMICAL_CELL_HOUSING.get();
 
-        for (var tier : AItems.Tier.values()) {
+        for (var tier : AMItems.Tier.values()) {
             var cellComponent = switch (tier) {
                 case _1K -> AEItems.CELL_COMPONENT_1K;
                 case _4K -> AEItems.CELL_COMPONENT_4K;
@@ -45,12 +45,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
             var tierName = tier.toString().toLowerCase(Locale.ROOT);
 
-            ShapelessRecipeBuilder.shapeless(AItems.get(tier).get())
+            ShapelessRecipeBuilder.shapeless(AMItems.get(tier).get())
                     .requires(housing)
                     .requires(cellComponent)
                     .unlockedBy("has_cell_component" + tierName, has(cellComponent))
                     .save(consumer);
-            ShapelessRecipeBuilder.shapeless(AItems.getPortableCell(tier)::get)
+            ShapelessRecipeBuilder.shapeless(AMItems.getPortableCell(tier)::get)
                     .requires(AEBlocks.CHEST)
                     .requires(cellComponent)
                     .requires(AEBlocks.ENERGY_CELL)

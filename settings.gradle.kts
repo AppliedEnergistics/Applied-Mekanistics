@@ -1,4 +1,4 @@
-rootProject.name = "ae2-mekanism-addons"
+rootProject.name = "Applied-Mekanistics"
 
 pluginManagement {
     repositories {

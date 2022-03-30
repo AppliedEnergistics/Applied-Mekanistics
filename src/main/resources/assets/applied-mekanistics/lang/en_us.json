@@ -1,0 +1,20 @@
+{
+  "itemGroup.applied-mekanistics": "AE2 Mekanism Addons",
+
+  "gui.applied-mekanistics.chemical": "Chemical",
+
+  "item.applied-mekanistics.chemical_cell_housing": "ME Chemical Cell Housing",
+  "item.applied-mekanistics.creative_chemical_cell": "Creative ME Chemical Cell",
+
+  "item.applied-mekanistics.chemical_storage_cell_1k": "1k ME Chemical Storage Cell",
+  "item.applied-mekanistics.chemical_storage_cell_4k": "4k ME Chemical Storage Cell",
+  "item.applied-mekanistics.chemical_storage_cell_16k": "16k ME Chemical Storage Cell",
+  "item.applied-mekanistics.chemical_storage_cell_64k": "64k ME Chemical Storage Cell",
+
+  "item.applied-mekanistics.portable_chemical_storage_cell_16k": "16k Portable Chemical Cell",
+  "item.applied-mekanistics.portable_chemical_storage_cell_1k": "1k Portable Chemical Cell",
+  "item.applied-mekanistics.portable_chemical_storage_cell_4k": "4k Portable Chemical Cell",
+  "item.applied-mekanistics.portable_chemical_storage_cell_64k": "64k Portable Chemical Cell",
+
+  "item.applied-mekanistics.chemical_p2p_tunnel": "Chemical P2P Tunnel"
+}

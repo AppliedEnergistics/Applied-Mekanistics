@@ -20,11 +20,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AChemicalStackRenderer implements IAEStackRenderHandler<MekanismKey> {
+public class AMChemicalStackRenderer implements IAEStackRenderHandler<MekanismKey> {
 
     public static void initialize(IEventBus bus) {
         bus.addListener((FMLClientSetupEvent event) -> event.enqueueWork(() -> {
-            AEStackRendering.register(MekanismKeyType.TYPE, MekanismKey.class, new AChemicalStackRenderer());
+            AEStackRendering.register(MekanismKeyType.TYPE, MekanismKey.class, new AMChemicalStackRenderer());
         }));
     }
 

@@ -39,16 +39,16 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod("ae2_mekanism_addons")
-public class AE2MekanismAddons {
+@Mod("applied_mekanistics")
+public class AppliedMekanistics {
 
-    public static final String ID = "ae2-mekanism-addons";
+    public static final String ID = "applied-mekanistics";
 
-    public AE2MekanismAddons() {
+    public AppliedMekanistics() {
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        AItems.initialize(bus);
-        AMenus.initialize(bus);
+        AMItems.initialize(bus);
+        AMMenus.initialize(bus);
 
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
@@ -69,7 +69,7 @@ public class AE2MekanismAddons {
             event.enqueueWork(this::initializeAttunement);
         });
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AE2MekanismAddonsClient::initialize);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AppliedMekanisticsClient::initialize);
     }
 
     public static ResourceLocation id(String path) {
@@ -92,11 +92,11 @@ public class AE2MekanismAddons {
             }
         });
 
-        StorageCellModels.registerModel(AItems.CHEMICAL_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
+        StorageCellModels.registerModel(AMItems.CHEMICAL_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
 
-        for (var tier : AItems.Tier.values()) {
-            var cell = AItems.get(tier);
-            var portable = AItems.getPortableCell(tier);
+        for (var tier : AMItems.Tier.values()) {
+            var cell = AMItems.get(tier);
+            var portable = AMItems.getPortableCell(tier);
 
             registerCell(cell::get, portable::get, cell.getId().getPath());
         }
@@ -111,12 +111,12 @@ public class AE2MekanismAddons {
         var storageCellGroup = GuiText.StorageCells.getTranslationKey();
         var portableStorageCellGroup = GuiText.PortableCells.getTranslationKey();
 
-        for (var tier : AItems.Tier.values()) {
-            Upgrades.add(AEItems.INVERTER_CARD, AItems.getPortableCell(tier)::get, 1, storageCellGroup);
+        for (var tier : AMItems.Tier.values()) {
+            Upgrades.add(AEItems.INVERTER_CARD, AMItems.getPortableCell(tier)::get, 1, storageCellGroup);
         }
 
-        for (var tier : AItems.Tier.values()) {
-            var portableCell = AItems.getPortableCell(tier);
+        for (var tier : AMItems.Tier.values()) {
+            var portableCell = AMItems.getPortableCell(tier);
             Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
             Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
         }
@@ -130,23 +130,23 @@ public class AE2MekanismAddons {
         var creative = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "creative_chemical_tank"));
 
         if (basic != null) {
-            P2PTunnelAttunement.addItem(basic, AItems.CHEMICAL_P2P_TUNNEL::get);
+            P2PTunnelAttunement.addItem(basic, AMItems.CHEMICAL_P2P_TUNNEL::get);
         }
 
         if (advanced != null) {
-            P2PTunnelAttunement.addItem(advanced, AItems.CHEMICAL_P2P_TUNNEL::get);
+            P2PTunnelAttunement.addItem(advanced, AMItems.CHEMICAL_P2P_TUNNEL::get);
         }
 
         if (elite != null) {
-            P2PTunnelAttunement.addItem(elite, AItems.CHEMICAL_P2P_TUNNEL::get);
+            P2PTunnelAttunement.addItem(elite, AMItems.CHEMICAL_P2P_TUNNEL::get);
         }
 
         if (ultimate != null) {
-            P2PTunnelAttunement.addItem(ultimate, AItems.CHEMICAL_P2P_TUNNEL::get);
+            P2PTunnelAttunement.addItem(ultimate, AMItems.CHEMICAL_P2P_TUNNEL::get);
         }
 
         if (creative != null) {
-            P2PTunnelAttunement.addItem(creative, AItems.CHEMICAL_P2P_TUNNEL::get);
+            P2PTunnelAttunement.addItem(creative, AMItems.CHEMICAL_P2P_TUNNEL::get);
         }
     }
 }

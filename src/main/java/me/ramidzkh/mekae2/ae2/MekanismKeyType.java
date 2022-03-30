@@ -3,7 +3,7 @@ package me.ramidzkh.mekae2.ae2;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
-import me.ramidzkh.mekae2.AE2MekanismAddons;
+import me.ramidzkh.mekae2.AppliedMekanistics;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
 import mekanism.api.chemical.pigment.PigmentStack;
@@ -19,7 +19,7 @@ public class MekanismKeyType extends AEKeyType {
     public static final AEKeyType TYPE = new MekanismKeyType();
 
     private MekanismKeyType() {
-        super(AE2MekanismAddons.id("chemical"), MekanismKey.class, new TranslatableComponent("gui." + AE2MekanismAddons.ID + ".chemical"));
+        super(AppliedMekanistics.id("chemical"), MekanismKey.class, new TranslatableComponent("gui." + AppliedMekanistics.ID + ".chemical"));
     }
 
     @Nullable

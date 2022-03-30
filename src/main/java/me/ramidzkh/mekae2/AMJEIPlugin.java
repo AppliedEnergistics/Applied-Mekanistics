@@ -7,9 +7,9 @@ import mezz.jei.api.JeiPlugin;
 import net.minecraft.resources.ResourceLocation;
 
 @JeiPlugin
-public class AJEIPlugin implements IModPlugin {
+public class AMJEIPlugin implements IModPlugin {
 
-    public AJEIPlugin() {
+    public AMJEIPlugin() {
         IngredientConverters.register(new ChemicalIngredientConverter.OfGas());
         IngredientConverters.register(new ChemicalIngredientConverter.OfInfusion());
         IngredientConverters.register(new ChemicalIngredientConverter.OfPigment());
@@ -18,6 +18,6 @@ public class AJEIPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return AE2MekanismAddons.id("jei");
+        return AppliedMekanistics.id("jei");
     }
 }
