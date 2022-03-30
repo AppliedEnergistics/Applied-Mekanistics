@@ -1,8 +1,7 @@
 package me.ramidzkh.mekae2.ae2;
 
-import appeng.api.integrations.jei.IngredientConverter;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.GenericStack;
+import org.jetbrains.annotations.Nullable;
+
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.gas.GasStack;
@@ -10,7 +9,10 @@ import mekanism.api.chemical.infuse.InfusionStack;
 import mekanism.api.chemical.pigment.PigmentStack;
 import mekanism.api.chemical.slurry.SlurryStack;
 import mezz.jei.api.ingredients.IIngredientType;
-import org.jetbrains.annotations.Nullable;
+
+import appeng.api.integrations.jei.IngredientConverter;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.GenericStack;
 
 public abstract sealed class ChemicalIngredientConverter<S extends ChemicalStack<?>> implements IngredientConverter<S> {
 
@@ -29,7 +31,7 @@ public abstract sealed class ChemicalIngredientConverter<S extends ChemicalStack
     @Nullable
     @Override
     public S getIngredientFromStack(GenericStack stack) {
-        if (stack.what() instanceof MekanismKey key) {
+        if (stack.what()instanceof MekanismKey key) {
             return ChemicalBridge.withAmount((S) key.getStack(), Math.max(1, stack.amount()));
         } else {
             return null;

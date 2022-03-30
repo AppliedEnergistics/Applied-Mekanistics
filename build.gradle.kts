@@ -7,6 +7,7 @@ import java.util.Date
 plugins {
     id("dev.architectury.loom") version "0.11.0-SNAPSHOT"
     id("com.matthewprenger.cursegradle") version "1.4.0"
+    id("com.diffplug.spotless") version "6.4.1"
     `maven-publish`
 }
 
@@ -133,6 +134,27 @@ publishing {
             name = "Project"
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
         }
+    }
+}
+
+/////////////
+// Spotless
+spotless {
+    java {
+        target("src/main/java/**/*.java")
+
+        endWithNewline()
+        indentWithSpaces()
+        removeUnusedImports()
+        toggleOffOn()
+        eclipse().configFile("codeformat/codeformat.xml")
+        importOrderFile("codeformat/ae2.importorder")
+    }
+
+    format("json") {
+        target("src/*/resources/**/*.json")
+        targetExclude("src/generated/resources/**")
+        prettier().config(mapOf("parser" to "json"))
     }
 }
 

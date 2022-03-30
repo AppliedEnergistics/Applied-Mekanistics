@@ -1,20 +1,22 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import appeng.api.config.Actionable;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
-import appeng.api.stacks.GenericStack;
-import appeng.api.stacks.KeyCounter;
-import appeng.me.storage.ExternalStorageFacade;
+import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
+
 import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import appeng.api.config.Actionable;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEKeyType;
+import appeng.api.stacks.GenericStack;
+import appeng.api.stacks.KeyCounter;
+import appeng.me.storage.ExternalStorageFacade;
 
 class HandlerStrategy {
 
@@ -103,7 +105,8 @@ class HandlerStrategy {
 
     public static long insert(IChemicalHandler handler, AEKey what, long amount, Actionable mode) {
         if (what instanceof MekanismKey key) {
-            return amount - handler.insertChemical(ChemicalBridge.withAmount(key.getStack(), amount), ChemicalContainerItemStrategy.action(mode)).getAmount();
+            return amount - handler.insertChemical(ChemicalBridge.withAmount(key.getStack(), amount),
+                    ChemicalContainerItemStrategy.action(mode)).getAmount();
         }
 
         return 0;

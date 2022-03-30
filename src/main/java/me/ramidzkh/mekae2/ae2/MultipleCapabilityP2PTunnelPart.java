@@ -1,17 +1,18 @@
 package me.ramidzkh.mekae2.ae2;
 
-import appeng.api.parts.IPartItem;
-import appeng.parts.p2p.P2PTunnelPart;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import appeng.api.parts.IPartItem;
+import appeng.parts.p2p.P2PTunnelPart;
 
 public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunnelPart<P>> extends P2PTunnelPart<P> {
 
@@ -21,7 +22,8 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
     // Prevents recursive block updates.
     private boolean inBlockUpdate = false;
 
-    public MultipleCapabilityP2PTunnelPart(IPartItem<?> partItem, Function<P, Collection<CapabilitySet<?>>> capabilities) {
+    public MultipleCapabilityP2PTunnelPart(IPartItem<?> partItem,
+            Function<P, Collection<CapabilitySet<?>>> capabilities) {
         super(partItem);
         this.capabilities = capabilities.apply((P) this).stream()
                 .collect(Collectors.toMap(CapabilitySet::capability, set -> set.toInner((P) this)));
@@ -63,7 +65,8 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
      */
     protected final <C> CapabilityGuard<C, P> getInputCapability(Capability<C> capability) {
         var input = getInput();
-        return input == null ? (CapabilityGuard<C, P>) capabilities.get(capability).empty() : input.getAdjacentCapability(capability);
+        return input == null ? (CapabilityGuard<C, P>) capabilities.get(capability).empty()
+                : input.getAdjacentCapability(capability);
     }
 
     /**
@@ -128,7 +131,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
         }
     }
 
-    public record CapabilitySet<C>(Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
+    public record CapabilitySet<C> (Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
         private <P extends MultipleCapabilityP2PTunnelPart<P>> CapabilitySetInner<C, P> toInner(P part) {
             return new CapabilitySetInner<>(new CapabilityGuard<>(part, capability(), emptyHandler()),
                     new EmptyCapabilityGuard<>(part, capability(), emptyHandler()),
@@ -137,10 +140,10 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
         }
     }
 
-    private record CapabilitySetInner<C, P extends MultipleCapabilityP2PTunnelPart<P>>(CapabilityGuard<C, P> guard,
-                                                                                       CapabilityGuard<C, P> empty,
-                                                                                       C inputHandler,
-                                                                                       C outputHandler) {
+    private record CapabilitySetInner<C, P extends MultipleCapabilityP2PTunnelPart<P>> (CapabilityGuard<C, P> guard,
+            CapabilityGuard<C, P> empty,
+            C inputHandler,
+            C outputHandler) {
     }
 
     protected static class CapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> implements AutoCloseable {
@@ -190,7 +193,8 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
     /**
      * This specialization is used when the tunnel is not connected.
      */
-    private static class EmptyCapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> extends CapabilityGuard<C, P> implements AutoCloseable {
+    private static class EmptyCapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>>
+            extends CapabilityGuard<C, P> implements AutoCloseable {
         public EmptyCapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
             super(part, capability, emptyHandler);
         }

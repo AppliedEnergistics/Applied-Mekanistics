@@ -1,19 +1,21 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
+import java.util.List;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+
+import me.ramidzkh.mekae2.MekCapabilities;
+import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import mekanism.api.chemical.IChemicalHandler;
+
 import appeng.api.behaviors.StackExportStrategy;
 import appeng.api.behaviors.StackTransferContext;
 import appeng.api.config.Actionable;
 import appeng.api.stacks.AEKey;
 import appeng.api.storage.StorageHelper;
 import appeng.util.BlockApiCache;
-import me.ramidzkh.mekae2.MekCapabilities;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import mekanism.api.chemical.IChemicalHandler;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-
-import java.util.List;
 
 public class MekanismStackExportStrategy implements StackExportStrategy {
 
@@ -21,8 +23,8 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
     private final Direction fromSide;
 
     public MekanismStackExportStrategy(ServerLevel level,
-                                       BlockPos fromPos,
-                                       Direction fromSide) {
+            BlockPos fromPos,
+            Direction fromSide) {
         this.lookups = List.of(BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),

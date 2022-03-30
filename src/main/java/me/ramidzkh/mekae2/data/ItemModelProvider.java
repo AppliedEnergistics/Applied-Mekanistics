@@ -1,13 +1,15 @@
 package me.ramidzkh.mekae2.data;
 
-import appeng.core.AppEng;
-import me.ramidzkh.mekae2.AppliedMekanistics;
-import me.ramidzkh.mekae2.AMItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
+
+import me.ramidzkh.mekae2.AMItems;
+import me.ramidzkh.mekae2.AppliedMekanistics;
+
+import appeng.core.AppEng;
 
 public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
 

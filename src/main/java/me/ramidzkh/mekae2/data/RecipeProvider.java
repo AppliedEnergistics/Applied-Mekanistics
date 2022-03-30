@@ -1,9 +1,8 @@
 package me.ramidzkh.mekae2.data;
 
-import appeng.core.definitions.AEBlocks;
-import appeng.core.definitions.AEItems;
-import me.ramidzkh.mekae2.AppliedMekanistics;
-import me.ramidzkh.mekae2.AMItems;
+import java.util.Locale;
+import java.util.function.Consumer;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -12,8 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.Tags;
 
-import java.util.Locale;
-import java.util.function.Consumer;
+import me.ramidzkh.mekae2.AMItems;
+import me.ramidzkh.mekae2.AppliedMekanistics;
+
+import appeng.core.definitions.AEBlocks;
+import appeng.core.definitions.AEItems;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 

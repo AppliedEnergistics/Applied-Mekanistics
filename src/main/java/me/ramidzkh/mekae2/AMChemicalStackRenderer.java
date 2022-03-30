@@ -1,12 +1,10 @@
 package me.ramidzkh.mekae2;
 
-import appeng.api.client.AEStackRendering;
-import appeng.api.client.IAEStackRenderHandler;
-import appeng.client.gui.style.Blitter;
-import appeng.util.Platform;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,8 +15,13 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
+import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+
+import appeng.api.client.AEStackRendering;
+import appeng.api.client.IAEStackRenderHandler;
+import appeng.client.gui.style.Blitter;
+import appeng.util.Platform;
 
 public class AMChemicalStackRenderer implements IAEStackRenderHandler<MekanismKey> {
 
@@ -32,7 +35,8 @@ public class AMChemicalStackRenderer implements IAEStackRenderHandler<MekanismKe
     public void drawInGui(Minecraft minecraft, PoseStack poseStack, int x, int y, int zIndex, MekanismKey what) {
         var stack = what.getStack();
 
-        Blitter.sprite(Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stack.getType().getIcon()))
+        Blitter.sprite(
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stack.getType().getIcon()))
                 .colorRgb(stack.getChemicalTint())
                 // Most fluid texture have transparency, but we want an opaque slot
                 .blending(false)
@@ -41,9 +45,11 @@ public class AMChemicalStackRenderer implements IAEStackRenderHandler<MekanismKe
     }
 
     @Override
-    public void drawOnBlockFace(PoseStack poseStack, MultiBufferSource buffers, MekanismKey what, float scale, int combinedLight) {
+    public void drawOnBlockFace(PoseStack poseStack, MultiBufferSource buffers, MekanismKey what, float scale,
+            int combinedLight) {
         var stack = what.getStack();
-        var sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(stack.getType().getIcon());
+        var sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
+                .apply(stack.getType().getIcon());
         var color = stack.getChemicalTint();
 
         poseStack.pushPose();

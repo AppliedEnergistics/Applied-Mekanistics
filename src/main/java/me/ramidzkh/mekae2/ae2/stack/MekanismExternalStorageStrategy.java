@@ -1,16 +1,19 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import appeng.api.behaviors.ExternalStorageStrategy;
-import appeng.api.storage.MEStorage;
-import appeng.util.BlockApiCache;
-import me.ramidzkh.mekae2.MekCapabilities;
-import mekanism.api.chemical.IChemicalHandler;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import me.ramidzkh.mekae2.MekCapabilities;
+import mekanism.api.chemical.IChemicalHandler;
+
+import appeng.api.behaviors.ExternalStorageStrategy;
+import appeng.api.storage.MEStorage;
+import appeng.util.BlockApiCache;
 
 public class MekanismExternalStorageStrategy implements ExternalStorageStrategy {
 
@@ -18,8 +21,8 @@ public class MekanismExternalStorageStrategy implements ExternalStorageStrategy 
     private final Direction fromSide;
 
     public MekanismExternalStorageStrategy(ServerLevel level,
-                                           BlockPos fromPos,
-                                           Direction fromSide) {
+            BlockPos fromPos,
+            Direction fromSide) {
         this.lookups = List.of(BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),

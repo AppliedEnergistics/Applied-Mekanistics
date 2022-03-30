@@ -1,18 +1,20 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
+import java.util.List;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+
+import me.ramidzkh.mekae2.MekCapabilities;
+import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import mekanism.api.chemical.IChemicalHandler;
+
 import appeng.api.behaviors.StackImportStrategy;
 import appeng.api.behaviors.StackTransferContext;
 import appeng.api.config.Actionable;
 import appeng.core.AELog;
 import appeng.util.BlockApiCache;
-import me.ramidzkh.mekae2.MekCapabilities;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import mekanism.api.chemical.IChemicalHandler;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-
-import java.util.List;
 
 public class MekanismStackImportStrategy implements StackImportStrategy {
 
@@ -20,8 +22,8 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
     private final Direction fromSide;
 
     public MekanismStackImportStrategy(ServerLevel level,
-                                       BlockPos fromPos,
-                                       Direction fromSide) {
+            BlockPos fromPos,
+            Direction fromSide) {
         this.lookups = List.of(BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
@@ -64,7 +66,8 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
                         context.getActionSource());
 
                 // Try to simulate-extract it
-                var amount = HandlerStrategy.extract(adjacentHandler, resource, amountForThisResource, Actionable.MODULATE);
+                var amount = HandlerStrategy.extract(adjacentHandler, resource, amountForThisResource,
+                        Actionable.MODULATE);
 
                 if (amount > 0) {
                     var inserted = inv.getInventory().insert(resource, amount, Actionable.MODULATE,

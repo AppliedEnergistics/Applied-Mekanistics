@@ -1,18 +1,21 @@
 package me.ramidzkh.mekae2.ae2;
 
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
 import mekanism.api.chemical.pigment.PigmentStack;
 import mekanism.api.chemical.slurry.SlurryStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 
-import javax.annotation.Nullable;
-import java.util.Objects;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEKeyType;
 
 public class MekanismKey extends AEKey {
 
@@ -89,8 +92,10 @@ public class MekanismKey extends AEKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         var that = (MekanismKey) o;
         return Objects.equals(stack.getType(), that.stack.getType());
     }

@@ -1,12 +1,14 @@
 package me.ramidzkh.mekae2.item;
 
-import appeng.api.stacks.AEKey;
-import appeng.items.tools.powered.PortableCellItem;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
+
+import appeng.api.stacks.AEKey;
+import appeng.items.tools.powered.PortableCellItem;
 
 public class ChemicalPortableCellItem extends PortableCellItem {
 

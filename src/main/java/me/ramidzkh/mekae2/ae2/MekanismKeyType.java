@@ -1,25 +1,28 @@
 package me.ramidzkh.mekae2.ae2;
 
-import appeng.api.stacks.AEFluidKey;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
+
 import me.ramidzkh.mekae2.AppliedMekanistics;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
 import mekanism.api.chemical.pigment.PigmentStack;
 import mekanism.api.chemical.slurry.SlurryStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
 
-import javax.annotation.Nullable;
+import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEKeyType;
 
 public class MekanismKeyType extends AEKeyType {
 
     public static final AEKeyType TYPE = new MekanismKeyType();
 
     private MekanismKeyType() {
-        super(AppliedMekanistics.id("chemical"), MekanismKey.class, new TranslatableComponent("gui." + AppliedMekanistics.ID + ".chemical"));
+        super(AppliedMekanistics.id("chemical"), MekanismKey.class,
+                new TranslatableComponent("gui." + AppliedMekanistics.ID + ".chemical"));
     }
 
     @Nullable

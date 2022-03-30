@@ -1,10 +1,12 @@
 package me.ramidzkh.mekae2;
 
-import appeng.api.integrations.jei.IngredientConverters;
+import net.minecraft.resources.ResourceLocation;
+
 import me.ramidzkh.mekae2.ae2.ChemicalIngredientConverter;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import net.minecraft.resources.ResourceLocation;
+
+import appeng.api.integrations.jei.IngredientConverters;
 
 @JeiPlugin
 public class AMJEIPlugin implements IModPlugin {

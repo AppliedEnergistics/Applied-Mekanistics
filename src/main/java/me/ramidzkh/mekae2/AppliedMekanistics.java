@@ -1,5 +1,26 @@
 package me.ramidzkh.mekae2;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
+import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.ae2.stack.MekanismExternalStorageStrategy;
+import me.ramidzkh.mekae2.ae2.stack.MekanismStackExportStrategy;
+import me.ramidzkh.mekae2.ae2.stack.MekanismStackImportStrategy;
+import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
+
 import appeng.api.behaviors.ContainerItemStrategy;
 import appeng.api.behaviors.GenericSlotCapacities;
 import appeng.api.client.StorageCellModels;
@@ -19,25 +40,6 @@ import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import appeng.menu.me.common.MEStorageMenu;
 import appeng.parts.automation.StackWorldBehaviors;
-import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
-import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import me.ramidzkh.mekae2.ae2.stack.MekanismExternalStorageStrategy;
-import me.ramidzkh.mekae2.ae2.stack.MekanismStackExportStrategy;
-import me.ramidzkh.mekae2.ae2.stack.MekanismStackImportStrategy;
-import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod("applied_mekanistics")
 public class AppliedMekanistics {
@@ -80,7 +82,7 @@ public class AppliedMekanistics {
         StorageCells.addCellGuiHandler(new ICellGuiHandler() {
             @Override
             public boolean isSpecializedFor(ItemStack cell) {
-                return cell.getItem() instanceof IBasicCellItem basicCellItem
+                return cell.getItem()instanceof IBasicCellItem basicCellItem
                         && basicCellItem.getKeyType() == MekanismKeyType.TYPE;
             }
 
@@ -92,7 +94,8 @@ public class AppliedMekanistics {
             }
         });
 
-        StorageCellModels.registerModel(AMItems.CHEMICAL_CELL_CREATIVE::get, AppEng.makeId("block/drive/cells/creative_cell"));
+        StorageCellModels.registerModel(AMItems.CHEMICAL_CELL_CREATIVE::get,
+                AppEng.makeId("block/drive/cells/creative_cell"));
 
         for (var tier : AMItems.Tier.values()) {
             var cell = AMItems.get(tier);

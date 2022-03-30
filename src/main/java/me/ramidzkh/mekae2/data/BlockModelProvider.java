@@ -1,13 +1,15 @@
 package me.ramidzkh.mekae2.data;
 
-import appeng.core.AppEng;
-import me.ramidzkh.mekae2.AppliedMekanistics;
-import me.ramidzkh.mekae2.AMItems;
+import java.util.Locale;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.Locale;
+import me.ramidzkh.mekae2.AMItems;
+import me.ramidzkh.mekae2.AppliedMekanistics;
+
+import appeng.core.AppEng;
 
 public class BlockModelProvider extends net.minecraftforge.client.model.generators.BlockModelProvider {
 
