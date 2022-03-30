@@ -8,6 +8,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.Tags;
 
@@ -28,7 +29,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .pattern("OOO")
                 .define('Q', AEBlocks.QUARTZ_GLASS)
                 .define('R', Tags.Items.DUSTS_REDSTONE)
-                .define('O', ItemTags.bind("forge:ingots/osmium"))
+                .define('O', ItemTags.create(new ResourceLocation("forge", "ingots/osmium")))
                 .unlockedBy("has_dusts/redstone", has(Tags.Items.DUSTS_REDSTONE))
                 .save(consumer, AE2MekanismAddons.id("chemical_cell_housing"));
 

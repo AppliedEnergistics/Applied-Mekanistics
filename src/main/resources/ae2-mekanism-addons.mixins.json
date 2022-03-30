@@ -6,7 +6,6 @@
   "mixins": [
     "InitCapabilitiesMixin",
     "InterfaceLogicMixin",
-    "ListTagMixin",
     "MEStorageMenuMixin",
     "PatternProviderLogicMixin",
     "ProcessingPatternEncodingMixin",

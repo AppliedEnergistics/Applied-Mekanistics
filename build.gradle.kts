@@ -5,13 +5,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 plugins {
-    id("dev.architectury.loom") version "0.10.0-SNAPSHOT"
+    id("dev.architectury.loom") version "0.11.0-SNAPSHOT"
     id("com.matthewprenger.cursegradle") version "1.4.0"
     `maven-publish`
 }
 
 group = "me.ramidzkh"
-version = "1.0.${System.getenv("BUILD_NUMBER") ?: "0-SNAPSHOT"}"
+version = "1.1.${System.getenv("BUILD_NUMBER") ?: "0-SNAPSHOT"}"
 
 repositories {
     maven {
@@ -39,18 +39,18 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.minecraft", "minecraft", "1.18.1")
+    minecraft("net.minecraft", "minecraft", "1.18.2")
     mappings(loom.officialMojangMappings())
-    forge("net.minecraftforge", "forge", "1.18.1-39.0.61")
+    forge("net.minecraftforge", "forge", "1.18.2-40.0.32")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
-    modImplementation("appeng", "appliedenergistics2", "10.1.0-beta.2")
+    modImplementation("appeng", "appliedenergistics2", "11.0.0-alpha.2")
 
-    modCompileOnly("mekanism", "Mekanism", "1.18.1-10.1.1.homebaked", classifier = "api")
-    modRuntimeOnly("mekanism", "Mekanism", "1.18.1-10.1.1.homebaked", classifier = "all")
+    modCompileOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "api")
+    modRuntimeOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "all")
 
-    modCompileOnly("mezz.jei", "jei-1.18.1", "9.2.3.82", classifier = "api")
-    modRuntimeOnly("mezz.jei", "jei-1.18.1", "9.2.3.82")
+    modCompileOnly("mezz.jei", "jei-1.18.2", "9.5.0.124", classifier = "api")
+    modRuntimeOnly("mezz.jei", "jei-1.18.2", "9.5.0.124")
 }
 
 sourceSets {

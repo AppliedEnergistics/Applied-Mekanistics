@@ -17,20 +17,20 @@ description = "Use Mekanism resources through your ME network"
 [[dependencies.ae2_mekanism_addons]]
 modId = "forge"
 mandatory = true
-versionRange = "[39.0.0,40.0.0)"
+versionRange = "[40.0.0,41.0.0)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.ae2_mekanism_addons]]
 modId = "ae2"
 mandatory = true
-versionRange = "[10.0.0,11.0.0)"
+versionRange = "[11.0.0,12.0.0)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.ae2_mekanism_addons]]
 modId = "mekanism"
 mandatory = true
-versionRange = "[10.1.1,11.0.0)"
+versionRange = "[10.1.2,11.0.0)"
 ordering = "AFTER"
 side = "BOTH"

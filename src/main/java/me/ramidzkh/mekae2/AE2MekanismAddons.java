@@ -32,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -51,7 +52,9 @@ public class AE2MekanismAddons {
 
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
-        AEKeyTypes.register(MekanismKeyType.TYPE);
+        bus.addGenericListener(AEKeyType.class, (RegistryEvent.Register<AEKeyType> event) -> {
+            AEKeyTypes.register(MekanismKeyType.TYPE);
+        });
 
         StackWorldBehaviors.registerImportStrategy(MekanismKeyType.TYPE, MekanismStackImportStrategy::new);
         StackWorldBehaviors.registerExportStrategy(MekanismKeyType.TYPE, MekanismStackExportStrategy::new);
