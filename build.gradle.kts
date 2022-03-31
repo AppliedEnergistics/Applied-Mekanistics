@@ -171,7 +171,7 @@ System.getenv("CURSEFORGE")?.let {
             changelogType = "markdown"
             changelog = System.getenv("CHANGELOG")
             releaseType = if (System.getenv("CHANGELOG").contains("[beta]")) "beta" else "alpha"
-            addGameVersion("1.18.1")
+            addGameVersion("1.18.2")
             addGameVersion("Forge")
 
             mainArtifact(tasks.remapJar.flatMap { it.archiveFile }, closureOf<CurseArtifact> {

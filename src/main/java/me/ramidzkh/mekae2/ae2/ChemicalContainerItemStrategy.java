@@ -72,19 +72,20 @@ public class ChemicalContainerItemStrategy
     @Override
     public long extract(Context context, MekanismKey what, long amount, Actionable mode) {
         var stack = ChemicalBridge.withAmount(what.getStack(), amount);
+        var action = Action.fromFluidAction(mode.getFluidAction());
 
         if (stack instanceof GasStack gas) {
             return context.stack().getCapability(MekCapabilities.GAS_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(gas, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> handler.extractChemical(gas, action).getAmount()).orElse(0L);
         } else if (stack instanceof InfusionStack infusion) {
             return context.stack().getCapability(MekCapabilities.INFUSION_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(infusion, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> handler.extractChemical(infusion, action).getAmount()).orElse(0L);
         } else if (stack instanceof PigmentStack pigment) {
             return context.stack().getCapability(MekCapabilities.PIGMENT_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(pigment, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> handler.extractChemical(pigment, action).getAmount()).orElse(0L);
         } else if (stack instanceof SlurryStack slurry) {
             return context.stack().getCapability(MekCapabilities.SLURRY_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(slurry, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> handler.extractChemical(slurry, action).getAmount()).orElse(0L);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -93,19 +94,20 @@ public class ChemicalContainerItemStrategy
     @Override
     public long insert(Context context, MekanismKey what, long amount, Actionable mode) {
         var stack = ChemicalBridge.withAmount(what.getStack(), amount);
+        var action = Action.fromFluidAction(mode.getFluidAction());
 
         if (stack instanceof GasStack gas) {
             return context.stack().getCapability(MekCapabilities.GAS_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(gas, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> amount - handler.insertChemical(gas, action).getAmount()).orElse(0L);
         } else if (stack instanceof InfusionStack infusion) {
             return context.stack().getCapability(MekCapabilities.INFUSION_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(infusion, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> amount - handler.insertChemical(infusion, action).getAmount()).orElse(0L);
         } else if (stack instanceof PigmentStack pigment) {
             return context.stack().getCapability(MekCapabilities.PIGMENT_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(pigment, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> amount - handler.insertChemical(pigment, action).getAmount()).orElse(0L);
         } else if (stack instanceof SlurryStack slurry) {
             return context.stack().getCapability(MekCapabilities.SLURRY_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(slurry, action(mode)).getAmount()).orElse(0L);
+                    .map(handler -> amount - handler.insertChemical(slurry, action).getAmount()).orElse(0L);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -145,12 +147,5 @@ public class ChemicalContainerItemStrategy
     }
 
     record Context(Player player, AbstractContainerMenu menu, ItemStack stack) {
-    }
-
-    public static Action action(Actionable actionable) {
-        return switch (actionable) {
-            case MODULATE -> Action.EXECUTE;
-            case SIMULATE -> Action.SIMULATE;
-        };
     }
 }

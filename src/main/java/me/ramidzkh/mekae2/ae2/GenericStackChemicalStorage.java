@@ -30,13 +30,6 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
         this.inv = inv;
     }
 
-    public static Actionable actionable(Action action) {
-        return switch (action) {
-            case EXECUTE -> Actionable.MODULATE;
-            case SIMULATE -> Actionable.SIMULATE;
-        };
-    }
-
     @Override
     public int getTanks() {
         return inv.size();
@@ -75,7 +68,8 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
             return stack;
         }
 
-        var remainder = stack.getAmount() - inv.insert(tank, what, stack.getAmount(), actionable(action));
+        var remainder = stack.getAmount()
+                - inv.insert(tank, what, stack.getAmount(), Actionable.of(action.toFluidAction()));
 
         if (remainder == 0) {
             return getEmptyStack();
@@ -90,7 +84,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
             return getEmptyStack();
         }
 
-        var extracted = inv.extract(tank, what, amount, actionable(action));
+        var extracted = inv.extract(tank, what, amount, Actionable.of(action.toFluidAction()));
 
         if (extracted > 0) {
             return (S) ChemicalBridge.withAmount(what.getStack(), extracted);

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
@@ -106,7 +105,7 @@ class HandlerStrategy {
     public static long insert(IChemicalHandler handler, AEKey what, long amount, Actionable mode) {
         if (what instanceof MekanismKey key) {
             return amount - handler.insertChemical(ChemicalBridge.withAmount(key.getStack(), amount),
-                    ChemicalContainerItemStrategy.action(mode)).getAmount();
+                    Action.fromFluidAction(mode.getFluidAction())).getAmount();
         }
 
         return 0;
