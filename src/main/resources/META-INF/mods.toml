@@ -24,7 +24,7 @@ side = "BOTH"
 [[dependencies.applied_mekanistics]]
 modId = "ae2"
 mandatory = true
-versionRange = "[11.0.0,12.0.0)"
+versionRange = "(,12.0.0)"
 ordering = "AFTER"
 side = "BOTH"
 

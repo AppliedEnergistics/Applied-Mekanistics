@@ -45,7 +45,7 @@ dependencies {
     forge("net.minecraftforge", "forge", "1.18.2-40.0.32")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
-    modImplementation("appeng", "appliedenergistics2", "11.0.0-alpha.2")
+    modImplementation("appeng", "appliedenergistics2", "11.0.0-alpha.3")
 
     modCompileOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "api")
     modRuntimeOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "all")

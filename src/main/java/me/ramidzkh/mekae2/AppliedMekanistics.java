@@ -52,10 +52,10 @@ import appeng.menu.locator.MenuLocators;
 import appeng.menu.me.common.MEStorageMenu;
 import appeng.parts.automation.StackWorldBehaviors;
 
-@Mod("applied_mekanistics")
+@Mod(AppliedMekanistics.ID)
 public class AppliedMekanistics {
 
-    public static final String ID = "applied-mekanistics";
+    public static final String ID = "applied_mekanistics";
 
     public AppliedMekanistics() {
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
