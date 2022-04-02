@@ -50,8 +50,8 @@ dependencies {
     modCompileOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "api")
     modRuntimeOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "all")
 
-    modCompileOnly("mezz.jei", "jei-1.18.2", "9.5.0.124", classifier = "api")
-    modRuntimeOnly("mezz.jei", "jei-1.18.2", "9.5.0.124")
+    modCompileOnly("mezz.jei", "jei-1.18.2", "9.5.5.174", classifier = "api")
+    modRuntimeOnly("mezz.jei", "jei-1.18.2", "9.5.5.174")
 }
 
 sourceSets {

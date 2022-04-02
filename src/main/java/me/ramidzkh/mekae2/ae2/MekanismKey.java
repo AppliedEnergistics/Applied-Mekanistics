@@ -1,13 +1,20 @@
 package me.ramidzkh.mekae2.ae2;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
+import me.ramidzkh.mekae2.util.ChemicalBridge;
+import mekanism.api.Coord4D;
+import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
@@ -88,6 +95,14 @@ public class MekanismKey extends AEKey {
     @Override
     public Component getDisplayName() {
         return stack.getType().getTextComponent();
+    }
+
+    // @Override
+    public void addDrops(long amount, List<ItemStack> drops, Level level, BlockPos pos) {
+        if (getStack()instanceof GasStack gasStack) {
+            MekanismAPI.getRadiationManager().dumpRadiation(new Coord4D(pos, level),
+                    ChemicalBridge.withAmount(gasStack, amount));
+        }
     }
 
     @Override
