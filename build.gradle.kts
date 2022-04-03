@@ -163,8 +163,6 @@ spotless {
 ////////////////
 // CurseForge
 System.getenv("CURSEFORGE")?.let {
-    apply(plugin = "curseforge")
-
     curseforge {
         apiKey = it
 
