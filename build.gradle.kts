@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "me.ramidzkh"
-version = "1.1.${System.getenv("BUILD_NUMBER") ?: "0-SNAPSHOT"}"
+version = System.getenv("APPMEK_VERSION") ?: "0.0.0"
 
 repositories {
     maven {
@@ -168,10 +168,17 @@ System.getenv("CURSEFORGE")?.let {
         apiKey = it
 
         project(closureOf<CurseProject> {
+            val version = version.toString()
+
             id = "574300"
             changelogType = "markdown"
-            changelog = System.getenv("CHANGELOG")
-            releaseType = if (System.getenv("CHANGELOG").contains("[beta]")) "beta" else "alpha"
+            changelog = "View changelog at [the release page](https://github.com/AppliedEnergistics/Applied-Mekanistics/releases/tag/${version})"
+            releaseType = when {
+                version.contains("alpha") -> "alpha"
+                version.contains("beta") -> "beta"
+                else -> "release"
+            }
+
             addGameVersion("1.18.2")
             addGameVersion("Forge")
 

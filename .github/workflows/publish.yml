@@ -1,13 +1,12 @@
 name: Publish
 
 on:
-  push:
-    branches:
-      - 'dev/**'
+  release:
+    types:
+      - published
 
 jobs:
   publish:
-    if: "! contains(toJSON(github.event.commits.*.message), '[ci skip]')"
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
@@ -18,19 +17,21 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-      # Generate a build number unique to the branch
-      - name: Generate build number
-        uses: einaregilsson/build-number@v3
-        with:
-          token: ${{ secrets.github_token }}
-          prefix: ${{ github.ref }}
       - name: Generate data
         run: ./gradlew runData
+        env:
+          APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Build
         run: ./gradlew build
+        env:
+          APPMEK_VERSION: ${{ github.event.release.tag_name }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: appmek ${{ github.event.release.tag_name }}
+          path: build/libs/
       - name: Upload to CurseForge
-        if: "! contains(toJSON(github.event.commits.*.message), '[curseforge skip]')"
         run: ./gradlew curseforge
         env:
-          CHANGELOG: ${{ github.event.head_commit.message }}
+          APPMEK_VERSION: ${{ github.event.release.tag_name }}
           CURSEFORGE: ${{ secrets.CURSEFORGE }}
