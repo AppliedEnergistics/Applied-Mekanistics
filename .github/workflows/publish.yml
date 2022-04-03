@@ -17,12 +17,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-      - name: Generate data
-        run: ./gradlew runData
-        env:
-          APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew downloadAssets runData build
         env:
           APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Upload artifacts
