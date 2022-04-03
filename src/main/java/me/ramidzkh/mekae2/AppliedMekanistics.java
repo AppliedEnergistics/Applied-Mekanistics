@@ -29,6 +29,7 @@ import me.ramidzkh.mekae2.ae2.stack.MekanismExternalStorageStrategy;
 import me.ramidzkh.mekae2.ae2.stack.MekanismStackExportStrategy;
 import me.ramidzkh.mekae2.ae2.stack.MekanismStackImportStrategy;
 import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
+import me.ramidzkh.mekae2.qio.QioSupport;
 
 import appeng.api.behaviors.ContainerItemStrategy;
 import appeng.api.behaviors.GenericSlotCapacities;
@@ -76,6 +77,8 @@ public class AppliedMekanistics {
         GenericSlotCapacities.register(MekanismKeyType.TYPE, GenericSlotCapacities.getMap().get(AEKeyType.fluids()));
 
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::initializeCapabilities);
+
+        QioSupport.initialize();
 
         bus.addListener((FMLCommonSetupEvent event) -> {
             event.enqueueWork(this::initializeModels);

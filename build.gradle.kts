@@ -47,7 +47,8 @@ dependencies {
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
     modImplementation("appeng", "appliedenergistics2", "11.0.0-alpha.3")
 
-    modCompileOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "api")
+    // We depend on mekanism internals, thus not using classifier = "api"
+    modCompileOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "all")
     modRuntimeOnly("mekanism", "Mekanism", "1.18.2-10.1.2.homebaked", classifier = "all")
 
     modCompileOnly("mezz.jei", "jei-1.18.2", "9.5.5.174", classifier = "api")
