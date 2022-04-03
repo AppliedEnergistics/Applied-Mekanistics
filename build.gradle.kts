@@ -71,10 +71,10 @@ loom {
     silentMojangMappingsLicense()
 
     forge {
-        mixinConfigs("applied-mekanistics.mixins.json")
+        mixinConfigs("appmek.mixins.json")
 
         dataGen {
-            mod("applied_mekanistics")
+            mod("appmek")
         }
     }
 

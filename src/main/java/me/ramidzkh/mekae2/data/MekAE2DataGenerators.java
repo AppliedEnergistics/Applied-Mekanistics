@@ -5,8 +5,15 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 public class MekAE2DataGenerators {
 
     public static void onGatherData(GatherDataEvent event) {
-        event.getGenerator().addProvider(new BlockModelProvider(event.getGenerator(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(new ItemModelProvider(event.getGenerator(), event.getExistingFileHelper()));
-        event.getGenerator().addProvider(new RecipeProvider(event.getGenerator()));
+        var generator = event.getGenerator();
+        var existingFileHelper = event.getExistingFileHelper();
+
+        var blockTagsProvider = new BlockTagsProvider(generator, existingFileHelper);
+        generator.addProvider(blockTagsProvider);
+        generator.addProvider(new ItemTagsProvider(generator, blockTagsProvider, existingFileHelper));
+
+        generator.addProvider(new BlockModelProvider(generator, existingFileHelper));
+        generator.addProvider(new ItemModelProvider(generator, existingFileHelper));
+        generator.addProvider(new RecipeProvider(generator));
     }
 }

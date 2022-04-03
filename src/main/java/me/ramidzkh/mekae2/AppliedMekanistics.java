@@ -20,7 +20,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
 import me.ramidzkh.mekae2.ae2.GenericStackChemicalStorage;
@@ -55,7 +54,7 @@ import appeng.parts.automation.StackWorldBehaviors;
 @Mod(AppliedMekanistics.ID)
 public class AppliedMekanistics {
 
-    public static final String ID = "applied_mekanistics";
+    public static final String ID = "appmek";
 
     public AppliedMekanistics() {
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -165,30 +164,6 @@ public class AppliedMekanistics {
     }
 
     private void initializeAttunement() {
-        var basic = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "basic_chemical_tank"));
-        var advanced = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "advanced_chemical_tank"));
-        var elite = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "elite_chemical_tank"));
-        var ultimate = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "ultimate_chemical_tank"));
-        var creative = ForgeRegistries.ITEMS.getValue(new ResourceLocation("mekanism", "creative_chemical_tank"));
-
-        if (basic != null) {
-            P2PTunnelAttunement.addItem(basic, AMItems.CHEMICAL_P2P_TUNNEL::get);
-        }
-
-        if (advanced != null) {
-            P2PTunnelAttunement.addItem(advanced, AMItems.CHEMICAL_P2P_TUNNEL::get);
-        }
-
-        if (elite != null) {
-            P2PTunnelAttunement.addItem(elite, AMItems.CHEMICAL_P2P_TUNNEL::get);
-        }
-
-        if (ultimate != null) {
-            P2PTunnelAttunement.addItem(ultimate, AMItems.CHEMICAL_P2P_TUNNEL::get);
-        }
-
-        if (creative != null) {
-            P2PTunnelAttunement.addItem(creative, AMItems.CHEMICAL_P2P_TUNNEL::get);
-        }
+        P2PTunnelAttunement.addItemByTag(AMItems.MEKANISM_TANKS, AMItems.CHEMICAL_P2P_TUNNEL::get);
     }
 }

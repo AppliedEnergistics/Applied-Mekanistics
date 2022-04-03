@@ -97,7 +97,7 @@ public class MekanismKey extends AEKey {
         return stack.getType().getTextComponent();
     }
 
-    // @Override
+    @Override
     public void addDrops(long amount, List<ItemStack> drops, Level level, BlockPos pos) {
         if (getStack()instanceof GasStack gasStack) {
             MekanismAPI.getRadiationManager().dumpRadiation(new Coord4D(pos, level),

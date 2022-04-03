@@ -1,6 +1,8 @@
 package me.ramidzkh.mekae2;
 
 import net.minecraft.Util;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +28,10 @@ public class AMItems {
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS,
             AppliedMekanistics.ID);
+
+    // These are foreign items, but idk another nice place to put these so /shrug
+    public static TagKey<Item> MEKANISM_TANKS = TagKey.create(Registry.ITEM_REGISTRY,
+            AppliedMekanistics.id("mekanism_tanks"));
 
     public static void initialize(IEventBus bus) {
         ITEMS.register(bus);
