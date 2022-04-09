@@ -1,5 +1,3 @@
-rootProject.name = "Applied-Mekanistics"
-
 pluginManagement {
     repositories {
         maven {
@@ -20,3 +18,5 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+rootProject.name = "Applied-Mekanistics"
