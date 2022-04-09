@@ -1,6 +1,6 @@
 package me.ramidzkh.mekae2.qio;
 
-import com.google.common.primitives.Ints;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -9,9 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import me.ramidzkh.mekae2.AMText;
-import mekanism.common.content.qio.QIODriveData;
+import mekanism.api.Action;
 import mekanism.common.content.qio.QIOFrequency;
-import mekanism.common.lib.inventory.HashedItem;
 import mekanism.common.lib.security.SecurityMode;
 import mekanism.common.tile.qio.TileEntityQIODashboard;
 
@@ -51,16 +50,24 @@ public class QioStorageAdapter implements MEStorage {
         // Check security.
         var securityMode = dashboard.getSecurityMode();
         if (securityMode != SecurityMode.PUBLIC) {
-            // Private or trusted: the player who placed the storage bus must be the owner of the dashboard.
+            // Private or trusted: the player who placed the storage bus must have dashboard access.
             var host = querySrc.machine().map(IActionHost::getActionableNode).orElse(null);
             if (host == null) {
                 return null;
             }
-            var storageBusOwner = host.getOwningPlayerId();
-            var dashboardOwner = IPlayerRegistry.getMapping(dashboard.getLevel()).getPlayerId(dashboard.getOwnerUUID());
+            var storageBusOwner = IPlayerRegistry.getMapping(dashboard.getLevel())
+                    .getProfileId(host.getOwningPlayerId());
+            var dashboardOwner = dashboard.getOwnerUUID();
 
-            if (storageBusOwner != dashboardOwner) {
-                return null;
+            if (!Objects.equals(dashboardOwner, storageBusOwner)) {
+                var securityFreq = dashboard.getSecurity().getFrequency();
+
+                if (securityMode == SecurityMode.PRIVATE) {
+                    return null;
+                } else if (securityMode == SecurityMode.TRUSTED
+                        && !securityFreq.getTrustedUUIDs().contains(storageBusOwner)) {
+                    return null;
+                }
             }
         }
         return freq;
@@ -69,63 +76,25 @@ public class QioStorageAdapter implements MEStorage {
     @Override
     public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
         if (what instanceof AEItemKey itemKey && amount > 0) {
-            // Insert only accepts int, so clamp to that.
-            int intAmount = Ints.saturatedCast(amount);
             var freq = getFrequency();
             if (freq == null) {
                 return 0;
             }
-
-            if (mode == Actionable.MODULATE) {
-                return intAmount - freq.addItem(itemKey.toStack(intAmount)).getCount();
-            } else {
-                // Need to simulate by hand, quite bad :(
-                int canFit = 0;
-                var hashedItem = HashedItem.raw(itemKey.toStack());
-
-                for (var driveData : freq.getAllDrives()) {
-                    canFit += howMuchCanFit(driveData, hashedItem, intAmount - canFit);
-
-                    if (canFit == intAmount) {
-                        return canFit;
-                    }
-                }
-
-                return canFit;
-            }
+            return freq.massInsert(itemKey.toStack(), amount, Action.fromFluidAction(mode.getFluidAction()));
         }
         return 0;
-    }
-
-    private static int howMuchCanFit(QIODriveData driveData, HashedItem item, int upTo) {
-        long stored = driveData.getStored(item);
-        long totalCountLeft = driveData.getCountCapacity() - driveData.getTotalCount();
-        if (totalCountLeft == 0 || (stored == 0 && driveData.getTotalTypes() == driveData.getTypeCapacity())) {
-            // No room left
-            return 0;
-        }
-        // Ok
-        return (int) Math.min(upTo, totalCountLeft);
     }
 
     @Override
     public long extract(AEKey what, long amount, Actionable mode, IActionSource source) {
         if (what instanceof AEItemKey itemKey && amount > 0) {
-            // Extract only accepts int, so clamp to that.
-            int intAmount = Ints.saturatedCast(amount);
             var freq = getFrequency();
             if (freq == null) {
                 return 0;
             }
-            var hashedItem = HashedItem.raw(itemKey.toStack());
-
-            if (mode == Actionable.MODULATE) {
-                return freq.removeByType(hashedItem, intAmount).getCount();
-            } else {
-                return Math.min(intAmount, Ints.saturatedCast(freq.getStored(hashedItem)));
-            }
+            return freq.massExtract(itemKey.toStack(), amount, Action.fromFluidAction(mode.getFluidAction()));
         }
-        return MEStorage.super.extract(what, amount, mode, source);
+        return 0;
     }
 
     @Override

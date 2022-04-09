@@ -38,7 +38,7 @@ public class MekanismKey extends AEKey {
             return null;
         }
 
-        return new MekanismKey(stack);
+        return new MekanismKey(stack.copy());
     }
 
     public ChemicalStack<?> getStack() {
