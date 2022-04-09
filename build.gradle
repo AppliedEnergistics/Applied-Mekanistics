@@ -180,9 +180,9 @@ spotless {
 
 ////////////////
 // CurseForge
-System.getenv("CURSEFORGE")?.with {
+System.getenv("CURSEFORGE")?.with { String key ->
     curseforge {
-        apiKey = it
+        apiKey = key
 
         project {
             id = "574300"
@@ -200,7 +200,7 @@ System.getenv("CURSEFORGE")?.with {
             addGameVersion("1.18.2")
             addGameVersion("Forge")
 
-            mainArtifact(tasks.jar.archiveFile) {
+            mainArtifact(jar) {
                 displayName = "${project.version}"
 
                 relations {
