@@ -22,17 +22,44 @@
   </issueManagement>
   <dependencies>
     <dependency>
-      <groupId>curse.maven</groupId>
-      <artifactId>the-one-probe-245211</artifactId>
-      <version>3671753</version>
+      <groupId>com.blamejared.crafttweaker</groupId>
+      <artifactId>CraftTweaker-forge-1.18.2</artifactId>
+      <version>9.1.90</version>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.blamejared.jeitweaker</groupId>
+      <artifactId>JEITweaker-1.18.2</artifactId>
+      <version>3.0.0.8</version>
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>mezz.jei</groupId>
       <artifactId>jei-1.18.2</artifactId>
-      <version>9.5.2.135</version>
+      <version>9.6.0.179</version>
       <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>team.chisel.ctm</groupId>
+      <artifactId>CTM</artifactId>
+      <version>1.18.2-1.1.4+4</version>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>mcjty.theoneprobe</groupId>
+      <artifactId>theoneprobe</artifactId>
+      <version>1.18-5.1.0-8</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
       <optional>true</optional>
     </dependency>
     <dependency>

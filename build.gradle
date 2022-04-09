@@ -59,8 +59,8 @@ dependencies {
     compileOnly(fg.deobf("mekanism:Mekanism:1.18.2-10.1.2.homebaked"))
     runtimeOnly(fg.deobf("mekanism:Mekanism:1.18.2-10.1.2.homebaked:all"))
 
-    compileOnly(fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174:api"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-1.18.2:9.5.5.174"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.18.2:9.7.0.180:api"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-1.18.2:9.7.0.180"))
 }
 
 sourceSets {
