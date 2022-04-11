@@ -3,6 +3,8 @@ package me.ramidzkh.mekae2;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import me.ramidzkh.mekae2.ae2.AMChemicalStackRenderer;
+
 import appeng.items.storage.BasicStorageCell;
 
 public class AppliedMekanisticsClient {

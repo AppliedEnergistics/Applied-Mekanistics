@@ -30,6 +30,7 @@ repositories {
 
         content {
             includeGroup("appeng")
+            includeGroup("mekanism")
         }
     }
 
@@ -49,18 +50,18 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.minecraftforge:forge:1.18.2-40.0.44")
+    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
-    implementation(fg.deobf("appeng:appliedenergistics2:11.0.0-alpha.3"))
+    implementation(fg.deobf("appeng:appliedenergistics2:${ae2_version}"))
 
     // We depend on Mekanism internals, such as using QIO, thus not using classifier = "api"
-    compileOnly(fg.deobf("mekanism:Mekanism:1.18.2-10.1.2.homebaked:api"))
-    compileOnly(fg.deobf("mekanism:Mekanism:1.18.2-10.1.2.homebaked"))
-    runtimeOnly(fg.deobf("mekanism:Mekanism:1.18.2-10.1.2.homebaked:all"))
+    compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api"))
+    compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}"))
+    runtimeOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all"))
 
-    compileOnly(fg.deobf("mezz.jei:jei-1.18.2:9.7.0.180:api"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-1.18.2:9.7.0.180"))
+    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}"))
 }
 
 sourceSets {
@@ -79,7 +80,7 @@ java {
 ////////////////////
 // Forge/Minecraft
 minecraft {
-    mappings(channel: "official", version: "1.18.2")
+    mappings(channel: "official", version: "${minecraft_version}")
 
     /**
      * Configures properties common to all run configurations
@@ -197,7 +198,7 @@ System.getenv("CURSEFORGE")?.with { String key ->
                 releaseType = "release"
             }
 
-            addGameVersion("1.18.2")
+            addGameVersion("${minecraft_version}")
             addGameVersion("Forge")
 
             mainArtifact(jar) {

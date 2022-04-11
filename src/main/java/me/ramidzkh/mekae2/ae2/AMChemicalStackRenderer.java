@@ -1,4 +1,4 @@
-package me.ramidzkh.mekae2;
+package me.ramidzkh.mekae2.ae2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-
-import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 
 import appeng.api.client.AEStackRendering;
 import appeng.api.client.IAEStackRenderHandler;
