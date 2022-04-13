@@ -117,7 +117,7 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
             }
 
             if (action == Action.EXECUTE) {
-                part.queueTunnelDrain(PowerUnits.RF, total);
+                part.queueTunnelDrain(PowerUnits.AE, (double) total / MekanismKeyType.TYPE.getAmountPerOperation());
             }
 
             return ChemicalBridge.withAmount(stack, stack.getAmount() - total);
@@ -211,7 +211,8 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
                 var result = input.get().extractChemical(tank, maxAmount, action);
 
                 if (action.execute()) {
-                    part.queueTunnelDrain(PowerUnits.RF, result.getAmount());
+                    part.queueTunnelDrain(PowerUnits.AE,
+                            (float) result.getAmount() / MekanismKeyType.TYPE.getAmountPerOperation());
                 }
 
                 return result;
