@@ -29,10 +29,10 @@ public class MekanismKeyType extends AEKeyType {
     @Override
     public AEKey readFromPacket(FriendlyByteBuf input) {
         return switch (input.readByte()) {
-            case 0 -> MekanismKey.of(GasStack.readFromPacket(input));
-            case 1 -> MekanismKey.of(InfusionStack.readFromPacket(input));
-            case 2 -> MekanismKey.of(PigmentStack.readFromPacket(input));
-            case 3 -> MekanismKey.of(SlurryStack.readFromPacket(input));
+            case MekanismKey.GAS -> MekanismKey.of(GasStack.readFromPacket(input));
+            case MekanismKey.INFUSION -> MekanismKey.of(InfusionStack.readFromPacket(input));
+            case MekanismKey.PIGMENT -> MekanismKey.of(PigmentStack.readFromPacket(input));
+            case MekanismKey.SLURRY -> MekanismKey.of(SlurryStack.readFromPacket(input));
             default -> null;
         };
     }
@@ -41,10 +41,10 @@ public class MekanismKeyType extends AEKeyType {
     @Override
     public AEKey loadKeyFromTag(CompoundTag tag) {
         return switch (tag.getByte("t")) {
-            case 0 -> MekanismKey.of(GasStack.readFromNBT(tag));
-            case 1 -> MekanismKey.of(InfusionStack.readFromNBT(tag));
-            case 2 -> MekanismKey.of(PigmentStack.readFromNBT(tag));
-            case 3 -> MekanismKey.of(SlurryStack.readFromNBT(tag));
+            case MekanismKey.GAS -> MekanismKey.of(GasStack.readFromNBT(tag));
+            case MekanismKey.INFUSION -> MekanismKey.of(InfusionStack.readFromNBT(tag));
+            case MekanismKey.PIGMENT -> MekanismKey.of(PigmentStack.readFromNBT(tag));
+            case MekanismKey.SLURRY -> MekanismKey.of(SlurryStack.readFromNBT(tag));
             default -> null;
         };
     }

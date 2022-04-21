@@ -26,6 +26,11 @@ import appeng.api.stacks.AEKeyType;
 
 public class MekanismKey extends AEKey {
 
+    public static final byte GAS = 0;
+    public static final byte INFUSION = 1;
+    public static final byte PIGMENT = 2;
+    public static final byte SLURRY = 3;
+
     private final ChemicalStack<?> stack;
 
     private MekanismKey(ChemicalStack<?> stack) {
@@ -45,15 +50,15 @@ public class MekanismKey extends AEKey {
         return stack;
     }
 
-    private byte getForm() {
+    public byte getForm() {
         if (stack instanceof GasStack) {
-            return 0;
+            return GAS;
         } else if (stack instanceof InfusionStack) {
-            return 1;
+            return INFUSION;
         } else if (stack instanceof PigmentStack) {
-            return 2;
+            return PIGMENT;
         } else if (stack instanceof SlurryStack) {
-            return 3;
+            return SLURRY;
         } else {
             throw new UnsupportedOperationException();
         }
