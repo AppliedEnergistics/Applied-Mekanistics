@@ -1,6 +1,7 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
 import java.util.Map;
+import java.util.Objects;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -13,31 +14,23 @@ import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.MEStorage;
 import appeng.core.localization.GuiText;
+import appeng.me.storage.NullInventory;
 
-public record CompositeFormStorage(Map<Byte, MEStorage> storages) implements MEStorage {
+record CompositeFormStorage(Map<Byte, MEStorage> storages) implements MEStorage {
 
     @Override
     public boolean isPreferredStorageFor(AEKey what, IActionSource source) {
-        if (!(what instanceof MekanismKey mekanismKey))
-            return false;
-        var storage = storages.get(mekanismKey.getForm());
-        return storage != null && storage.isPreferredStorageFor(what, source);
+        return getStorage(what).isPreferredStorageFor(what, source);
     }
 
     @Override
     public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
-        if (!(what instanceof MekanismKey mekanismKey))
-            return 0;
-        var storage = storages.get(mekanismKey.getForm());
-        return storage != null ? storage.insert(what, amount, mode, source) : 0;
+        return getStorage(what).insert(what, amount, mode, source);
     }
 
     @Override
     public long extract(AEKey what, long amount, Actionable mode, IActionSource source) {
-        if (!(what instanceof MekanismKey mekanismKey))
-            return 0;
-        var storage = storages.get(mekanismKey.getForm());
-        return storage != null ? storage.extract(what, amount, mode, source) : 0;
+        return getStorage(what).extract(what, amount, mode, source);
     }
 
     /**
@@ -45,8 +38,7 @@ public record CompositeFormStorage(Map<Byte, MEStorage> storages) implements MES
      */
     @Override
     public Component getDescription() {
-        var types = new TextComponent("Chemicals");
-        return GuiText.ExternalStorage.text(types);
+        return GuiText.ExternalStorage.text(new TextComponent("Chemicals"));
     }
 
     @Override
@@ -54,5 +46,15 @@ public record CompositeFormStorage(Map<Byte, MEStorage> storages) implements MES
         for (var storage : storages.values()) {
             storage.getAvailableStacks(out);
         }
+    }
+
+    private MEStorage getStorage(AEKey key) {
+        MEStorage storage = null;
+
+        if (key instanceof MekanismKey mekanismKey) {
+            storage = storages.get(mekanismKey.getForm());
+        }
+
+        return Objects.requireNonNullElse(storage, NullInventory.of());
     }
 }
