@@ -174,8 +174,7 @@ spotless {
 
     format("json") {
         target("src/*/resources/**/*.json")
-        targetExclude("src/generated/resources/**")
-        targetExclude("src/main/resources/assets/appmek/lang/**")
+        targetExclude("src/generated/resources/**", "src/main/resources/assets/appmek/lang/**")
         prettier().config(parser: "json")
     }
 }
