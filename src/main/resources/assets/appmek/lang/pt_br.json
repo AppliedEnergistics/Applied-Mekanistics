@@ -1,22 +1,22 @@
 {
   "itemGroup.appmek": "Applied Mekanistics",
 
-  "gui.appmek.chemical": "Químico",
+  "gui.appmek.chemical": "QuÃ­mico",
 
-  "item.appmek.chemical_cell_housing": "Cápsula para Células de Armazenamento de Químicos",
-  "item.appmek.creative_chemical_cell": "Célula Criativa de Armazenamento de Químicos",
+  "item.appmek.chemical_cell_housing": "CÃ¡psula para CÃ©lulas de Armazenamento de QuÃ­micos",
+  "item.appmek.creative_chemical_cell": "CÃ©lula Criativa de Armazenamento de QuÃ­micos",
 
-  "item.appmek.chemical_storage_cell_1k": "Célula de Armazenamento de 1k para Químicos",
-  "item.appmek.chemical_storage_cell_4k": "Célula de Armazenamento de 4k para Químicos",
-  "item.appmek.chemical_storage_cell_16k": "Célula de Armazenamento de 16k para Químicos",
-  "item.appmek.chemical_storage_cell_64k": "Célula de Armazenamento de 64k para Químicos",
+  "item.appmek.chemical_storage_cell_1k": "CÃ©lula de Armazenamento de 1k para QuÃ­micos",
+  "item.appmek.chemical_storage_cell_4k": "CÃ©lula de Armazenamento de 4k para QuÃ­micos",
+  "item.appmek.chemical_storage_cell_16k": "CÃ©lula de Armazenamento de 16k para QuÃ­micos",
+  "item.appmek.chemical_storage_cell_64k": "CÃ©lula de Armazenamento de 64k para QuÃ­micos",
 
-  "item.appmek.portable_chemical_storage_cell_16k": "Célula de Armazenamento Portátil de 16k para Químicos",
-  "item.appmek.portable_chemical_storage_cell_1k": "Célula de Armazenamento Portátil de 1k para Químicos",
-  "item.appmek.portable_chemical_storage_cell_4k": "Célula de Armazenamento Portátil de 4k para Químicos",
-  "item.appmek.portable_chemical_storage_cell_64k": "Célula de Armazenamento Portátil de 64k para Químicos",
+  "item.appmek.portable_chemical_storage_cell_16k": "CÃ©lula de Armazenamento PortÃ¡til de 16k para QuÃ­micos",
+  "item.appmek.portable_chemical_storage_cell_1k": "CÃ©lula de Armazenamento PortÃ¡til de 1k para QuÃ­micos",
+  "item.appmek.portable_chemical_storage_cell_4k": "CÃ©lula de Armazenamento PortÃ¡til de 4k para QuÃ­micos",
+  "item.appmek.portable_chemical_storage_cell_64k": "CÃ©lula de Armazenamento PortÃ¡til de 64k para QuÃ­micos",
 
-  "item.appmek.chemical_p2p_tunnel": "Túnel P2P para Químicos",
+  "item.appmek.chemical_p2p_tunnel": "TÃºnel P2P para QuÃ­micos",
 
-  "text.appmek.qio_frequency": "OIQ Frequência (%s)"
+  "text.appmek.qio_frequency": "OIQ FrequÃªncia (%s)"
 }
