@@ -1,13 +1,13 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import java.util.List;
+import java.util.Map;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
 import me.ramidzkh.mekae2.MekCapabilities;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import mekanism.api.chemical.IChemicalHandler;
 
 import appeng.api.behaviors.StackExportStrategy;
@@ -19,28 +19,34 @@ import appeng.util.BlockApiCache;
 
 public class MekanismStackExportStrategy implements StackExportStrategy {
 
-    private final List<BlockApiCache<? extends IChemicalHandler>> lookups;
+    private final Map<Byte, BlockApiCache<? extends IChemicalHandler>> lookups;
     private final Direction fromSide;
 
     public MekanismStackExportStrategy(ServerLevel level,
             BlockPos fromPos,
             Direction fromSide) {
-        this.lookups = List.of(BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos));
+        this.lookups = Map.of(
+                MekanismKey.GAS, BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
+                MekanismKey.INFUSION, BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
+                MekanismKey.PIGMENT, BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
+                MekanismKey.SLURRY, BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos));
         this.fromSide = fromSide;
     }
 
     @Override
     public long transfer(StackTransferContext context, AEKey what, long amount, Actionable mode) {
-        if (what.getType() != MekanismKeyType.TYPE) {
+        if (!(what instanceof MekanismKey mekanismKey)) {
             return 0;
         }
 
-        for (var lookup : lookups) {
-            var adjacentStorage = lookup.find(fromSide);
-            if (adjacentStorage == null) {
+        for (var entry : lookups.entrySet()) {
+            if (entry.getKey() != mekanismKey.getForm()) {
+                continue;
+            }
+
+            var storage = entry.getValue().find(fromSide);
+
+            if (storage == null) {
                 continue;
             }
 
@@ -54,7 +60,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                     context.getActionSource(),
                     Actionable.SIMULATE);
 
-            var wasInserted = HandlerStrategy.insert(adjacentStorage, what, extracted, mode);
+            var wasInserted = HandlerStrategy.insert(storage, what, extracted, mode);
 
             if (wasInserted > 0) {
                 if (mode == Actionable.MODULATE) {
@@ -78,18 +84,22 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
 
     @Override
     public long push(AEKey what, long amount, Actionable mode) {
-        if (what.getType() != MekanismKeyType.TYPE) {
+        if (!(what instanceof MekanismKey mekanismKey)) {
             return 0;
         }
 
-        for (var lookup : lookups) {
-            var adjacentStorage = lookup.find(fromSide);
-
-            if (adjacentStorage == null) {
+        for (var entry : lookups.entrySet()) {
+            if (entry.getKey() != mekanismKey.getForm()) {
                 continue;
             }
 
-            return HandlerStrategy.insert(adjacentStorage, what, amount, mode);
+            var storage = entry.getValue().find(fromSide);
+
+            if (storage == null) {
+                continue;
+            }
+
+            return HandlerStrategy.insert(storage, what, amount, mode);
         }
 
         return 0;
