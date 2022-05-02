@@ -18,7 +18,7 @@ jobs:
         with:
           java-version: 17
       - name: Build
-        run: ./gradlew downloadAssets runData build
+        run: ./gradlew downloadAssets runData build --max-workers 1
         env:
           APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Upload Release Artifact
@@ -31,7 +31,7 @@ jobs:
           asset_name: appmek-${{ github.event.release.tag_name }}.jar
           asset_content_type: application/zip
       - name: Upload to CurseForge
-        run: ./gradlew curseforge
+        run: ./gradlew curseforge --max-workers 1
         env:
           APPMEK_VERSION: ${{ github.event.release.tag_name }}
           CURSEFORGE: ${{ secrets.CURSEFORGE }}

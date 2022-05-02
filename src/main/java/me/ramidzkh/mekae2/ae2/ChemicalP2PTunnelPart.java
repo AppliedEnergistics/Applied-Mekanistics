@@ -202,7 +202,7 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
 
         @Override
         public S insertChemical(int tank, S stack, Action action) {
-            return getEmptyStack();
+            return stack;
         }
 
         @Override
