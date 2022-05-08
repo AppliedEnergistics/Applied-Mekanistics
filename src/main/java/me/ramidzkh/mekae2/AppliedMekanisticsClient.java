@@ -6,6 +6,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import me.ramidzkh.mekae2.ae2.AMChemicalStackRenderer;
 
 import appeng.items.storage.BasicStorageCell;
+import appeng.items.tools.powered.PortableCellItem;
 
 public class AppliedMekanisticsClient {
 
@@ -18,7 +19,12 @@ public class AppliedMekanisticsClient {
 
     private static void registerItemColors(ColorHandlerEvent.Item event) {
         for (var tier : AMItems.Tier.values()) {
-            event.getItemColors().register(BasicStorageCell::getColor, AMItems.get(tier)::get);
+            event.getItemColors().register(
+                BasicStorageCell::getColor, AMItems.get(tier)::get);
+        }
+        for (var tier : AMItems.Tier.values()) {
+            event.getItemColors().register(
+                PortableCellItem::getColor, AMItems.getPortableCell(tier)::get);
         }
     }
 }
