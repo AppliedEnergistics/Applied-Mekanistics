@@ -19,6 +19,7 @@ public class AppliedMekanisticsClient {
     private static void registerItemColors(ColorHandlerEvent.Item event) {
         for (var tier : AMItems.Tier.values()) {
             event.getItemColors().register(BasicStorageCell::getColor, AMItems.get(tier)::get);
+            event.getItemColors().register(BasicStorageCell::getColor, AMItems.getPortableCell(tier)::get);
         }
     }
 }
