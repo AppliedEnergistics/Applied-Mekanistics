@@ -43,6 +43,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 case _4K -> AEItems.CELL_COMPONENT_4K;
                 case _16K -> AEItems.CELL_COMPONENT_16K;
                 case _64K -> AEItems.CELL_COMPONENT_64K;
+                case _256K -> AEItems.CELL_COMPONENT_256K;
             };
 
             var tierName = tier.toString().toLowerCase(Locale.ROOT);
