@@ -70,6 +70,9 @@ public class AMItems {
     public static final RegistryObject<Item> CHEMICAL_CELL_64K = ITEMS.register("chemical_storage_cell_64k",
             () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.CELL_COMPONENT_64K,
                     CHEMICAL_CELL_HOUSING.get(), 2.0f, 64, 512, 5));
+    public static final RegistryObject<Item> CHEMICAL_CELL_256K = ITEMS.register("chemical_storage_cell_256k",
+            () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.SKY_DUST,
+                    CHEMICAL_CELL_HOUSING.get(), 2.5f, 256, 2048, 5));
 
     public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_1K = ITEMS.register(
             "portable_chemical_storage_cell_1k", () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE,
@@ -85,6 +88,10 @@ public class AMItems {
             "portable_chemical_storage_cell_64k",
             () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_64K,
                     properties().stacksTo(1)));
+    public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_256K = ITEMS.register(
+            "portable_chemical_storage_cell_256k",
+            () -> new ChemicalPortableCellItem(AMMenus.PORTABLE_CHEMICAL_CELL_TYPE, PortableCellItem.SIZE_256K,
+                    properties().stacksTo(1)));
 
     public static final RegistryObject<PartItem<ChemicalP2PTunnelPart>> CHEMICAL_P2P_TUNNEL = Util.make(() -> {
         PartModels.registerModels(PartModelsHelper.createModels(ChemicalP2PTunnelPart.class));
@@ -98,6 +105,7 @@ public class AMItems {
             case _4K -> CHEMICAL_CELL_4K;
             case _16K -> CHEMICAL_CELL_16K;
             case _64K -> CHEMICAL_CELL_64K;
+            case _256K -> CHEMICAL_CELL_256K;
         };
     }
 
@@ -107,6 +115,7 @@ public class AMItems {
             case _4K -> PORTABLE_CHEMICAL_CELL_4K;
             case _16K -> PORTABLE_CHEMICAL_CELL_16K;
             case _64K -> PORTABLE_CHEMICAL_CELL_64K;
+            case _256K -> PORTABLE_CHEMICAL_CELL_256K;
         };
     }
 
@@ -114,6 +123,7 @@ public class AMItems {
         _1K,
         _4K,
         _16K,
-        _64K
+        _64K,
+        _256K
     }
 }

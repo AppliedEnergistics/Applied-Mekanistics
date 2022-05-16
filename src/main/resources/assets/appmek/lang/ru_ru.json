@@ -10,11 +10,13 @@
   "item.appmek.chemical_storage_cell_4k": "Химическая ячейка памяти ME 4К",
   "item.appmek.chemical_storage_cell_16k": "Химическая ячейка памяти ME 16К",
   "item.appmek.chemical_storage_cell_64k": "Химическая ячейка памяти ME 64К",
+  "item.appmek.chemical_storage_cell_256k": "Химическая ячейка памяти ME 256К",
 
   "item.appmek.portable_chemical_storage_cell_16k": "Переносная химическая ячейка 16К",
   "item.appmek.portable_chemical_storage_cell_1k": "Переносная химическая ячейка 1К",
   "item.appmek.portable_chemical_storage_cell_4k": "Переносная химическая ячейка 4К",
   "item.appmek.portable_chemical_storage_cell_64k": "Переносная химическая ячейка 64К",
+  "item.appmek.portable_chemical_storage_cell_256k": "Переносная химическая ячейка 256К",
 
   "item.appmek.chemical_p2p_tunnel": "Химический P2P тоннель",
 
