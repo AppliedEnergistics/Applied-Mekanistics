@@ -8,6 +8,8 @@ import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 
 import appeng.api.stacks.AEKey;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.items.storage.BasicStorageCell;
 
 public class ChemicalStorageCell extends BasicStorageCell {
@@ -25,5 +27,10 @@ public class ChemicalStorageCell extends BasicStorageCell {
         }
 
         return true;
+    }
+
+    @Override
+    public IUpgradeInventory getUpgrades(ItemStack is) {
+        return UpgradeInventories.forItem(is, 3);
     }
 }
