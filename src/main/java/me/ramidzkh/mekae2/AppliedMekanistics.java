@@ -156,11 +156,13 @@ public class AppliedMekanistics {
         var portableStorageCellGroup = GuiText.PortableCells.getTranslationKey();
 
         for (var tier : AMItems.Tier.values()) {
-            Upgrades.add(AEItems.INVERTER_CARD, AMItems.getPortableCell(tier)::get, 1, storageCellGroup);
-        }
-
-        for (var tier : AMItems.Tier.values()) {
+            var cell = AMItems.get(tier);
             var portableCell = AMItems.getPortableCell(tier);
+
+            Upgrades.add(AEItems.INVERTER_CARD, cell::get, 1, storageCellGroup);
+            Upgrades.add(AEItems.EQUAL_DISTRIBUTION_CARD, cell::get, 1, storageCellGroup);
+            Upgrades.add(AEItems.VOID_CARD, cell::get, 1, storageCellGroup);
+
             Upgrades.add(AEItems.INVERTER_CARD, portableCell::get, 1, portableStorageCellGroup);
             Upgrades.add(AEItems.ENERGY_CARD, portableCell::get, 2, portableStorageCellGroup);
         }

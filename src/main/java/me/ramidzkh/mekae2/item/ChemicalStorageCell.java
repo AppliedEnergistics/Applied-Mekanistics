@@ -1,5 +1,7 @@
 package me.ramidzkh.mekae2.item;
 
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.UpgradeInventories;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
@@ -25,5 +27,10 @@ public class ChemicalStorageCell extends BasicStorageCell {
         }
 
         return true;
+    }
+
+    @Override
+    public IUpgradeInventory getUpgrades(ItemStack is) {
+        return UpgradeInventories.forItem(is, 3);
     }
 }
