@@ -1,7 +1,5 @@
 package me.ramidzkh.mekae2.item;
 
-import appeng.api.upgrades.IUpgradeInventory;
-import appeng.api.upgrades.UpgradeInventories;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
@@ -10,6 +8,8 @@ import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 
 import appeng.api.stacks.AEKey;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.items.storage.BasicStorageCell;
 
 public class ChemicalStorageCell extends BasicStorageCell {
