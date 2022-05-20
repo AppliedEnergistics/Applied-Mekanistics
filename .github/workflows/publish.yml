@@ -5,6 +5,9 @@ on:
     types:
       - published
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-20.04
@@ -17,19 +20,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+      - name: Generate data
+        run: ./gradlew downloadAssets runData --max-workers 1
+        env:
+          APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Build
-        run: ./gradlew downloadAssets runData build --max-workers 1
+        run: ./gradlew build --max-workers 1
         env:
           APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Upload Release Artifact
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./build/libs/Applied-Mekanistics-${{ github.event.release.tag_name }}.jar
-          asset_name: appmek-${{ github.event.release.tag_name }}.jar
-          asset_content_type: application/zip
+          files: build/libs/Applied-Mekanistics-${{ github.event.release.tag_name }}.jar
+          tag_name: ${{ github.event.release.tag_name }}
       - name: Upload to CurseForge
         run: ./gradlew curseforge --max-workers 1
         env:
