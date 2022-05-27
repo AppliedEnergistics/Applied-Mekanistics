@@ -55,9 +55,7 @@ dependencies {
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
     implementation(fg.deobf("appeng:appliedenergistics2:${ae2_version}"))
 
-    // We depend on Mekanism internals, such as using QIO, thus not using classifier = "api"
     compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api"))
-    compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}"))
     runtimeOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all"))
 
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api"))

@@ -1,18 +1,18 @@
 package me.ramidzkh.mekae2.qio;
 
-import java.util.Objects;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import me.ramidzkh.mekae2.AMText;
 import mekanism.api.Action;
-import mekanism.common.content.qio.QIOFrequency;
-import mekanism.common.lib.security.SecurityMode;
-import mekanism.common.tile.qio.TileEntityQIODashboard;
+import mekanism.api.MekanismAPI;
+import mekanism.api.inventory.qio.IQIOComponent;
+import mekanism.api.inventory.qio.IQIOFrequency;
+import mekanism.api.security.SecurityMode;
 
 import appeng.api.config.Actionable;
 import appeng.api.features.IPlayerRegistry;
@@ -23,13 +23,17 @@ import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.MEStorage;
 
-public class QioStorageAdapter implements MEStorage {
-    private final TileEntityQIODashboard dashboard;
+/**
+ * This generic trick allows us to capture both the BE and the IQIOComponent without depending on the actual Mekanism
+ * block entity class.
+ */
+public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> implements MEStorage {
+    private final DASHBOARD dashboard;
     @Nullable
     private final Direction queriedSide;
     private final IActionSource querySrc;
 
-    public QioStorageAdapter(TileEntityQIODashboard dashboard, @Nullable Direction queriedSide,
+    public QioStorageAdapter(DASHBOARD dashboard, @Nullable Direction queriedSide,
             IActionSource querySrc) {
         this.dashboard = dashboard;
         this.queriedSide = queriedSide;
@@ -37,18 +41,19 @@ public class QioStorageAdapter implements MEStorage {
     }
 
     @Nullable
-    public QIOFrequency getFrequency() {
+    public IQIOFrequency getFrequency() {
         // Check dashboard facing.
         if (dashboard.getBlockState().getValue(BlockStateProperties.FACING).getOpposite() != queriedSide) {
             return null;
         }
         // Check that it has a frequency.
-        var freq = dashboard.getFrequency();
-        if (freq == null) {
+        var freq = dashboard.getQIOFrequency();
+        if (freq == null || !freq.isValid()) {
             return null;
         }
         // Check security.
-        var securityMode = dashboard.getSecurityMode();
+        var utils = MekanismAPI.getSecurityUtils();
+        var securityMode = utils.getSecurityMode(dashboard, dashboard.getLevel().isClientSide());
         if (securityMode != SecurityMode.PUBLIC) {
             // Private or trusted: the player who placed the storage bus must have dashboard access.
             var host = querySrc.machine().map(IActionHost::getActionableNode).orElse(null);
@@ -57,17 +62,8 @@ public class QioStorageAdapter implements MEStorage {
             }
             var storageBusOwner = IPlayerRegistry.getMapping(dashboard.getLevel())
                     .getProfileId(host.getOwningPlayerId());
-            var dashboardOwner = dashboard.getOwnerUUID();
-
-            if (!Objects.equals(dashboardOwner, storageBusOwner)) {
-                var securityFreq = dashboard.getSecurity().getFrequency();
-
-                if (securityMode == SecurityMode.PRIVATE) {
-                    return null;
-                } else if (securityMode == SecurityMode.TRUSTED
-                        && !securityFreq.getTrustedUUIDs().contains(storageBusOwner)) {
-                    return null;
-                }
+            if (!utils.canAccess(storageBusOwner, dashboard, dashboard.getLevel().isClientSide())) {
+                return null;
             }
         }
         return freq;
@@ -103,9 +99,8 @@ public class QioStorageAdapter implements MEStorage {
         if (freq == null) {
             return;
         }
-        for (var entry : freq.getItemDataMap().entrySet()) {
-            out.add(AEItemKey.of(entry.getKey().getStack()), entry.getValue().getCount());
-        }
+        // noinspection ConstantConditions
+        freq.forAllStored((stack, value) -> out.add(AEItemKey.of(stack), value));
     }
 
     @Override
