@@ -71,7 +71,7 @@ public class AMItems {
             () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.CELL_COMPONENT_64K,
                     CHEMICAL_CELL_HOUSING.get(), 2.0f, 64, 512, 5));
     public static final RegistryObject<Item> CHEMICAL_CELL_256K = ITEMS.register("chemical_storage_cell_256k",
-            () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.SKY_DUST,
+            () -> new ChemicalStorageCell(properties().stacksTo(1), AEItems.CELL_COMPONENT_256K,
                     CHEMICAL_CELL_HOUSING.get(), 2.5f, 256, 2048, 5));
 
     public static final RegistryObject<Item> PORTABLE_CHEMICAL_CELL_1K = ITEMS.register(
