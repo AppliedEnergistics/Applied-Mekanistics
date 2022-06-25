@@ -5,6 +5,8 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -115,10 +117,12 @@ public class ChemicalContainerItemStrategy
 
     @Override
     public void playFillSound(Player player, MekanismKey what) {
+        player.playNotifySound(SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     @Override
     public void playEmptySound(Player player, MekanismKey what) {
+        player.playNotifySound(SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     @Override
