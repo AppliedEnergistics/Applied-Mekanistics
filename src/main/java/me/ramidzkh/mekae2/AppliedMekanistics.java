@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,11 +16,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
 
 import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
 import me.ramidzkh.mekae2.ae2.GenericStackChemicalStorage;
@@ -65,7 +66,11 @@ public class AppliedMekanistics {
 
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
-        bus.addGenericListener(AEKeyType.class, (RegistryEvent.Register<AEKeyType> event) -> {
+        bus.addListener((RegisterEvent event) -> {
+            if (!event.getRegistryKey().equals(Registry.BLOCK_REGISTRY)) {
+                return;
+            }
+
             AEKeyTypes.register(MekanismKeyType.TYPE);
         });
 
@@ -169,6 +174,6 @@ public class AppliedMekanistics {
     }
 
     private void initializeAttunement() {
-        P2PTunnelAttunement.addItemByTag(AMItems.MEKANISM_TANKS, AMItems.CHEMICAL_P2P_TUNNEL::get);
+        P2PTunnelAttunement.registerAttunementTag(AMItems.CHEMICAL_P2P_TUNNEL::get);
     }
 }

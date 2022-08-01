@@ -1,6 +1,6 @@
 package me.ramidzkh.mekae2;
 
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import me.ramidzkh.mekae2.ae2.AMChemicalStackRenderer;
@@ -17,10 +17,10 @@ public class AppliedMekanisticsClient {
         AMChemicalStackRenderer.initialize(bus);
     }
 
-    private static void registerItemColors(ColorHandlerEvent.Item event) {
+    private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         for (var tier : AMItems.Tier.values()) {
-            event.getItemColors().register(BasicStorageCell::getColor, AMItems.get(tier)::get);
-            event.getItemColors().register(PortableCellItem::getColor, AMItems.getPortableCell(tier)::get);
+            event.register(BasicStorageCell::getColor, AMItems.get(tier)::get);
+            event.register(PortableCellItem::getColor, AMItems.getPortableCell(tier)::get);
         }
     }
 }

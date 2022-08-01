@@ -1,6 +1,6 @@
 package me.ramidzkh.mekae2;
 
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 public enum AMText {
     QIO_FREQUENCY("qio_frequency"),
@@ -12,7 +12,7 @@ public enum AMText {
         this.key = "text.%s.%s".formatted(AppliedMekanistics.ID, key);
     }
 
-    public TranslatableComponent formatted(Object... params) {
-        return new TranslatableComponent(this.key, params);
+    public Component formatted(Object... params) {
+        return Component.translatable(this.key, params);
     }
 }

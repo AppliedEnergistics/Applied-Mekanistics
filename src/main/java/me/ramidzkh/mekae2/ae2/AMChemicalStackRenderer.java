@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -104,13 +103,17 @@ public class AMChemicalStackRenderer implements IAEStackRenderHandler<MekanismKe
 
     @Override
     public List<Component> getTooltip(MekanismKey stack) {
-        var list = new ArrayList<Component>();
-        list.add(getDisplayName(stack));
+        var tooltip = new ArrayList<Component>();
+        tooltip.add(getDisplayName(stack));
 
-        stack.getStack().getAttributes().forEach(attribute -> attribute.addTooltipText(list));
+        stack.getStack().getAttributes().forEach(attribute -> attribute.addTooltipText(tooltip));
 
-        // Append the name of the mod by default as mods such as REI would also add that
-        list.add(new TextComponent(Platform.formatModName(stack.getModId())));
-        return list;
+        // Heuristic: If the last line doesn't include the modname, add it ourselves
+        var modName = Platform.formatModName(stack.getModId());
+        if (tooltip.isEmpty() || !tooltip.get(tooltip.size() - 1).getString().equals(modName)) {
+            tooltip.add(Component.literal(modName));
+        }
+
+        return tooltip;
     }
 }

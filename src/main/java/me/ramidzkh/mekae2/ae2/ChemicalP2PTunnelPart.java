@@ -4,8 +4,8 @@ import java.util.List;
 
 import net.minecraftforge.common.capabilities.Capability;
 
+import me.ramidzkh.mekae2.AppliedMekanistics;
 import me.ramidzkh.mekae2.MekCapabilities;
-import me.ramidzkh.mekae2.ae2.impl.P2PModels;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
@@ -28,10 +28,11 @@ import appeng.api.config.PowerUnits;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
 import appeng.items.parts.PartModels;
+import appeng.parts.p2p.P2PModels;
 
 public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<ChemicalP2PTunnelPart> {
 
-    private static final P2PModels MODELS = new P2PModels("part/chemical_p2p_tunnel");
+    private static final P2PModels MODELS = new P2PModels(AppliedMekanistics.id("part/chemical_p2p_tunnel"));
 
     public ChemicalP2PTunnelPart(IPartItem<?> partItem) {
         super(partItem, self -> List.of(

@@ -50,7 +50,7 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
             var inv = context.getInternalStorage();
 
             // Try to find an extractable resource that fits our filter
-            for (var i = 0; i < adjacentHandler.getTanks(); i++) {
+            for (var i = 0; i < adjacentHandler.getTanks() && remainingTransferAmount > 0; i++) {
                 var resource = HandlerStrategy.getStackInTank(i, adjacentHandler);
 
                 if (resource == null
@@ -75,12 +75,18 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
 
                     if (inserted < amount) {
                         // Be nice and try to give the overflow back
-                        AELog.warn("Extracted %dx%s from adjacent storage and voided it because network refused insert",
-                                amount - inserted, resource);
+                        var leftover = amount - inserted;
+                        leftover -= HandlerStrategy.insert(adjacentHandler, resource, leftover, Actionable.MODULATE);
+                        if (leftover > 0) {
+                            AELog.warn(
+                                    "Extracted %dx%s from adjacent storage and voided it because network refused insert",
+                                    leftover, resource);
+                        }
                     }
 
                     var opsUsed = Math.max(1, inserted / MekanismKeyType.TYPE.getAmountPerOperation());
                     context.reduceOperationsRemaining(opsUsed);
+                    remainingTransferAmount -= inserted;
                 }
             }
 

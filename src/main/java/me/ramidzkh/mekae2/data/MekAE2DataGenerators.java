@@ -1,6 +1,6 @@
 package me.ramidzkh.mekae2.data;
 
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 
 public class MekAE2DataGenerators {
 
@@ -9,11 +9,11 @@ public class MekAE2DataGenerators {
         var existingFileHelper = event.getExistingFileHelper();
 
         var blockTagsProvider = new BlockTagsProvider(generator, existingFileHelper);
-        generator.addProvider(blockTagsProvider);
-        generator.addProvider(new ItemTagsProvider(generator, blockTagsProvider, existingFileHelper));
+        generator.addProvider(true, blockTagsProvider);
+        generator.addProvider(true, new ItemTagsProvider(generator, blockTagsProvider, existingFileHelper));
 
-        generator.addProvider(new BlockModelProvider(generator, existingFileHelper));
-        generator.addProvider(new ItemModelProvider(generator, existingFileHelper));
-        generator.addProvider(new RecipeProvider(generator));
+        generator.addProvider(true, new BlockModelProvider(generator, existingFileHelper));
+        generator.addProvider(true, new ItemModelProvider(generator, existingFileHelper));
+        generator.addProvider(true, new RecipeProvider(generator));
     }
 }

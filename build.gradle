@@ -1,24 +1,9 @@
-buildscript {
-    repositories {
-        maven {
-            name = "MinecraftForge"
-            url = uri("https://files.minecraftforge.net/maven/")
-        }
-
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath(group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.1.+", changing: true)
-    }
-}
-
 plugins {
+    id("net.minecraftforge.gradle") version "5.1.+"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.4.1"
+    id("com.diffplug.spotless") version "6.7.2"
+    id("com.modrinth.minotaur") version "2.3.3"
 }
-
-apply(plugin: "net.minecraftforge.gradle")
 
 group = "me.ramidzkh"
 version = System.getenv("APPMEK_VERSION") ?: "0.0.0"
@@ -58,8 +43,8 @@ dependencies {
     compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api"))
     runtimeOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all"))
 
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
 }
 
 sourceSets {
@@ -209,4 +194,33 @@ System.getenv("CURSEFORGE")?.with { String key ->
             }
         }
     }
+}
+
+////////////////
+// Modrinth
+modrinth {
+    token.set(System.getenv("MODRINTH"))
+    projectId.set("applied-mekanistics")
+    changelog.set("View changelog at [the release page](https://github.com/AppliedEnergistics/Applied-Mekanistics/releases/tag/${version})")
+    versionNumber.set(project.version)
+
+    if (version.contains("alpha")) {
+        versionType.set("alpha")
+    } else if (version.contains("beta")) {
+        versionType.set("beta")
+    } else {
+        versionType.set("release")
+    }
+
+    uploadFile.set(jar)
+    gameVersions.add(minecraft_version)
+
+    dependencies {
+        required.project("ae2")
+        required.project("mekanism")
+    }
+}
+
+tasks.modrinth.onlyIf {
+    System.getenv("MODRINTH")
 }

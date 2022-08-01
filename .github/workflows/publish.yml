@@ -33,8 +33,9 @@ jobs:
         with:
           files: build/libs/Applied-Mekanistics-${{ github.event.release.tag_name }}.jar
           tag_name: ${{ github.event.release.tag_name }}
-      - name: Upload to CurseForge
-        run: ./gradlew curseforge --max-workers 1
+      - name: Upload to external sites
+        run: ./gradlew curseforge modrinth --max-workers 1
         env:
           APPMEK_VERSION: ${{ github.event.release.tag_name }}
           CURSEFORGE: ${{ secrets.CURSEFORGE }}
+          MODRINTH: ${{ secrets.MODRINTH }}

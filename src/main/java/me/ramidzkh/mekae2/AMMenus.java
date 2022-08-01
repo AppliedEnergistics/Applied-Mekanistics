@@ -1,7 +1,6 @@
 package me.ramidzkh.mekae2;
 
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -19,10 +18,6 @@ public class AMMenus {
 
     @SuppressWarnings("RedundantTypeArguments")
     public static void initialize(IEventBus bus) {
-        bus.addGenericListener(MenuType.class, (RegistryEvent.Register<MenuType<?>> event) -> {
-            event.getRegistry().registerAll(PORTABLE_CHEMICAL_CELL_TYPE);
-        });
-
         bus.addListener((FMLClientSetupEvent event) -> event.enqueueWork(() -> {
             InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(PORTABLE_CHEMICAL_CELL_TYPE,
                     MEStorageScreen::new, "/screens/terminals/portable_chemical_cell.json");

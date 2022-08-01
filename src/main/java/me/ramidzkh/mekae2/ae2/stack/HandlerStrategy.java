@@ -29,13 +29,14 @@ class HandlerStrategy {
             @Nullable
             @Override
             public GenericStack getStackInSlot(int slot) {
-                var key = getStackInTank(slot, handler);
+                var stack = handler.getChemicalInTank(slot);
+                var key = MekanismKey.of(stack);
 
                 if (key == null) {
                     return null;
                 }
 
-                return new GenericStack(key, handler.getChemicalInTank(slot).getAmount());
+                return new GenericStack(key, stack.getAmount());
             }
 
             @Override

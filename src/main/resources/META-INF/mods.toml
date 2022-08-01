@@ -13,24 +13,25 @@ modId = "appmek"
 version = "${version}"
 displayName = "Applied Mekanistics"
 description = "Use Mekanism resources through your ME network"
+updateJSONURL = "https://api.modrinth.com/updates/applied-mekanistics/forge_updates.json"
 
 [[dependencies.appmek]]
 modId = "forge"
 mandatory = true
-versionRange = "[40.0.0,41.0.0)"
+versionRange = "[41.0.0,42.0.0)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.appmek]]
 modId = "ae2"
-mandatory = true
-versionRange = "[11.0.0,12.0.0)"
+mandatory = false
+versionRange = "[12.0.0,13.0.0)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.appmek]]
 modId = "mekanism"
 mandatory = true
-versionRange = "[10.2.1,11.0.0)"
+versionRange = "[10.3.0,11.0.0)"
 ordering = "AFTER"
 side = "BOTH"

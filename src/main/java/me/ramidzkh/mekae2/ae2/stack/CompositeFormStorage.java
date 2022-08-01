@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 
@@ -38,7 +37,7 @@ record CompositeFormStorage(Map<Byte, MEStorage> storages) implements MEStorage 
      */
     @Override
     public Component getDescription() {
-        return GuiText.ExternalStorage.text(new TextComponent("Chemicals"));
+        return GuiText.ExternalStorage.text(Component.literal("Chemicals"));
     }
 
     @Override

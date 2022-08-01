@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import me.ramidzkh.mekae2.AppliedMekanistics;
 import mekanism.api.chemical.gas.GasStack;
@@ -22,7 +22,7 @@ public class MekanismKeyType extends AEKeyType {
 
     private MekanismKeyType() {
         super(AppliedMekanistics.id("chemical"), MekanismKey.class,
-                new TranslatableComponent("gui." + AppliedMekanistics.ID + ".chemical"));
+                Component.translatable("gui." + AppliedMekanistics.ID + ".chemical"));
     }
 
     @Nullable

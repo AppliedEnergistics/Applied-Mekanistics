@@ -58,7 +58,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                     .requires(cellComponent)
                     .requires(AEBlocks.ENERGY_CELL)
                     .requires(housing)
-                    .unlockedBy("has_" + housing.getRegistryName().getPath(), has(housing))
+                    .unlockedBy("has_" + housing.builtInRegistryHolder().key().location().getPath(), has(housing))
                     .unlockedBy("has_energy_cell", has(AEBlocks.ENERGY_CELL))
                     .save(consumer);
         }

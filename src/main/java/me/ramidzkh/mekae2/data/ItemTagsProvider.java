@@ -10,6 +10,8 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import me.ramidzkh.mekae2.AMItems;
 import me.ramidzkh.mekae2.AppliedMekanistics;
 
+import appeng.api.features.P2PTunnelAttunement;
+
 public class ItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvider {
 
     public ItemTagsProvider(DataGenerator generator, BlockTagsProvider blockTagsProvider,
@@ -19,10 +21,12 @@ public class ItemTagsProvider extends net.minecraft.data.tags.ItemTagsProvider {
 
     @Override
     protected void addTags() {
-        tag(AMItems.MEKANISM_TANKS).addOptional(new ResourceLocation("mekanism", "basic_chemical_tank"));
-        tag(AMItems.MEKANISM_TANKS).addOptional(new ResourceLocation("mekanism", "advanced_chemical_tank"));
-        tag(AMItems.MEKANISM_TANKS).addOptional(new ResourceLocation("mekanism", "elite_chemical_tank"));
-        tag(AMItems.MEKANISM_TANKS).addOptional(new ResourceLocation("mekanism", "ultimate_chemical_tank"));
-        tag(AMItems.MEKANISM_TANKS).addOptional(new ResourceLocation("mekanism", "creative_chemical_tank"));
+        var tanks = P2PTunnelAttunement.getAttunementTag(AMItems.CHEMICAL_P2P_TUNNEL::get);
+
+        tag(tanks).addOptional(new ResourceLocation("mekanism", "basic_chemical_tank"));
+        tag(tanks).addOptional(new ResourceLocation("mekanism", "advanced_chemical_tank"));
+        tag(tanks).addOptional(new ResourceLocation("mekanism", "elite_chemical_tank"));
+        tag(tanks).addOptional(new ResourceLocation("mekanism", "ultimate_chemical_tank"));
+        tag(tanks).addOptional(new ResourceLocation("mekanism", "creative_chemical_tank"));
     }
 }

@@ -2,6 +2,9 @@ package me.ramidzkh.mekae2.ae2.stack;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +22,7 @@ import appeng.util.BlockApiCache;
 
 public class MekanismStackExportStrategy implements StackExportStrategy {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MekanismStackExportStrategy.class);
     private final Map<Byte, BlockApiCache<? extends IChemicalHandler>> lookups;
     private final Direction fromSide;
 
@@ -34,7 +38,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
     }
 
     @Override
-    public long transfer(StackTransferContext context, AEKey what, long amount, Actionable mode) {
+    public long transfer(StackTransferContext context, AEKey what, long amount) {
         if (!(what instanceof MekanismKey mekanismKey)) {
             return 0;
         }
@@ -60,17 +64,21 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                     context.getActionSource(),
                     Actionable.SIMULATE);
 
-            var wasInserted = HandlerStrategy.insert(storage, what, extracted, mode);
+            var wasInserted = HandlerStrategy.insert(storage, what, extracted, Actionable.MODULATE);
 
             if (wasInserted > 0) {
-                if (mode == Actionable.MODULATE) {
-                    StorageHelper.poweredExtraction(
-                            context.getEnergySource(),
-                            inv.getInventory(),
-                            what,
-                            wasInserted,
-                            context.getActionSource(),
-                            Actionable.MODULATE);
+                extracted = StorageHelper.poweredExtraction(
+                        context.getEnergySource(),
+                        inv.getInventory(),
+                        what,
+                        wasInserted,
+                        context.getActionSource(),
+                        Actionable.MODULATE);
+
+                wasInserted = HandlerStrategy.insert(storage, what, extracted, Actionable.MODULATE);
+
+                if (wasInserted < extracted) {
+                    LOGGER.error("Storage export issue, voided {}x{}", extracted - wasInserted, what);
                 }
 
                 return wasInserted;

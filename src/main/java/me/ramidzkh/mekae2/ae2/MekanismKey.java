@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -34,6 +35,7 @@ public class MekanismKey extends AEKey {
     private final ChemicalStack<?> stack;
 
     private MekanismKey(ChemicalStack<?> stack) {
+        super(stack.getTextComponent());
         this.stack = stack;
     }
 
@@ -89,6 +91,11 @@ public class MekanismKey extends AEKey {
     @Override
     public String getModId() {
         return stack.getTypeRegistryName().getNamespace();
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return stack.getTypeRegistryName();
     }
 
     @Override

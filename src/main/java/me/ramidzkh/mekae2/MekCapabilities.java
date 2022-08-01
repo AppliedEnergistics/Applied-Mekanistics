@@ -8,7 +8,6 @@ import mekanism.api.chemical.gas.IGasHandler;
 import mekanism.api.chemical.infuse.IInfusionHandler;
 import mekanism.api.chemical.pigment.IPigmentHandler;
 import mekanism.api.chemical.slurry.ISlurryHandler;
-import mekanism.api.heat.IHeatHandler;
 
 public class MekCapabilities {
 
@@ -24,10 +23,6 @@ public class MekCapabilities {
             });
 
     public static final Capability<ISlurryHandler> SLURRY_HANDLER_CAPABILITY = CapabilityManager
-            .get(new CapabilityToken<>() {
-            });
-
-    public static final Capability<IHeatHandler> HEAT_HANDLER_CAPABILITY = CapabilityManager
             .get(new CapabilityToken<>() {
             });
 }
