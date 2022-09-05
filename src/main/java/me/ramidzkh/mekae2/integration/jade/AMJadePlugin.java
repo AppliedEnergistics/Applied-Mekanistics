@@ -1,12 +1,10 @@
 package me.ramidzkh.mekae2.integration.jade;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 
-import mcp.mobius.waila.api.IWailaClientRegistration;
-import mcp.mobius.waila.api.IWailaPlugin;
-import mcp.mobius.waila.api.TooltipPosition;
-import mcp.mobius.waila.api.WailaPlugin;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
 
 /**
  * Plugin to remove the mekanism-added chemical handler lines for interfaces and pattern providers.
@@ -22,9 +20,9 @@ public class AMJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
-        // Run in TAIL to be able to remove Mekanism's chemical tooltips
-        registration.registerComponentProvider((tooltip, blockAccessor, pluginConfig) -> {
+        registration.addTooltipCollectedCallback((tooltip, accessor) -> {
             // This is ugly, but nothing else worked perfectly due to Jade using old server data for new blocks.
+            // TODO: check if this is still needed in 1.19+
             for (var loc : CHEMICALS) {
                 if (tooltip.get(loc).size() != 9) {
                     return;
@@ -35,6 +33,6 @@ public class AMJadePlugin implements IWailaPlugin {
             for (var loc : CHEMICALS) {
                 tooltip.remove(loc);
             }
-        }, TooltipPosition.TAIL, Block.class); // We must use Block.class because of the desyncs mentioned above.
+        });
     }
 }
