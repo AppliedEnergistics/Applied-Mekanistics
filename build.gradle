@@ -45,7 +45,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
-    implementation(fg.deobf("appeng:appliedenergistics2:${ae2_version}"))
+    implementation(fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}"))
 
     compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api"))
     runtimeOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all"))

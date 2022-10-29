@@ -8,6 +8,7 @@ import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 
 import appeng.api.stacks.AEKey;
+import appeng.items.storage.StorageTier;
 import appeng.items.tools.powered.PortableCellItem;
 
 public class ChemicalPortableCellItem extends PortableCellItem {

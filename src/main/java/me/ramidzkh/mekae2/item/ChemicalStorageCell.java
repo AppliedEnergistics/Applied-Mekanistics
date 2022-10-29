@@ -9,12 +9,13 @@ import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 
 import appeng.api.stacks.AEKey;
 import appeng.items.storage.BasicStorageCell;
+import appeng.items.storage.StorageTier;
 
 public class ChemicalStorageCell extends BasicStorageCell {
 
-    public ChemicalStorageCell(Properties properties, ItemLike coreItem, ItemLike housingItem, double idleDrain,
-            int kilobytes, int bytesPerType, int totalTypes) {
-        super(properties, coreItem, housingItem, idleDrain, kilobytes, bytesPerType, totalTypes, MekanismKeyType.TYPE);
+    public ChemicalStorageCell(Properties properties, StorageTier tier, ItemLike housingItem) {
+        super(properties, tier.componentSupplier().get(), housingItem, tier.idleDrain(), tier.bytes() / 1024,
+                tier.bytes() / 128, 5, MekanismKeyType.TYPE);
     }
 
     @Override
