@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[39,)"
+loaderVersion = "[43,)"
 #updateJSONURL=""
 issueTrackerURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics/issues"
 displayURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics#readme"
@@ -25,7 +25,7 @@ side = "BOTH"
 [[dependencies.appmek]]
 modId = "ae2"
 mandatory = false
-versionRange = "[12.0.0,13.0.0)"
+versionRange = "[12.8.4,13.0.0)"
 ordering = "AFTER"
 side = "BOTH"
 
