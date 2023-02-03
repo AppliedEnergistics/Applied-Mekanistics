@@ -13,11 +13,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import me.ramidzkh.mekae2.AMText;
 import mekanism.api.Action;
 import mekanism.api.MekanismAPI;
+import mekanism.api.inventory.IHashedItem;
 import mekanism.api.inventory.qio.IQIOComponent;
 import mekanism.api.inventory.qio.IQIOFrequency;
 import mekanism.api.security.SecurityMode;
-import mekanism.common.content.qio.QIOFrequency;
-import mekanism.common.lib.inventory.HashedItem;
 
 import appeng.api.config.Actionable;
 import appeng.api.features.IPlayerRegistry;
@@ -33,7 +32,7 @@ import appeng.api.storage.MEStorage;
  * block entity class.
  */
 public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> implements MEStorage {
-    private static final Map<HashedItem, AEItemKey> CACHE = new WeakHashMap<>();
+    private static final Map<IHashedItem, AEItemKey> CACHE = new WeakHashMap<>();
     private final DASHBOARD dashboard;
     @Nullable
     private final Direction queriedSide;
@@ -107,14 +106,10 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
         }
 
         // Fixes #19
-        if (freq instanceof QIOFrequency internal) {
+        freq.forAllHashedStored((type, count) -> {
             // noinspection ConstantConditions
-            internal.getItemDataMap().forEach((type, data) -> out
-                    .add(CACHE.computeIfAbsent(type, it -> AEItemKey.of(it.getStack())), data.getCount()));
-        } else {
-            // noinspection ConstantConditions
-            freq.forAllStored((stack, value) -> out.add(AEItemKey.of(stack), value));
-        }
+            out.add(CACHE.computeIfAbsent(type, it -> AEItemKey.of(it.getInternalStack())), count);
+        });
     }
 
     @Override
