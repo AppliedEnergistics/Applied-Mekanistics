@@ -1,5 +1,8 @@
 package me.ramidzkh.mekae2.qio;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Direction;
@@ -10,6 +13,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import me.ramidzkh.mekae2.AMText;
 import mekanism.api.Action;
 import mekanism.api.MekanismAPI;
+import mekanism.api.inventory.IHashedItem;
 import mekanism.api.inventory.qio.IQIOComponent;
 import mekanism.api.inventory.qio.IQIOFrequency;
 import mekanism.api.security.SecurityMode;
@@ -28,6 +32,7 @@ import appeng.api.storage.MEStorage;
  * block entity class.
  */
 public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> implements MEStorage {
+    private static final Map<IHashedItem, AEItemKey> CACHE = new WeakHashMap<>();
     private final DASHBOARD dashboard;
     @Nullable
     private final Direction queriedSide;
@@ -99,8 +104,12 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
         if (freq == null) {
             return;
         }
-        // noinspection ConstantConditions
-        freq.forAllStored((stack, value) -> out.add(AEItemKey.of(stack), value));
+
+        // Fixes #19
+        freq.forAllHashedStored((type, count) -> {
+            // noinspection ConstantConditions
+            out.add(CACHE.computeIfAbsent(type, it -> AEItemKey.of(it.getInternalStack())), count);
+        });
     }
 
     @Override

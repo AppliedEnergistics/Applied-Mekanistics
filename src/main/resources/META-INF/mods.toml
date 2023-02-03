@@ -32,6 +32,6 @@ side = "BOTH"
 [[dependencies.appmek]]
 modId = "mekanism"
 mandatory = true
-versionRange = "[10.3.0,11.0.0)"
+versionRange = "[10.3.7,11.0.0)"
 ordering = "AFTER"
 side = "BOTH"
