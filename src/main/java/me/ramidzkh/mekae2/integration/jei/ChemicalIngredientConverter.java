@@ -1,7 +1,8 @@
-package me.ramidzkh.mekae2.ae2;
+package me.ramidzkh.mekae2.integration.jei;
 
 import org.jetbrains.annotations.Nullable;
 
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.chemical.ChemicalStack;
 import mezz.jei.api.ingredients.IIngredientType;

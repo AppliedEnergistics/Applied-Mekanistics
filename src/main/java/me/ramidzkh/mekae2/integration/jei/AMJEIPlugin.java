@@ -1,8 +1,8 @@
-package me.ramidzkh.mekae2;
+package me.ramidzkh.mekae2.integration.jei;
 
 import net.minecraft.resources.ResourceLocation;
 
-import me.ramidzkh.mekae2.ae2.ChemicalIngredientConverter;
+import me.ramidzkh.mekae2.AppliedMekanistics;
 import mekanism.api.MekanismAPI;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
