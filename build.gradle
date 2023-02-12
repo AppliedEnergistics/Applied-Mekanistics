@@ -29,9 +29,22 @@ repositories {
     }
 
     maven {
-        url "https://www.cursemaven.com"
+        name = "Curseforge"
+        url = uri("https://www.cursemaven.com")
+
         content {
             includeGroup "curse.maven"
+        }
+    }
+
+    maven {
+        name = "shedaniel"
+        url = uri("https://maven.shedaniel.me/")
+
+        content {
+            includeGroup "me.shedaniel"
+            includeGroup "me.shedaniel.cloth"
+            includeGroup "dev.architectury"
         }
     }
 
@@ -52,6 +65,11 @@ dependencies {
 
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+
+    compileOnly "me.shedaniel.cloth:basic-math:0.6.1"
+    compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
+    compileOnly fg.deobf("dev.architectury:architectury-forge:6.2.46")
+    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:9.1.530")
 
     implementation(fg.deobf("curse.maven:jade-324717:${jade_id}"))
 }
