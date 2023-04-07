@@ -7,7 +7,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
 import me.ramidzkh.mekae2.MekCapabilities;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.util.ChemicalBridge;
+import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
 
 import appeng.api.behaviors.StackImportStrategy;
@@ -16,6 +19,7 @@ import appeng.api.config.Actionable;
 import appeng.core.AELog;
 import appeng.util.BlockApiCache;
 
+@SuppressWarnings("UnstableApiUsage")
 public class MekanismStackImportStrategy implements StackImportStrategy {
 
     private final List<BlockApiCache<? extends IChemicalHandler>> lookups;
@@ -51,7 +55,8 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
 
             // Try to find an extractable resource that fits our filter
             for (var i = 0; i < adjacentHandler.getTanks() && remainingTransferAmount > 0; i++) {
-                var resource = HandlerStrategy.getStackInTank(i, adjacentHandler);
+                var stack = adjacentHandler.getChemicalInTank(i);
+                var resource = MekanismKey.of(stack);
 
                 if (resource == null
                         // Regard a filter that is set on the bus
@@ -66,8 +71,9 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
                         context.getActionSource());
 
                 // Try to simulate-extract it
-                var amount = HandlerStrategy.extract(adjacentHandler, resource, amountForThisResource,
-                        Actionable.MODULATE);
+                var amount = adjacentHandler
+                        .extractChemical(ChemicalBridge.withAmount(stack, amountForThisResource), Action.EXECUTE)
+                        .getAmount();
 
                 if (amount > 0) {
                     var inserted = inv.getInventory().insert(resource, amount, Actionable.MODULATE,
@@ -76,7 +82,9 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
                     if (inserted < amount) {
                         // Be nice and try to give the overflow back
                         var leftover = amount - inserted;
-                        leftover -= HandlerStrategy.insert(adjacentHandler, resource, leftover, Actionable.MODULATE);
+                        leftover = adjacentHandler
+                                .insertChemical(ChemicalBridge.withAmount(stack, leftover), Action.EXECUTE).getAmount();
+
                         if (leftover > 0) {
                             AELog.warn(
                                     "Extracted %dx%s from adjacent storage and voided it because network refused insert",
