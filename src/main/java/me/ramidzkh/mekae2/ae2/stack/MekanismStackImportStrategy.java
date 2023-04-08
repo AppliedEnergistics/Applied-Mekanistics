@@ -97,8 +97,6 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
                     remainingTransferAmount -= inserted;
                 }
             }
-
-            return false;
         }
 
         return false;
