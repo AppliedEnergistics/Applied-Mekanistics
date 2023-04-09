@@ -7,6 +7,8 @@ import net.minecraftforge.api.distmarker.Dist;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
+import me.shedaniel.rei.api.common.plugins.PluginManager;
+import me.shedaniel.rei.api.common.registry.ReloadStage;
 import me.shedaniel.rei.forge.REIPlugin;
 import mekanism.api.MekanismAPI;
 import mezz.jei.api.ingredients.IIngredientType;
@@ -17,6 +19,10 @@ import appeng.api.integrations.rei.IngredientConverters;
 public class AMREIPlugin implements REIClientPlugin {
 
     public AMREIPlugin() {
+    }
+
+    @Override
+    public void postStage(PluginManager<REIClientPlugin> manager, ReloadStage stage) {
         var helper = MekanismAPI.getJeiHelper();
 
         IngredientConverters
