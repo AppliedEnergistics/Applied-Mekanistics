@@ -11,6 +11,8 @@ import net.minecraft.server.level.ServerLevel;
 
 import me.ramidzkh.mekae2.MekCapabilities;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
+import me.ramidzkh.mekae2.util.ChemicalBridge;
+import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
 
 import appeng.api.behaviors.StackExportStrategy;
@@ -43,48 +45,44 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        for (var entry : lookups.entrySet()) {
-            if (entry.getKey() != mekanismKey.getForm()) {
-                continue;
-            }
+        var storage = lookups.get(mekanismKey.getForm()).find(fromSide);
 
-            var storage = entry.getValue().find(fromSide);
+        if (storage == null) {
+            return 0;
+        }
 
-            if (storage == null) {
-                continue;
-            }
+        var inv = context.getInternalStorage();
 
-            var inv = context.getInternalStorage();
+        var extracted = StorageHelper.poweredExtraction(
+                context.getEnergySource(),
+                inv.getInventory(),
+                what,
+                amount,
+                context.getActionSource(),
+                Actionable.SIMULATE);
 
-            var extracted = StorageHelper.poweredExtraction(
+        var wasInserted = extracted
+                - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), extracted),
+                        Action.SIMULATE).getAmount();
+
+        if (wasInserted > 0) {
+            extracted = StorageHelper.poweredExtraction(
                     context.getEnergySource(),
                     inv.getInventory(),
                     what,
-                    amount,
+                    wasInserted,
                     context.getActionSource(),
-                    Actionable.SIMULATE);
+                    Actionable.MODULATE);
 
-            var wasInserted = HandlerStrategy.insert(storage, what, extracted, Actionable.SIMULATE);
+            wasInserted = extracted
+                    - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), extracted),
+                            Action.EXECUTE).getAmount();
 
-            if (wasInserted > 0) {
-                extracted = StorageHelper.poweredExtraction(
-                        context.getEnergySource(),
-                        inv.getInventory(),
-                        what,
-                        wasInserted,
-                        context.getActionSource(),
-                        Actionable.MODULATE);
-
-                wasInserted = HandlerStrategy.insert(storage, what, extracted, Actionable.MODULATE);
-
-                if (wasInserted < extracted) {
-                    LOGGER.error("Storage export issue, voided {}x{}", extracted - wasInserted, what);
-                }
-
-                return wasInserted;
+            if (wasInserted < extracted) {
+                LOGGER.error("Storage export issue, voided {}x{}", extracted - wasInserted, what);
             }
 
-            return 0;
+            return wasInserted;
         }
 
         return 0;
@@ -96,20 +94,14 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        for (var entry : lookups.entrySet()) {
-            if (entry.getKey() != mekanismKey.getForm()) {
-                continue;
-            }
+        var storage = lookups.get(mekanismKey.getForm()).find(fromSide);
 
-            var storage = entry.getValue().find(fromSide);
-
-            if (storage == null) {
-                continue;
-            }
-
-            return HandlerStrategy.insert(storage, what, amount, mode);
+        if (storage == null) {
+            return 0;
         }
 
-        return 0;
+        return amount - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), amount),
+                Action.fromFluidAction(mode.getFluidAction())).getAmount();
+
     }
 }
