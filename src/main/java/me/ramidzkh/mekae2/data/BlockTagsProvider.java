@@ -1,19 +1,23 @@
 package me.ramidzkh.mekae2.data;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import me.ramidzkh.mekae2.AppliedMekanistics;
 
-public class BlockTagsProvider extends net.minecraft.data.tags.BlockTagsProvider {
+public class BlockTagsProvider extends net.minecraftforge.common.data.BlockTagsProvider {
 
-    public BlockTagsProvider(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper) {
-        super(generator, AppliedMekanistics.ID, existingFileHelper);
+    public BlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
+            @Nullable ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, AppliedMekanistics.ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags() {
+    protected void addTags(HolderLookup.Provider provider) {
     }
 }

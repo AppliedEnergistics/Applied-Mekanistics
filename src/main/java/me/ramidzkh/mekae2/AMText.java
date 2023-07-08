@@ -3,6 +3,8 @@ package me.ramidzkh.mekae2;
 import net.minecraft.network.chat.Component;
 
 public enum AMText {
+    CHEMICAL("chemical"),
+    CREATIVE_TAB("creative_tab"),
     QIO_FREQUENCY("qio_frequency"),
     ;
 

@@ -18,10 +18,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import me.ramidzkh.mekae2.AppliedMekanistics;
 import mekanism.api.inventory.qio.IQIOComponent;
 
-import appeng.api.storage.IStorageMonitorableAccessor;
+import appeng.api.features.IPlayerRegistry;
+import appeng.api.networking.GridHelper;
+import appeng.api.storage.MEStorage;
 
 public class QioSupport {
-    private static final Capability<IStorageMonitorableAccessor> STORAGE_MONITORABLE = CapabilityManager
+    public static final Capability<MEStorage> STORAGE = CapabilityManager
             .get(new CapabilityToken<>() {
             });
     private static final ResourceLocation DASHBOARD = new ResourceLocation("mekanism", "qio_dashboard");
@@ -40,14 +42,35 @@ public class QioSupport {
                     @Override
                     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability,
                             @Nullable Direction arg) {
-                        if (capability == STORAGE_MONITORABLE) {
-                            return LazyOptional.of(() -> (IStorageMonitorableAccessor) querySrc -> {
-                                var adapter = new QioStorageAdapter<>((BlockEntity & IQIOComponent) object, arg,
-                                        querySrc);
-                                // Make sure that we only allow non-null frequencies.
-                                return adapter.getFrequency() == null ? null : adapter;
-                            }).cast();
+                        out: if (capability == STORAGE && arg != null) {
+                            // guess the source...
+                            // if you're trying to qio across a compact machine wall or something, sorry!
+                            var host = GridHelper.getNodeHost(object.getLevel(), object.getBlockPos().relative(arg));
+
+                            if (host == null) {
+                                break out;
+                            }
+
+                            var source = host.getGridNode(arg.getOpposite());
+
+                            // I don't know of any full-block nodes which query inventories, but we'll see
+                            if (source == null) {
+                                source = host.getGridNode(null);
+                            }
+
+                            if (source == null) {
+                                break out;
+                            }
+
+                            var owner = IPlayerRegistry.getMapping(object.getLevel())
+                                    .getProfileId(source.getOwningPlayerId());
+                            var adapter = new QioStorageAdapter<>((BlockEntity & IQIOComponent) object, arg, owner);
+
+                            if (adapter.getFrequency() != null) {
+                                return LazyOptional.of(() -> adapter).cast();
+                            }
                         }
+
                         return LazyOptional.empty();
                     }
                 });

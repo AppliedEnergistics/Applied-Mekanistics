@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -67,7 +67,7 @@ public class AppliedMekanistics {
         bus.addListener(MekAE2DataGenerators::onGatherData);
 
         bus.addListener((RegisterEvent event) -> {
-            if (!event.getRegistryKey().equals(Registry.BLOCK_REGISTRY)) {
+            if (!event.getRegistryKey().equals(Registries.BLOCK)) {
                 return;
             }
 
@@ -134,7 +134,6 @@ public class AppliedMekanistics {
 
             @Override
             public void openChestGui(Player player, IChestOrDrive chest, ICellHandler cellHandler, ItemStack cell) {
-                chest.getUp();
                 MenuOpener.open(MEStorageMenu.TYPE, player,
                         MenuLocators.forBlockEntity((BlockEntity) chest));
             }

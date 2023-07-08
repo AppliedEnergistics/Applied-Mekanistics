@@ -13,8 +13,9 @@ import appeng.items.tools.powered.PortableCellItem;
 
 public class ChemicalPortableCellItem extends PortableCellItem {
 
-    public ChemicalPortableCellItem(MenuType<?> menuType, StorageTier tier, Properties props) {
-        super(MekanismKeyType.TYPE, menuType, tier, props);
+    public ChemicalPortableCellItem(int totalTypes, MenuType<?> menuType, StorageTier tier, Properties props,
+            int defaultColor) {
+        super(MekanismKeyType.TYPE, totalTypes, menuType, tier, props, defaultColor);
     }
 
     @Override

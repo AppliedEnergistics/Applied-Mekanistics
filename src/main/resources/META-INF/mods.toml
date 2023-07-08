@@ -18,20 +18,20 @@ updateJSONURL = "https://api.modrinth.com/updates/applied-mekanistics/forge_upda
 [[dependencies.appmek]]
 modId = "forge"
 mandatory = true
-versionRange = "[43.0.0,44.0.0)"
+versionRange = "[47.0.0,48.0.0)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.appmek]]
 modId = "ae2"
 mandatory = false
-versionRange = "[12.8.4,13.0.0)"
+versionRange = "[15.0.0,16.0.0)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.appmek]]
 modId = "mekanism"
 mandatory = true
-versionRange = "[10.3.7,11.0.0)"
+versionRange = "[10.3.9,11.0.0)"
 ordering = "AFTER"
 side = "BOTH"

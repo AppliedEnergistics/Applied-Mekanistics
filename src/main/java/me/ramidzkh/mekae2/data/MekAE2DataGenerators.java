@@ -6,14 +6,17 @@ public class MekAE2DataGenerators {
 
     public static void onGatherData(GatherDataEvent event) {
         var generator = event.getGenerator();
+        var packOutput = generator.getPackOutput();
+        var lookupProvider = event.getLookupProvider();
         var existingFileHelper = event.getExistingFileHelper();
 
-        var blockTagsProvider = new BlockTagsProvider(generator, existingFileHelper);
+        var blockTagsProvider = new BlockTagsProvider(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(true, blockTagsProvider);
-        generator.addProvider(true, new ItemTagsProvider(generator, blockTagsProvider, existingFileHelper));
+        generator.addProvider(true, new ItemTagsProvider(packOutput, lookupProvider,
+                blockTagsProvider.contentsGetter(), existingFileHelper));
 
-        generator.addProvider(true, new BlockModelProvider(generator, existingFileHelper));
-        generator.addProvider(true, new ItemModelProvider(generator, existingFileHelper));
-        generator.addProvider(true, new RecipeProvider(generator));
+        generator.addProvider(true, new BlockModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(true, new ItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(true, new RecipeProvider(packOutput));
     }
 }

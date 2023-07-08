@@ -1,6 +1,7 @@
 package me.ramidzkh.mekae2.qio;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +20,6 @@ import mekanism.api.inventory.qio.IQIOFrequency;
 import mekanism.api.security.SecurityMode;
 
 import appeng.api.config.Actionable;
-import appeng.api.features.IPlayerRegistry;
-import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
@@ -34,15 +33,13 @@ import appeng.api.storage.MEStorage;
 public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> implements MEStorage {
     private static final Map<IHashedItem, AEItemKey> CACHE = new WeakHashMap<>();
     private final DASHBOARD dashboard;
-    @Nullable
-    private final Direction queriedSide;
-    private final IActionSource querySrc;
+    private final @Nullable Direction queriedSide;
+    private final @Nullable UUID owner;
 
-    public QioStorageAdapter(DASHBOARD dashboard, @Nullable Direction queriedSide,
-            IActionSource querySrc) {
+    public QioStorageAdapter(DASHBOARD dashboard, @Nullable Direction queriedSide, @Nullable UUID owner) {
         this.dashboard = dashboard;
         this.queriedSide = queriedSide;
-        this.querySrc = querySrc;
+        this.owner = owner;
     }
 
     @Nullable
@@ -61,13 +58,7 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
         var securityMode = utils.getSecurityMode(dashboard, dashboard.getLevel().isClientSide());
         if (securityMode != SecurityMode.PUBLIC) {
             // Private or trusted: the player who placed the storage bus must have dashboard access.
-            var host = querySrc.machine().map(IActionHost::getActionableNode).orElse(null);
-            if (host == null) {
-                return null;
-            }
-            var storageBusOwner = IPlayerRegistry.getMapping(dashboard.getLevel())
-                    .getProfileId(host.getOwningPlayerId());
-            if (!utils.canAccess(storageBusOwner, dashboard, dashboard.getLevel().isClientSide())) {
+            if (!utils.canAccess(owner, dashboard, dashboard.getLevel().isClientSide())) {
                 return null;
             }
         }

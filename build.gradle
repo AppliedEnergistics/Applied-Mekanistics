@@ -20,8 +20,8 @@ repositories {
     }
 
     maven {
-        name = "Progwml6 maven"
-        url = uri("https://dvs1.progwml6.com/files/maven/")
+        name = "Jared maven"
+        url = uri("https://maven.blamejared.com/")
 
         content {
             includeGroup("mezz.jei")

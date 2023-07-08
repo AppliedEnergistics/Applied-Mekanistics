@@ -1,12 +1,18 @@
 package me.ramidzkh.mekae2.ae2;
 
+import java.util.stream.Stream;
+
 import javax.annotation.Nullable;
+
+import com.google.common.collect.Streams;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
 
+import me.ramidzkh.mekae2.AMText;
 import me.ramidzkh.mekae2.AppliedMekanistics;
+import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
 import mekanism.api.chemical.pigment.PigmentStack;
@@ -21,8 +27,7 @@ public class MekanismKeyType extends AEKeyType {
     public static final AEKeyType TYPE = new MekanismKeyType();
 
     private MekanismKeyType() {
-        super(AppliedMekanistics.id("chemical"), MekanismKey.class,
-                Component.translatable("gui." + AppliedMekanistics.ID + ".chemical"));
+        super(AppliedMekanistics.id("chemical"), MekanismKey.class, AMText.CHEMICAL.formatted());
     }
 
     @Nullable
@@ -47,6 +52,15 @@ public class MekanismKeyType extends AEKeyType {
             case MekanismKey.SLURRY -> MekanismKey.of(SlurryStack.readFromNBT(tag));
             default -> null;
         };
+    }
+
+    @Override
+    public Stream<TagKey<?>> getTagNames() {
+        return Streams.concat(
+                MekanismAPI.gasRegistry().tags().getTagNames(),
+                MekanismAPI.infuseTypeRegistry().tags().getTagNames(),
+                MekanismAPI.pigmentRegistry().tags().getTagNames(),
+                MekanismAPI.slurryRegistry().tags().getTagNames());
     }
 
     // Copied from AEFluidKeys

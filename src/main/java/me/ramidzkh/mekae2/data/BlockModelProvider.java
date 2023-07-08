@@ -2,7 +2,7 @@ package me.ramidzkh.mekae2.data;
 
 import java.util.Locale;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -15,8 +15,8 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
 
     private static final ResourceLocation DRIVE_CELL = AppEng.makeId("block/drive/drive_cell");
 
-    public BlockModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, AppliedMekanistics.ID, existingFileHelper);
+    public BlockModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, AppliedMekanistics.ID, existingFileHelper);
 
         existingFileHelper.trackGenerated(DRIVE_CELL, MODEL);
     }

@@ -1,6 +1,6 @@
 package me.ramidzkh.mekae2.data;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -19,8 +19,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private static final ResourceLocation PORTABLE_CELL_LED = AppEng.makeId("item/portable_cell_led");
     private static final ResourceLocation OSMIUM_BLOCK = new ResourceLocation("mekanism", "block/block_osmium");
 
-    public ItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, AppliedMekanistics.ID, existingFileHelper);
+    public ItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, AppliedMekanistics.ID, existingFileHelper);
 
         existingFileHelper.trackGenerated(P2P_TUNNEL_BASE_ITEM, MODEL);
         existingFileHelper.trackGenerated(P2P_TUNNEL_BASE_PART, MODEL);

@@ -3,8 +3,9 @@ package me.ramidzkh.mekae2.data;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -19,13 +20,13 @@ import appeng.core.definitions.AEItems;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
-    public RecipeProvider(DataGenerator generator) {
-        super(generator);
+    public RecipeProvider(PackOutput output) {
+        super(output);
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(AMItems.CHEMICAL_CELL_HOUSING::get)
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AMItems.CHEMICAL_CELL_HOUSING::get)
                 .pattern("QRQ")
                 .pattern("R R")
                 .pattern("OOO")
@@ -48,12 +49,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
             var tierName = tier.toString().toLowerCase(Locale.ROOT);
 
-            ShapelessRecipeBuilder.shapeless(AMItems.get(tier).get())
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, AMItems.get(tier)::get)
                     .requires(housing)
                     .requires(cellComponent)
                     .unlockedBy("has_cell_component" + tierName, has(cellComponent))
                     .save(consumer);
-            ShapelessRecipeBuilder.shapeless(AMItems.getPortableCell(tier)::get)
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, AMItems.getPortableCell(tier)::get)
                     .requires(AEBlocks.CHEST)
                     .requires(cellComponent)
                     .requires(AEBlocks.ENERGY_CELL)
