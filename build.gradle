@@ -1,8 +1,8 @@
 plugins {
-    id("net.minecraftforge.gradle") version "5.1.+"
+    id("net.minecraftforge.gradle") version "6.0.8"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.7.2"
-    id("com.modrinth.minotaur") version "2.3.3"
+    id("com.diffplug.spotless") version "6.19.0"
+    id("com.modrinth.minotaur") version "2.8.1"
 }
 
 group = "me.ramidzkh"
@@ -108,9 +108,6 @@ minecraft {
 
         data {
             with(commonRunProperties)
-            // ForgeGradle will just force-exit the Gradle Daemon which fails our builds in case
-            // a daemon is used for any reason.
-            forceExit false
             args("--mod", "appmek", "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources"))
         }
     }

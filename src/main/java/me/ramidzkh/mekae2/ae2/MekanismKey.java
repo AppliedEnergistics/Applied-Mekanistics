@@ -118,13 +118,13 @@ public class MekanismKey extends AEKey {
 
     @Override
     public boolean isTagged(TagKey<?> tag) {
-        if (stack.getType()instanceof Gas gas) {
+        if (stack.getType() instanceof Gas gas) {
             return tag.registry().equals(MekanismAPI.gasRegistryName()) && gas.is((TagKey<Gas>) tag);
-        } else if (stack.getType()instanceof InfuseType infuse) {
+        } else if (stack.getType() instanceof InfuseType infuse) {
             return tag.registry().equals(MekanismAPI.infuseTypeRegistryName()) && infuse.is((TagKey<InfuseType>) tag);
-        } else if (stack.getType()instanceof Pigment pigment) {
+        } else if (stack.getType() instanceof Pigment pigment) {
             return tag.registry().equals(MekanismAPI.pigmentRegistryName()) && pigment.is((TagKey<Pigment>) tag);
-        } else if (stack.getType()instanceof Slurry slurry) {
+        } else if (stack.getType() instanceof Slurry slurry) {
             return tag.registry().equals(MekanismAPI.slurryRegistryName()) && slurry.is((TagKey<Slurry>) tag);
         } else {
             throw new UnsupportedOperationException();

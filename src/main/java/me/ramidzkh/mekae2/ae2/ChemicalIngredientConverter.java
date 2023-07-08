@@ -10,7 +10,7 @@ import appeng.api.integrations.jei.IngredientConverter;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 
-public record ChemicalIngredientConverter<S extends ChemicalStack<?>> (
+public record ChemicalIngredientConverter<S extends ChemicalStack<?>>(
         IIngredientType<S> type) implements IngredientConverter<S> {
 
     @Override
@@ -21,7 +21,7 @@ public record ChemicalIngredientConverter<S extends ChemicalStack<?>> (
     @Nullable
     @Override
     public S getIngredientFromStack(GenericStack stack) {
-        if (stack.what()instanceof MekanismKey key) {
+        if (stack.what() instanceof MekanismKey key) {
             return ChemicalBridge.withAmount((S) key.getStack(), Math.max(1, stack.amount()));
         } else {
             return null;

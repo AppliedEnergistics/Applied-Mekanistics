@@ -131,7 +131,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
         }
     }
 
-    public record CapabilitySet<C> (Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
+    public record CapabilitySet<C>(Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
         private <P extends MultipleCapabilityP2PTunnelPart<P>> CapabilitySetInner<C, P> toInner(P part) {
             return new CapabilitySetInner<>(new CapabilityGuard<>(part, capability(), emptyHandler()),
                     new EmptyCapabilityGuard<>(part, capability(), emptyHandler()),
@@ -140,7 +140,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
         }
     }
 
-    private record CapabilitySetInner<C, P extends MultipleCapabilityP2PTunnelPart<P>> (CapabilityGuard<C, P> guard,
+    private record CapabilitySetInner<C, P extends MultipleCapabilityP2PTunnelPart<P>>(CapabilityGuard<C, P> guard,
             CapabilityGuard<C, P> empty,
             C inputHandler,
             C outputHandler) {
