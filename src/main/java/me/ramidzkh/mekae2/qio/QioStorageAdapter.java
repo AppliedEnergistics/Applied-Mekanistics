@@ -13,10 +13,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import me.ramidzkh.mekae2.AMText;
 import mekanism.api.Action;
-import mekanism.api.MekanismAPI;
 import mekanism.api.inventory.IHashedItem;
 import mekanism.api.inventory.qio.IQIOComponent;
 import mekanism.api.inventory.qio.IQIOFrequency;
+import mekanism.api.security.ISecurityUtils;
 import mekanism.api.security.SecurityMode;
 
 import appeng.api.config.Actionable;
@@ -54,7 +54,7 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
             return null;
         }
         // Check security.
-        var utils = MekanismAPI.getSecurityUtils();
+        var utils = ISecurityUtils.INSTANCE;
         var securityMode = utils.getSecurityMode(dashboard, dashboard.getLevel().isClientSide());
         if (securityMode != SecurityMode.PUBLIC) {
             // Private or trusted: the player who placed the storage bus must have dashboard access.

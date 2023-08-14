@@ -3,7 +3,7 @@ package me.ramidzkh.mekae2;
 import net.minecraft.resources.ResourceLocation;
 
 import me.ramidzkh.mekae2.ae2.ChemicalIngredientConverter;
-import mekanism.api.MekanismAPI;
+import mekanism.api.IMekanismAccess;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 
@@ -13,7 +13,7 @@ import appeng.api.integrations.jei.IngredientConverters;
 public class AMJEIPlugin implements IModPlugin {
 
     public AMJEIPlugin() {
-        var helper = MekanismAPI.getJeiHelper();
+        var helper = IMekanismAccess.INSTANCE.jeiHelper();
 
         IngredientConverters
                 .register(new ChemicalIngredientConverter<>(helper.getGasStackHelper().getIngredientType()));
