@@ -26,6 +26,7 @@ import mekanism.api.chemical.pigment.Pigment;
 import mekanism.api.chemical.pigment.PigmentStack;
 import mekanism.api.chemical.slurry.Slurry;
 import mekanism.api.chemical.slurry.SlurryStack;
+import mekanism.api.radiation.IRadiationManager;
 
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
@@ -111,7 +112,7 @@ public class MekanismKey extends AEKey {
     @Override
     public void addDrops(long amount, List<ItemStack> drops, Level level, BlockPos pos) {
         if (stack instanceof GasStack gasStack) {
-            MekanismAPI.getRadiationManager().dumpRadiation(new Coord4D(pos, level),
+            IRadiationManager.INSTANCE.dumpRadiation(new Coord4D(pos, level),
                     ChemicalBridge.withAmount(gasStack, amount));
         }
     }
@@ -119,13 +120,13 @@ public class MekanismKey extends AEKey {
     @Override
     public boolean isTagged(TagKey<?> tag) {
         if (stack.getType() instanceof Gas gas) {
-            return tag.registry().equals(MekanismAPI.gasRegistryName()) && gas.is((TagKey<Gas>) tag);
+            return tag.registry().equals(MekanismAPI.GAS_REGISTRY_NAME) && gas.is((TagKey<Gas>) tag);
         } else if (stack.getType() instanceof InfuseType infuse) {
-            return tag.registry().equals(MekanismAPI.infuseTypeRegistryName()) && infuse.is((TagKey<InfuseType>) tag);
+            return tag.registry().equals(MekanismAPI.INFUSE_TYPE_REGISTRY_NAME) && infuse.is((TagKey<InfuseType>) tag);
         } else if (stack.getType() instanceof Pigment pigment) {
-            return tag.registry().equals(MekanismAPI.pigmentRegistryName()) && pigment.is((TagKey<Pigment>) tag);
+            return tag.registry().equals(MekanismAPI.PIGMENT_REGISTRY_NAME) && pigment.is((TagKey<Pigment>) tag);
         } else if (stack.getType() instanceof Slurry slurry) {
-            return tag.registry().equals(MekanismAPI.slurryRegistryName()) && slurry.is((TagKey<Slurry>) tag);
+            return tag.registry().equals(MekanismAPI.SLURRY_REGISTRY_NAME) && slurry.is((TagKey<Slurry>) tag);
         } else {
             throw new UnsupportedOperationException();
         }
