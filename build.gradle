@@ -1,8 +1,8 @@
 plugins {
-    id("net.minecraftforge.gradle") version "6.0.8"
+    id("net.neoforged.gradle") version "[6.0.18,6.2)"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.19.0"
-    id("com.modrinth.minotaur") version "2.8.1"
+    id("com.diffplug.spotless") version "6.22.0"
+    id("com.modrinth.minotaur") version "2.8.4"
 }
 
 group = "me.ramidzkh"
@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft("net.neoforged:forge:${minecraft_version}-${neoforge_version}")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
     implementation(fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}"))
