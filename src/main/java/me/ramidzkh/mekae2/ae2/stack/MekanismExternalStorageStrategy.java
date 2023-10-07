@@ -1,6 +1,5 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +35,8 @@ public class MekanismExternalStorageStrategy implements ExternalStorageStrategy 
     @Nullable
     @Override
     public MEStorage createWrapper(boolean extractableOnly, Runnable injectOrExtractCallback) {
-        var storages = new HashMap<Byte, MEStorage>();
+        var handlers = new IChemicalHandler[4];
+        var empty = true;
 
         for (var entry : lookups.entrySet()) {
             var storage = entry.getValue().find(fromSide);
@@ -45,16 +45,14 @@ public class MekanismExternalStorageStrategy implements ExternalStorageStrategy 
                 continue;
             }
 
-            var result = HandlerStrategy.getFacade(storage);
-            result.setChangeListener(injectOrExtractCallback);
-            result.setExtractableOnly(extractableOnly);
-            storages.put(entry.getKey(), result);
+            handlers[entry.getKey()] = storage;
+            empty = false;
         }
 
-        if (storages.isEmpty()) {
+        if (empty) {
             return null;
         }
 
-        return new CompositeFormStorage(storages);
+        return new ChemicalHandlerFacade(handlers, extractableOnly, injectOrExtractCallback);
     }
 }
