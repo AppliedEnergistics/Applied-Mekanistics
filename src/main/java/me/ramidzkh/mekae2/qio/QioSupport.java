@@ -18,7 +18,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import me.ramidzkh.mekae2.AppliedMekanistics;
 import mekanism.api.inventory.qio.IQIOComponent;
 
-import appeng.api.features.IPlayerRegistry;
 import appeng.api.networking.GridHelper;
 import appeng.api.storage.MEStorage;
 
@@ -62,9 +61,8 @@ public class QioSupport {
                                 break out;
                             }
 
-                            var owner = IPlayerRegistry.getMapping(object.getLevel())
-                                    .getProfileId(source.getOwningPlayerId());
-                            var adapter = new QioStorageAdapter<>((BlockEntity & IQIOComponent) object, arg, owner);
+                            var adapter = new QioStorageAdapter<>((BlockEntity & IQIOComponent) object, arg,
+                                    source.getOwningPlayerProfileId());
 
                             if (adapter.getFrequency() != null) {
                                 return LazyOptional.of(() -> adapter).cast();
