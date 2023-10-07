@@ -95,7 +95,7 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
 
         @Override
         public S insertChemical(int tank, S stack, Action action) {
-            var total = 0;
+            var total = 0L;
 
             var outputTunnels = part.getOutputs().size();
             var amount = stack.getAmount();
