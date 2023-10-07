@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import me.ramidzkh.mekae2.MekCapabilities;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
 
@@ -72,7 +71,7 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
 
                 // Try to simulate-extract it
                 var amount = adjacentHandler
-                        .extractChemical(ChemicalBridge.withAmount(stack, amountForThisResource), Action.EXECUTE)
+                        .extractChemical(resource.withAmount(amountForThisResource), Action.EXECUTE)
                         .getAmount();
 
                 if (amount > 0) {
@@ -83,7 +82,7 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
                         // Be nice and try to give the overflow back
                         var leftover = amount - inserted;
                         leftover = adjacentHandler
-                                .insertChemical(ChemicalBridge.withAmount(stack, leftover), Action.EXECUTE).getAmount();
+                                .insertChemical(resource.withAmount(leftover), Action.EXECUTE).getAmount();
 
                         if (leftover > 0) {
                             AELog.warn(

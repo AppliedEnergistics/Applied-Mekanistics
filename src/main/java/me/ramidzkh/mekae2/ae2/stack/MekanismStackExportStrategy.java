@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 
 import me.ramidzkh.mekae2.MekCapabilities;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
 
@@ -62,7 +61,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                 Actionable.SIMULATE);
 
         var wasInserted = extracted
-                - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), extracted),
+                - storage.insertChemical(mekanismKey.withAmount(extracted),
                         Action.SIMULATE).getAmount();
 
         if (wasInserted > 0) {
@@ -75,7 +74,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                     Actionable.MODULATE);
 
             wasInserted = extracted
-                    - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), extracted),
+                    - storage.insertChemical(mekanismKey.withAmount(extracted),
                             Action.EXECUTE).getAmount();
 
             if (wasInserted < extracted) {
@@ -100,7 +99,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        return amount - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), amount),
+        return amount - storage.insertChemical(mekanismKey.withAmount(amount),
                 Action.fromFluidAction(mode.getFluidAction())).getAmount();
 
     }

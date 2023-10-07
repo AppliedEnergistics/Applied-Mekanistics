@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
 
@@ -93,7 +92,7 @@ class HandlerStrategy {
             return 0;
         }
 
-        var stack = ChemicalBridge.withAmount(key.getStack(), amount);
+        var stack = key.withAmount(amount);
         return handler.extractChemical(stack, Action.fromFluidAction(mode.getFluidAction())).getAmount();
     }
 
@@ -105,7 +104,7 @@ class HandlerStrategy {
 
     public static long insert(IChemicalHandler handler, AEKey what, long amount, Actionable mode) {
         if (what instanceof MekanismKey key) {
-            return amount - handler.insertChemical(ChemicalBridge.withAmount(key.getStack(), amount),
+            return amount - handler.insertChemical(key.withAmount(amount),
                     Action.fromFluidAction(mode.getFluidAction())).getAmount();
         }
 

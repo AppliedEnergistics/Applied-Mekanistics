@@ -41,7 +41,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
     @Override
     public S getChemicalInTank(int tank) {
         if (inv.getKey(tank) instanceof MekanismKey what && what.getForm() == form) {
-            return (S) ChemicalBridge.withAmount(what.getStack(), inv.getAmount(tank));
+            return (S) what.withAmount(inv.getAmount(tank));
         }
 
         return getEmptyStack();
@@ -90,7 +90,7 @@ public abstract sealed class GenericStackChemicalStorage<C extends Chemical<C>, 
         var extracted = inv.extract(tank, what, amount, Actionable.of(action.toFluidAction()));
 
         if (extracted > 0) {
-            return (S) ChemicalBridge.withAmount(what.getStack(), extracted);
+            return (S) what.withAmount(extracted);
         }
 
         return getEmptyStack();
