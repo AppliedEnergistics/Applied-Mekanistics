@@ -21,13 +21,12 @@ public class AMJadePlugin implements IWailaPlugin {
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         registration.addTooltipCollectedCallback((tooltip, accessor) -> {
-            if (!(accessor.getTarget() instanceof InterfaceLogicHost
-                    || accessor.getTarget() instanceof PatternProviderLogicHost)) {
-                return;
-            }
+            var target = accessor.getTarget();
 
-            for (var loc : CHEMICALS) {
-                tooltip.remove(loc);
+            if (target instanceof InterfaceLogicHost || target instanceof PatternProviderLogicHost) {
+                for (var loc : CHEMICALS) {
+                    tooltip.remove(loc);
+                }
             }
         });
     }
