@@ -6,6 +6,9 @@ import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 
+import appeng.helpers.InterfaceLogicHost;
+import appeng.helpers.patternprovider.PatternProviderLogicHost;
+
 /**
  * Plugin to remove the mekanism-added chemical handler lines for interfaces and pattern providers.
  */
