@@ -21,15 +21,11 @@ public class AMJadePlugin implements IWailaPlugin {
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         registration.addTooltipCollectedCallback((tooltip, accessor) -> {
-            // This is ugly, but nothing else worked perfectly due to Jade using old server data for new blocks.
-            // TODO: check if this is still needed in 1.19+
-            for (var loc : CHEMICALS) {
-                if (tooltip.get(loc).size() != 9) {
-                    return;
-                }
+            if (!(accessor.getTarget() instanceof InterfaceLogicHost
+                    || accessor.getTarget() instanceof PatternProviderLogicHost)) {
+                return;
             }
 
-            // If we have 9 of each 4, remove them.
             for (var loc : CHEMICALS) {
                 tooltip.remove(loc);
             }
