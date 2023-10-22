@@ -6,6 +6,9 @@ import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 
+import appeng.helpers.InterfaceLogicHost;
+import appeng.helpers.patternprovider.PatternProviderLogicHost;
+
 /**
  * Plugin to remove the mekanism-added chemical handler lines for interfaces and pattern providers.
  */
@@ -21,17 +24,12 @@ public class AMJadePlugin implements IWailaPlugin {
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         registration.addTooltipCollectedCallback((tooltip, accessor) -> {
-            // This is ugly, but nothing else worked perfectly due to Jade using old server data for new blocks.
-            // TODO: check if this is still needed in 1.19+
-            for (var loc : CHEMICALS) {
-                if (tooltip.get(loc).size() != 9) {
-                    return;
-                }
-            }
+            var target = accessor.getTarget();
 
-            // If we have 9 of each 4, remove them.
-            for (var loc : CHEMICALS) {
-                tooltip.remove(loc);
+            if (target instanceof InterfaceLogicHost || target instanceof PatternProviderLogicHost) {
+                for (var loc : CHEMICALS) {
+                    tooltip.remove(loc);
+                }
             }
         });
     }
