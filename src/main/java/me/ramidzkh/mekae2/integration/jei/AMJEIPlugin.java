@@ -7,13 +7,15 @@ import me.ramidzkh.mekae2.ae2.ChemicalIngredientConverter;
 import mekanism.api.IMekanismAccess;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.runtime.IJeiRuntime;
 
 import appeng.api.integrations.jei.IngredientConverters;
 
 @JeiPlugin
 public class AMJEIPlugin implements IModPlugin {
 
-    public AMJEIPlugin() {
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         var helper = IMekanismAccess.INSTANCE.jeiHelper();
 
         IngredientConverters

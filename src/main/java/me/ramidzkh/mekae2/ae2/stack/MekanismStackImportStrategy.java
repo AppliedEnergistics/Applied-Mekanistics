@@ -1,7 +1,5 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import java.util.List;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -21,16 +19,17 @@ import appeng.util.BlockApiCache;
 @SuppressWarnings("UnstableApiUsage")
 public class MekanismStackImportStrategy implements StackImportStrategy {
 
-    private final List<BlockApiCache<? extends IChemicalHandler>> lookups;
+    private final BlockApiCache<? extends IChemicalHandler>[] lookups;
     private final Direction fromSide;
 
     public MekanismStackImportStrategy(ServerLevel level,
             BlockPos fromPos,
             Direction fromSide) {
-        this.lookups = List.of(BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
+        this.lookups = new BlockApiCache[] {
+                BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
                 BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos));
+                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos) };
         this.fromSide = fromSide;
     }
 
