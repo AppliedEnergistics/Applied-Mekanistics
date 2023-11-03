@@ -1,7 +1,5 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import com.google.common.primitives.Ints;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.chat.Component;
@@ -57,7 +55,7 @@ public record ChemicalHandlerFacade(@Nullable IChemicalHandler[] handlers, boole
             return 0;
         }
 
-        var extracted = handler.extractChemical(key.withAmount(Ints.saturatedCast(amount)),
+        var extracted = handler.extractChemical(key.withAmount(amount),
                 Action.fromFluidAction(mode.getFluidAction())).getAmount();
 
         if (extracted > 0 && mode == Actionable.MODULATE) {
