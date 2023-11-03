@@ -12,7 +12,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 import me.ramidzkh.mekae2.MekCapabilities;
-import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.infuse.InfusionStack;
@@ -83,7 +82,7 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
 
     @Override
     public long extract(ItemStack context, MekanismKey what, long amount, Actionable mode) {
-        var stack = ChemicalBridge.withAmount(what.getStack(), amount);
+        var stack = what.withAmount(amount);
         var action = Action.fromFluidAction(mode.getFluidAction());
 
         if (stack instanceof GasStack gas) {
@@ -105,7 +104,7 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
 
     @Override
     public long insert(ItemStack context, MekanismKey what, long amount, Actionable mode) {
-        var stack = ChemicalBridge.withAmount(what.getStack(), amount);
+        var stack = what.withAmount(amount);
         var action = Action.fromFluidAction(mode.getFluidAction());
 
         if (stack instanceof GasStack gas) {

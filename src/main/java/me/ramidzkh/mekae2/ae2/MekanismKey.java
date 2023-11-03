@@ -57,6 +57,10 @@ public class MekanismKey extends AEKey {
         return stack;
     }
 
+    public ChemicalStack<?> withAmount(long amount) {
+        return ChemicalBridge.withAmount(stack, amount);
+    }
+
     public byte getForm() {
         if (stack instanceof GasStack) {
             return GAS;

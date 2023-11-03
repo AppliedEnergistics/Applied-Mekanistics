@@ -1,7 +1,5 @@
 package me.ramidzkh.mekae2.ae2.stack;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 
 import me.ramidzkh.mekae2.MekCapabilities;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.util.ChemicalBridge;
 import mekanism.api.Action;
 import mekanism.api.chemical.IChemicalHandler;
 
@@ -25,17 +22,17 @@ import appeng.util.BlockApiCache;
 public class MekanismStackExportStrategy implements StackExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MekanismStackExportStrategy.class);
-    private final Map<Byte, BlockApiCache<? extends IChemicalHandler>> lookups;
+    private final BlockApiCache<? extends IChemicalHandler>[] lookups;
     private final Direction fromSide;
 
     public MekanismStackExportStrategy(ServerLevel level,
             BlockPos fromPos,
             Direction fromSide) {
-        this.lookups = Map.of(
-                MekanismKey.GAS, BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
-                MekanismKey.INFUSION, BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
-                MekanismKey.PIGMENT, BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
-                MekanismKey.SLURRY, BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos));
+        this.lookups = new BlockApiCache[] {
+                BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
+                BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
+                BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
+                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos) };
         this.fromSide = fromSide;
     }
 
@@ -45,7 +42,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        var storage = lookups.get(mekanismKey.getForm()).find(fromSide);
+        var storage = lookups[mekanismKey.getForm()].find(fromSide);
 
         if (storage == null) {
             return 0;
@@ -62,7 +59,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                 Actionable.SIMULATE);
 
         var wasInserted = extracted
-                - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), extracted),
+                - storage.insertChemical(mekanismKey.withAmount(extracted),
                         Action.SIMULATE).getAmount();
 
         if (wasInserted > 0) {
@@ -75,7 +72,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
                     Actionable.MODULATE);
 
             wasInserted = extracted
-                    - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), extracted),
+                    - storage.insertChemical(mekanismKey.withAmount(extracted),
                             Action.EXECUTE).getAmount();
 
             if (wasInserted < extracted) {
@@ -94,13 +91,13 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        var storage = lookups.get(mekanismKey.getForm()).find(fromSide);
+        var storage = lookups[mekanismKey.getForm()].find(fromSide);
 
         if (storage == null) {
             return 0;
         }
 
-        return amount - storage.insertChemical(ChemicalBridge.withAmount(mekanismKey.getStack(), amount),
+        return amount - storage.insertChemical(mekanismKey.withAmount(amount),
                 Action.fromFluidAction(mode.getFluidAction())).getAmount();
 
     }
