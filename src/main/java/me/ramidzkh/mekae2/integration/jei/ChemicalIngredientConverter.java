@@ -1,7 +1,8 @@
-package me.ramidzkh.mekae2.ae2;
+package me.ramidzkh.mekae2.integration.jei;
 
 import org.jetbrains.annotations.Nullable;
 
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import mekanism.api.chemical.ChemicalStack;
 import mezz.jei.api.ingredients.IIngredientType;
 
@@ -20,7 +21,7 @@ public record ChemicalIngredientConverter<S extends ChemicalStack<?>>(
     @Nullable
     @Override
     public S getIngredientFromStack(GenericStack stack) {
-        if (stack.what() instanceof MekanismKey key) {
+        if (stack.what() instanceof MekanismKey key && type.getIngredientClass().isInstance(key.getStack())) {
             return (S) key.withAmount(Math.max(1, stack.amount()));
         } else {
             return null;
