@@ -34,45 +34,43 @@ public class QioSupport {
     public static void onBlockEntityCapability(AttachCapabilitiesEvent<BlockEntity> event) {
         var object = event.getObject();
 
-        if (object instanceof IQIOComponent) {
-            if (DASHBOARD.equals(ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(object.getType()))) {
-                event.addCapability(AppliedMekanistics.id("qio_storage_monitorable"), new ICapabilityProvider() {
-                    @NotNull
-                    @Override
-                    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability,
-                            @Nullable Direction arg) {
-                        out: if (capability == STORAGE && arg != null) {
-                            // guess the source...
-                            // if you're trying to qio across a compact machine wall or something, sorry!
-                            var host = GridHelper.getNodeHost(object.getLevel(), object.getBlockPos().relative(arg));
+        if (object instanceof IQIOComponent
+                && DASHBOARD.equals(ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(object.getType()))) {
+            event.addCapability(AppliedMekanistics.id("qio_storage_monitorable"), new ICapabilityProvider() {
+                @NotNull
+                @Override
+                public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction arg) {
+                    out: if (capability == STORAGE && arg != null) {
+                        // guess the source...
+                        // if you're trying to qio across a compact machine wall or something, sorry!
+                        var host = GridHelper.getNodeHost(object.getLevel(), object.getBlockPos().relative(arg));
 
-                            if (host == null) {
-                                break out;
-                            }
-
-                            var source = host.getGridNode(arg.getOpposite());
-
-                            // I don't know of any full-block nodes which query inventories, but we'll see
-                            if (source == null) {
-                                source = host.getGridNode(null);
-                            }
-
-                            if (source == null) {
-                                break out;
-                            }
-
-                            var adapter = new QioStorageAdapter<>((BlockEntity & IQIOComponent) object, arg,
-                                    source.getOwningPlayerProfileId());
-
-                            if (adapter.getFrequency() != null) {
-                                return LazyOptional.of(() -> adapter).cast();
-                            }
+                        if (host == null) {
+                            break out;
                         }
 
-                        return LazyOptional.empty();
+                        var source = host.getGridNode(arg.getOpposite());
+
+                        // I don't know of any full-block nodes which query inventories, but we'll see
+                        if (source == null) {
+                            source = host.getGridNode(null);
+                        }
+
+                        if (source == null) {
+                            break out;
+                        }
+
+                        var adapter = new QioStorageAdapter<>((BlockEntity & IQIOComponent) object, arg,
+                                source.getOwningPlayerProfileId());
+
+                        if (adapter.getFrequency() != null) {
+                            return LazyOptional.of(() -> adapter).cast();
+                        }
                     }
-                });
-            }
+
+                    return LazyOptional.empty();
+                }
+            });
         }
     }
 }

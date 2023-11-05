@@ -99,6 +99,5 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
 
         return amount - storage.insertChemical(mekanismKey.withAmount(amount),
                 Action.fromFluidAction(mode.getFluidAction())).getAmount();
-
     }
 }
