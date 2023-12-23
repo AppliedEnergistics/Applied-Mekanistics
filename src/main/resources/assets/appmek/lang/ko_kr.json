@@ -1,0 +1,24 @@
+{
+  "itemGroup.appmek": "Applied Mekanistics",
+
+  "gui.appmek.chemical": "화학",
+
+  "item.appmek.chemical_cell_housing": "빈 ME 화학 저장 셀",
+  "item.appmek.creative_chemical_cell": "크리에이티브 ME 화학 저장 셀",
+
+  "item.appmek.chemical_storage_cell_1k": "1k ME 화학 저장 셀",
+  "item.appmek.chemical_storage_cell_4k": "4k ME 화학 저장 셀",
+  "item.appmek.chemical_storage_cell_16k": "16k ME 화학 저장 셀",
+  "item.appmek.chemical_storage_cell_64k": "64k ME 화학 저장 셀",
+  "item.appmek.chemical_storage_cell_256k": "256k ME 화학 저장 셀",
+
+  "item.appmek.portable_chemical_storage_cell_16k": "16k 휴대용 화학 셀",
+  "item.appmek.portable_chemical_storage_cell_1k": "1k 휴대용 화학 셀",
+  "item.appmek.portable_chemical_storage_cell_4k": "4k 휴대용 화학 셀",
+  "item.appmek.portable_chemical_storage_cell_64k": "64k 휴대용 화학 셀",
+  "item.appmek.portable_chemical_storage_cell_256k": "256k 휴대용 화학 셀",
+
+  "item.appmek.chemical_p2p_tunnel": "화학 P2P 터널",
+
+  "text.appmek.qio_frequency": "QIO 주파수 (%s)"
+}
