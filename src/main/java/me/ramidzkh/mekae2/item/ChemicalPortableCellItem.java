@@ -1,5 +1,8 @@
 package me.ramidzkh.mekae2.item;
 
+import java.util.Objects;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,5 +29,10 @@ public class ChemicalPortableCellItem extends PortableCellItem {
         }
 
         return true;
+    }
+
+    @Override
+    public ResourceLocation getRecipeId() {
+        return Objects.requireNonNull(getRegistryName());
     }
 }
