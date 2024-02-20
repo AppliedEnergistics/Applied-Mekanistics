@@ -1,5 +1,7 @@
 package me.ramidzkh.mekae2.item;
 
+import java.util.Objects;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -11,8 +13,6 @@ import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 import appeng.api.stacks.AEKey;
 import appeng.items.storage.StorageTier;
 import appeng.items.tools.powered.PortableCellItem;
-
-import java.util.Objects;
 
 public class ChemicalPortableCellItem extends PortableCellItem {
 
