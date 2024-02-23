@@ -1,31 +1,27 @@
 package me.ramidzkh.mekae2;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.function.Function;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
-import me.ramidzkh.mekae2.ae2.ChemicalContainerItemStrategy;
-import me.ramidzkh.mekae2.ae2.GenericStackChemicalStorage;
-import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.ae2.*;
 import me.ramidzkh.mekae2.ae2.stack.MekanismExternalStorageStrategy;
 import me.ramidzkh.mekae2.ae2.stack.MekanismStackExportStrategy;
 import me.ramidzkh.mekae2.ae2.stack.MekanismStackImportStrategy;
@@ -33,10 +29,12 @@ import me.ramidzkh.mekae2.data.MekAE2DataGenerators;
 import me.ramidzkh.mekae2.qio.QioSupport;
 
 import appeng.api.behaviors.ContainerItemStrategy;
+import appeng.api.behaviors.GenericInternalInventory;
 import appeng.api.behaviors.GenericSlotCapacities;
 import appeng.api.client.StorageCellModels;
 import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.implementations.blockentities.IChestOrDrive;
+import appeng.api.parts.RegisterPartCapabilitiesEvent;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.api.storage.StorageCells;
@@ -44,7 +42,7 @@ import appeng.api.storage.cells.IBasicCellItem;
 import appeng.api.storage.cells.ICellGuiHandler;
 import appeng.api.storage.cells.ICellHandler;
 import appeng.api.upgrades.Upgrades;
-import appeng.capabilities.Capabilities;
+import appeng.capabilities.AppEngCapabilities;
 import appeng.core.AppEng;
 import appeng.core.definitions.AEItems;
 import appeng.core.localization.GuiText;
@@ -58,9 +56,11 @@ public class AppliedMekanistics {
 
     public static final String ID = "appmek";
 
-    public AppliedMekanistics() {
-        var bus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(ID, path);
+    }
 
+    public AppliedMekanistics(IEventBus bus) {
         AMItems.initialize(bus);
         AMMenus.initialize(bus);
 
@@ -81,9 +81,10 @@ public class AppliedMekanistics {
         ContainerItemStrategy.register(MekanismKeyType.TYPE, MekanismKey.class, new ChemicalContainerItemStrategy());
         GenericSlotCapacities.register(MekanismKeyType.TYPE, GenericSlotCapacities.getMap().get(AEKeyType.fluids()));
 
-        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::initializeCapabilities);
+        bus.addListener(EventPriority.LOWEST, this::registerGenericAdapters);
 
-        QioSupport.initialize();
+        bus.addListener(QioSupport::onBlockEntityCapability);
+        bus.addListener(this::registerPartCapabilities);
 
         bus.addListener((FMLCommonSetupEvent event) -> {
             event.enqueueWork(this::initializeModels);
@@ -91,37 +92,35 @@ public class AppliedMekanistics {
             event.enqueueWork(this::initializeAttunement);
         });
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AppliedMekanisticsClient::initialize);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            AppliedMekanisticsClient.initialize(bus);
+        }
     }
 
-    public static ResourceLocation id(String path) {
-        return new ResourceLocation(ID, path);
+    private void registerPartCapabilities(RegisterPartCapabilitiesEvent event) {
+        event.register(MekCapabilities.GAS.block(), (part, context) -> part.getGasHandler(),
+                ChemicalP2PTunnelPart.class);
+        event.register(MekCapabilities.INFUSION.block(), (part, context) -> part.getInfuseHandler(),
+                ChemicalP2PTunnelPart.class);
+        event.register(MekCapabilities.PIGMENT.block(), (part, context) -> part.getPigmentHandler(),
+                ChemicalP2PTunnelPart.class);
+        event.register(MekCapabilities.SLURRY.block(), (part, context) -> part.getSlurryHandler(),
+                ChemicalP2PTunnelPart.class);
     }
 
-    private void initializeCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
-        var blockEntity = event.getObject();
-
-        event.addCapability(id("generic_inv_wrapper"), new ICapabilityProvider() {
-            @NotNull
-            @Override
-            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-                if (capability == MekCapabilities.GAS_HANDLER_CAPABILITY) {
-                    return blockEntity.getCapability(Capabilities.GENERIC_INTERNAL_INV, side)
-                            .lazyMap(GenericStackChemicalStorage.OfGas::new).cast();
-                } else if (capability == MekCapabilities.INFUSION_HANDLER_CAPABILITY) {
-                    return blockEntity.getCapability(Capabilities.GENERIC_INTERNAL_INV, side)
-                            .lazyMap(GenericStackChemicalStorage.OfInfusion::new).cast();
-                } else if (capability == MekCapabilities.PIGMENT_HANDLER_CAPABILITY) {
-                    return blockEntity.getCapability(Capabilities.GENERIC_INTERNAL_INV, side)
-                            .lazyMap(GenericStackChemicalStorage.OfPigment::new).cast();
-                } else if (capability == MekCapabilities.SLURRY_HANDLER_CAPABILITY) {
-                    return blockEntity.getCapability(Capabilities.GENERIC_INTERNAL_INV, side)
-                            .lazyMap(GenericStackChemicalStorage.OfSlurry::new).cast();
-                }
-
-                return LazyOptional.empty();
+    private void registerGenericAdapters(RegisterCapabilitiesEvent event) {
+        for (var block : BuiltInRegistries.BLOCK) {
+            if (event.isBlockRegistered(AppEngCapabilities.GENERIC_INTERNAL_INV, block)) {
+                registerGenericInvAdapter(event, block, MekCapabilities.GAS.block(),
+                        GenericStackChemicalStorage.OfGas::new);
+                registerGenericInvAdapter(event, block, MekCapabilities.INFUSION.block(),
+                        GenericStackChemicalStorage.OfInfusion::new);
+                registerGenericInvAdapter(event, block, MekCapabilities.PIGMENT.block(),
+                        GenericStackChemicalStorage.OfPigment::new);
+                registerGenericInvAdapter(event, block, MekCapabilities.SLURRY.block(),
+                        GenericStackChemicalStorage.OfSlurry::new);
             }
-        });
+        }
     }
 
     private void initializeModels() {
@@ -174,5 +173,19 @@ public class AppliedMekanistics {
 
     private void initializeAttunement() {
         P2PTunnelAttunement.registerAttunementTag(AMItems.CHEMICAL_P2P_TUNNEL::get);
+    }
+
+    private static <T> void registerGenericInvAdapter(RegisterCapabilitiesEvent event, Block block,
+            BlockCapability<T, Direction> capability, Function<GenericInternalInventory, T> adapter) {
+        if (!event.isBlockRegistered(capability, block)) {
+            event.registerBlock(capability, (level, pos, state, blockEntity, context) -> {
+                var genericInv = level.getCapability(AppEngCapabilities.GENERIC_INTERNAL_INV, pos, state,
+                        blockEntity, context);
+                if (genericInv != null) {
+                    return adapter.apply(genericInv);
+                }
+                return null;
+            }, block);
+        }
     }
 }

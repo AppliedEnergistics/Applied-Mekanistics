@@ -57,10 +57,10 @@ public class MekanismKeyType extends AEKeyType {
     @Override
     public Stream<TagKey<?>> getTagNames() {
         return Streams.concat(
-                MekanismAPI.gasRegistry().tags().getTagNames(),
-                MekanismAPI.infuseTypeRegistry().tags().getTagNames(),
-                MekanismAPI.pigmentRegistry().tags().getTagNames(),
-                MekanismAPI.slurryRegistry().tags().getTagNames());
+                MekanismAPI.GAS_REGISTRY.getTagNames(),
+                MekanismAPI.INFUSE_TYPE_REGISTRY.getTagNames(),
+                MekanismAPI.PIGMENT_REGISTRY.getTagNames(),
+                MekanismAPI.SLURRY_REGISTRY.getTagNames());
     }
 
     // Copied from AEFluidKeys

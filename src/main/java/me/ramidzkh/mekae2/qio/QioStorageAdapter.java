@@ -16,6 +16,7 @@ import mekanism.api.Action;
 import mekanism.api.inventory.IHashedItem;
 import mekanism.api.inventory.qio.IQIOComponent;
 import mekanism.api.inventory.qio.IQIOFrequency;
+import mekanism.api.security.ISecurityObject;
 import mekanism.api.security.ISecurityUtils;
 import mekanism.api.security.SecurityMode;
 
@@ -30,8 +31,10 @@ import appeng.api.storage.MEStorage;
  * This generic trick allows us to capture both the BE and the IQIOComponent without depending on the actual Mekanism
  * block entity class.
  */
-public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> implements MEStorage {
+public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent & ISecurityObject> implements MEStorage {
+
     private static final Map<IHashedItem, AEItemKey> CACHE = new WeakHashMap<>();
+
     private final DASHBOARD dashboard;
     private final @Nullable Direction queriedSide;
     private final @Nullable UUID owner;
@@ -48,20 +51,25 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
         if (dashboard.getBlockState().getValue(BlockStateProperties.FACING).getOpposite() != queriedSide) {
             return null;
         }
+
         // Check that it has a frequency.
         var freq = dashboard.getQIOFrequency();
+
         if (freq == null || !freq.isValid()) {
             return null;
         }
+
         // Check security.
         var utils = ISecurityUtils.INSTANCE;
-        var securityMode = utils.getSecurityMode(dashboard, dashboard.getLevel().isClientSide());
+        var securityMode = utils.getSecurityMode(() -> dashboard, () -> dashboard, dashboard.getLevel().isClientSide());
+
         if (securityMode != SecurityMode.PUBLIC) {
             // Private or trusted: the player who placed the storage bus must have dashboard access.
-            if (!utils.canAccess(owner, dashboard, dashboard.getLevel().isClientSide())) {
+            if (!utils.canAccessObject(owner, dashboard, dashboard.getLevel().isClientSide())) {
                 return null;
             }
         }
+
         return freq;
     }
 
@@ -69,11 +77,14 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
     public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
         if (what instanceof AEItemKey itemKey && amount > 0) {
             var freq = getFrequency();
+
             if (freq == null) {
                 return 0;
             }
+
             return freq.massInsert(itemKey.toStack(), amount, Action.fromFluidAction(mode.getFluidAction()));
         }
+
         return 0;
     }
 
@@ -81,22 +92,25 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
     public long extract(AEKey what, long amount, Actionable mode, IActionSource source) {
         if (what instanceof AEItemKey itemKey && amount > 0) {
             var freq = getFrequency();
+
             if (freq == null) {
                 return 0;
             }
+
             return freq.massExtract(itemKey.toStack(), amount, Action.fromFluidAction(mode.getFluidAction()));
         }
+
         return 0;
     }
 
     @Override
     public void getAvailableStacks(KeyCounter out) {
         var freq = getFrequency();
+
         if (freq == null) {
             return;
         }
 
-        // Fixes #19
         freq.forAllHashedStored((type, count) -> {
             // noinspection ConstantConditions
             out.add(CACHE.computeIfAbsent(type, it -> AEItemKey.of(it.getInternalStack())), count);
@@ -106,9 +120,11 @@ public class QioStorageAdapter<DASHBOARD extends BlockEntity & IQIOComponent> im
     @Override
     public Component getDescription() {
         var freq = getFrequency();
+
         if (freq == null) {
             throw new IllegalStateException("Unexpected null frequency!");
         }
+
         return AMText.QIO_FREQUENCY.formatted(freq.getName());
     }
 }

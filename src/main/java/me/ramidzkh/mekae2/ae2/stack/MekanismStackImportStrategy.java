@@ -3,6 +3,7 @@ package me.ramidzkh.mekae2.ae2.stack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 
 import me.ramidzkh.mekae2.MekCapabilities;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
@@ -14,23 +15,20 @@ import appeng.api.behaviors.StackImportStrategy;
 import appeng.api.behaviors.StackTransferContext;
 import appeng.api.config.Actionable;
 import appeng.core.AELog;
-import appeng.util.BlockApiCache;
 
 @SuppressWarnings("UnstableApiUsage")
 public class MekanismStackImportStrategy implements StackImportStrategy {
 
-    private final BlockApiCache<? extends IChemicalHandler>[] lookups;
-    private final Direction fromSide;
+    private final BlockCapabilityCache<? extends IChemicalHandler, Direction>[] lookups;
 
     public MekanismStackImportStrategy(ServerLevel level,
             BlockPos fromPos,
             Direction fromSide) {
-        this.lookups = new BlockApiCache[] {
-                BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos) };
-        this.fromSide = fromSide;
+        this.lookups = new BlockCapabilityCache[] {
+                BlockCapabilityCache.create(MekCapabilities.GAS.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.INFUSION.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.PIGMENT.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.SLURRY.block(), level, fromPos, fromSide) };
     }
 
     @Override
@@ -40,7 +38,7 @@ public class MekanismStackImportStrategy implements StackImportStrategy {
         }
 
         for (var lookup : lookups) {
-            var adjacentHandler = lookup.find(fromSide);
+            var adjacentHandler = lookup.getCapability();
 
             if (adjacentHandler == null) {
                 continue;

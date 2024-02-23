@@ -1,6 +1,6 @@
 package me.ramidzkh.mekae2.data;
 
-import net.minecraftforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 public class MekAE2DataGenerators {
 
@@ -17,6 +17,6 @@ public class MekAE2DataGenerators {
 
         generator.addProvider(true, new BlockModelProvider(packOutput, existingFileHelper));
         generator.addProvider(true, new ItemModelProvider(packOutput, existingFileHelper));
-        generator.addProvider(true, new RecipeProvider(packOutput));
+        generator.addProvider(true, new RecipeProvider(packOutput, lookupProvider));
     }
 }

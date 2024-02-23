@@ -1,11 +1,6 @@
 modLoader = "javafml"
-loaderVersion = "[43,)"
-#updateJSONURL=""
+loaderVersion = "${loader_version_range}"
 issueTrackerURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics/issues"
-displayURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics#readme"
-logoFile = "logo.png"
-#credits="Thanks for this example mod goes to Java"
-authors = "ramidzkh"
 license = "See GitHub repository for details"
 
 [[mods]]
@@ -14,24 +9,27 @@ version = "${version}"
 displayName = "Applied Mekanistics"
 description = "Use Mekanism resources through your ME network"
 updateJSONURL = "https://api.modrinth.com/updates/applied-mekanistics/forge_updates.json"
+displayURL = "https://github.com/AppliedEnergistics/Applied-Mekanistics#readme"
+logoFile = "logo.png"
+authors = "ramidzkh"
 
 [[dependencies.appmek]]
-modId = "forge"
-mandatory = true
-versionRange = "[47.0.0,48.0.0)"
+modId = "neoforge"
+type = "required"
+versionRange = "${neo_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.appmek]]
 modId = "ae2"
-mandatory = false
-versionRange = "[15.0.0,16.0.0)"
+type = "required"
+versionRange = "${ae2_version_range}"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.appmek]]
 modId = "mekanism"
-mandatory = true
-versionRange = "[10.4.0,11.0.0)"
+type = "required"
+versionRange = "${mekanism_version_range}"
 ordering = "AFTER"
 side = "BOTH"

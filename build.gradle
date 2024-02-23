@@ -1,8 +1,8 @@
 plugins {
-    id("net.neoforged.gradle") version "[6.0.18,6.2)"
+    id("net.neoforged.gradle.userdev") version "7.0.57"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.22.0"
-    id("com.modrinth.minotaur") version "2.8.4"
+    id("com.diffplug.spotless") version "6.23.3"
+    id("com.modrinth.minotaur") version "2.8.7"
 }
 
 group = "me.ramidzkh"
@@ -19,19 +19,30 @@ repositories {
         }
     }
 
-    maven {
-        name = "Jared maven"
-        url = uri("https://maven.blamejared.com/")
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Jared maven"
+                url = uri("https://maven.blamejared.com")
+            }
+        }
 
-        content {
+        filter {
+            includeGroup("mezz.jei")
             includeGroup("mezz.jei")
         }
     }
 
-    maven {
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "CurseForge"
+                url = uri("https://www.cursemaven.com")
+            }
+        }
+
+        filter {
+            includeGroup("curse.maven")
         }
     }
 
@@ -42,18 +53,20 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.neoforged:forge:${minecraft_version}-${neoforge_version}")
+    implementation("net.neoforged:neoforge:${neoforge_version}")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
-    implementation(fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}"))
+    implementation("appeng:appliedenergistics2-neoforge:${ae2_version}")
 
-    compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api"))
-    runtimeOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all"))
+    compileOnly("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api")
+    runtimeOnly("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all") {
+        exclude(group: "com.blamejared.crafttweaker")
+    }
 
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
-    implementation(fg.deobf("curse.maven:jade-324717:${jade_id}"))
+    compileOnly("curse.maven:jade-324717:${jade_id}")
 }
 
 sourceSets {
@@ -65,85 +78,51 @@ sourceSets {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 ////////////////////
-// Forge/Minecraft
-minecraft {
-    mappings(channel: "official", version: "${minecraft_version}")
-
-    /**
-     * Configures properties common to all run configurations
-     */
-    def commonRunProperties = {
-        workingDirectory(project.file("run"))
-
-        property("forge.logging.console.level", "debug")
-        property("fml.earlyprogresswindow", "false")
-        jvmArgs("--add-opens", "java.base/sun.security.util=ALL-UNNAMED")
-        jvmArgs("--add-opens", "java.base/java.util.jar=ALL-UNNAMED")
-
-        // See https://github.com/Vazkii/Patchouli#mixin-troubleshooting
-        property("mixin.env.remapRefMap", "true")
-        property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-        // property "mixin.debug.export", "true"
-
-        mods {
-            appmek {
-                source(sourceSets.main)
-            }
-        }
+// Minecraft
+runs {
+    configureEach {
+        systemProperty("forge.logging.console.level", "debug")
+        modSource(project.sourceSets.main)
     }
 
-    runs {
-        client {
-            with(commonRunProperties)
-        }
+    client {
+    }
 
-        server {
-            with(commonRunProperties)
-        }
+    server {
+        programArgument '--nogui'
+    }
 
-        data {
-            with(commonRunProperties)
-            args("--mod", "appmek", "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources"))
-        }
+    data {
+        programArguments.addAll "--mod", "appmek", "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources/").getAbsolutePath()
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
-    options.release.set(17)
 }
 
-processResources {
-    inputs.property("version", project.version)
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
+// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            version: version,
+            loader_version_range: loader_version_range,
+            neo_version_range: neo_version_range,
+            ae2_version_range: ae2_version_range,
+            mekanism_version_range: mekanism_version_range,
+    ]
+    inputs.properties(replaceProperties)
 
-    exclude(".cache")
-
-    filesMatching("META-INF/mods.toml") {
-        expand("version": project.version)
-    }
-}
-
-jar {
-    finalizedBy("reobfJar")
-
-    from(sourceSets.main.output.classesDirs)
-    from(sourceSets.main.output.resourcesDir)
-
-    manifest {
-        attributes([
-                "Specification-Title"     : "Applied Mekanistics",
-                "Specification-Vendor"    : "ramidzkh",
-                "Specification-Version"   : "${project.version}",
-                "Implementation-Title"    : "${project.name}",
-                "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "ramidzkh",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+    filesMatching(["META-INF/mods.toml"]) {
+        expand replaceProperties
     }
 }
 

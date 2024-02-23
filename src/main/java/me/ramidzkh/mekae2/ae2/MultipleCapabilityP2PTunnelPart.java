@@ -6,46 +6,43 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import appeng.api.parts.IPartItem;
+import appeng.hooks.ticking.TickHandler;
 import appeng.parts.p2p.P2PTunnelPart;
 
 public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunnelPart<P>> extends P2PTunnelPart<P> {
 
-    private final Map<Capability<?>, CapabilitySetInner<?, P>> capabilities;
-    // Prevents recursive access to the adjacent capability in case P2P input/output faces touch
-    int accessDepth = 0;
+    private final Map<BlockCapability<?, Direction>, CapabilitySetInner<?, P>> capabilities;
+
     // Prevents recursive block updates.
     private boolean inBlockUpdate = false;
+    // Prevents recursive access to the adjacent capability in case P2P input/output faces touch
+    int accessDepth = 0;
 
     public MultipleCapabilityP2PTunnelPart(IPartItem<?> partItem,
             Function<P, Collection<CapabilitySet<?>>> capabilities) {
         super(partItem);
-        this.capabilities = capabilities.apply((P) this).stream()
-                .collect(Collectors.toMap(CapabilitySet::capability, set -> set.toInner((P) this)));
+        var part = (P) this;
+        this.capabilities = capabilities.apply(part).stream()
+                .collect(Collectors.toMap(CapabilitySet::capability, set -> set.toInner(part)));
     }
 
-    @Override
-    protected float getPowerDrainPerTick() {
-        return 2.0f;
+    private <T> CapabilitySetInner<T, P> getSet(BlockCapability<T, Direction> capability) {
+        return (CapabilitySetInner<T, P>) capabilities.get(capability);
     }
 
-    public final <T> LazyOptional<T> getCapability(Capability<T> capability) {
-        var set = capabilities.get(capability);
+    protected <T> T getCapability(BlockCapability<T, Direction> capability) {
+        var set = getSet(capability);
 
-        if (set != null) {
-            if (isOutput()) {
-                return LazyOptional.of(set::outputHandler).cast();
-            } else {
-                return LazyOptional.of(set::inputHandler).cast();
-            }
+        if (isOutput()) {
+            return set.outputHandler();
+        } else {
+            return set.inputHandler();
         }
-
-        return LazyOptional.empty();
     }
 
     /**
@@ -53,9 +50,9 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
      * tunnel while the returned object has not been closed, further calls to {@link CapabilityGuard#get()} will return
      * a dummy capability.
      */
-    protected final <C> CapabilityGuard<C, P> getAdjacentCapability(Capability<C> capability) {
+    protected final <C> CapabilityGuard<C, P> getAdjacentCapability(BlockCapability<C, Direction> capability) {
         accessDepth++;
-        return (CapabilityGuard<C, P>) capabilities.get(capability).guard();
+        return getSet(capability).guard();
     }
 
     /**
@@ -63,10 +60,9 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
      * on this tunnel while the returned object has not been closed, further calls to {@link CapabilityGuard#get()} will
      * return a dummy capability.
      */
-    protected final <C> CapabilityGuard<C, P> getInputCapability(Capability<C> capability) {
-        var input = getInput();
-        return input == null ? (CapabilityGuard<C, P>) capabilities.get(capability).empty()
-                : input.getAdjacentCapability(capability);
+    protected final <C> CapabilityGuard<C, P> getInputCapability(BlockCapability<C, Direction> capability) {
+        var input = (MultipleCapabilityP2PTunnelPart<P>) getInput();
+        return input == null ? getSet(capability).empty() : input.getAdjacentCapability(capability);
     }
 
     /**
@@ -77,7 +73,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
     }
 
     // Send a block update on p2p status change, or any update on another endpoint.
-    protected void sendBlockUpdate() {
+    void sendBlockUpdate() {
         // Prevent recursive block updates.
         if (!inBlockUpdate) {
             inBlockUpdate = true;
@@ -85,8 +81,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
             try {
                 // getHost().notifyNeighbors() would queue a callback, but we want to do an update synchronously!
                 // (otherwise we can't detect infinite recursion, it would just queue updates endlessly)
-                var self = getBlockEntity();
-                self.getLevel().updateNeighborsAt(self.getBlockPos(), Blocks.AIR);
+                getHost().notifyNeighborNow(getSide());
             } finally {
                 inBlockUpdate = false;
             }
@@ -95,7 +90,13 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
 
     @Override
     public void onTunnelNetworkChange() {
-        sendBlockUpdate();
+        // This might be invoked while the network is being unloaded and we don't want to send a block update then, so
+        // we delay it until the next tick.
+        TickHandler.instance().addCallable(getLevel(), () -> {
+            if (getMainNode().isReady()) { // Check that the p2p tunnel is still there.
+                sendBlockUpdate();
+            }
+        });
     }
 
     /**
@@ -131,7 +132,8 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
         }
     }
 
-    public record CapabilitySet<C>(Capability<C> capability, C inputHandler, C outputHandler, C emptyHandler) {
+    public record CapabilitySet<C>(BlockCapability<C, Direction> capability, C inputHandler, C outputHandler,
+            C emptyHandler) {
         private <P extends MultipleCapabilityP2PTunnelPart<P>> CapabilitySetInner<C, P> toInner(P part) {
             return new CapabilitySetInner<>(new CapabilityGuard<>(part, capability(), emptyHandler()),
                     new EmptyCapabilityGuard<>(part, capability(), emptyHandler()),
@@ -149,9 +151,9 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
     protected static class CapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>> implements AutoCloseable {
         protected final C emptyHandler;
         private final P part;
-        private final Capability<C> capability;
+        private final BlockCapability<C, Direction> capability;
 
-        public CapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
+        public CapabilityGuard(P part, BlockCapability<C, Direction> capability, C emptyHandler) {
             this.part = part;
             this.capability = capability;
             this.emptyHandler = emptyHandler;
@@ -165,12 +167,11 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
                 throw new IllegalStateException("get was called after closing the wrapper");
             } else if (part.accessDepth == 1) {
                 if (part.isActive()) {
-                    var self = part.getBlockEntity();
-                    var te = self.getLevel().getBlockEntity(part.getFacingPos());
+                    var cap = part.getLevel().getCapability(capability, part.getFacingPos(),
+                            part.getSide().getOpposite());
 
-                    if (te != null) {
-                        return te.getCapability(capability, part.getSide().getOpposite())
-                                .orElse(emptyHandler);
+                    if (cap != null) {
+                        return cap;
                     }
                 }
 
@@ -195,7 +196,7 @@ public class MultipleCapabilityP2PTunnelPart<P extends MultipleCapabilityP2PTunn
      */
     private static class EmptyCapabilityGuard<C, P extends MultipleCapabilityP2PTunnelPart<P>>
             extends CapabilityGuard<C, P> implements AutoCloseable {
-        public EmptyCapabilityGuard(P part, Capability<C> capability, C emptyHandler) {
+        public EmptyCapabilityGuard(P part, BlockCapability<C, Direction> capability, C emptyHandler) {
             super(part, capability, emptyHandler);
         }
 

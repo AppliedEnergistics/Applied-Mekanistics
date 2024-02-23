@@ -1,8 +1,5 @@
 package me.ramidzkh.mekae2.ae2;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.sounds.SoundEvents;
@@ -32,14 +29,11 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
             return null;
         }
 
-        for (var capability : List.of(MekCapabilities.GAS_HANDLER_CAPABILITY,
-                MekCapabilities.INFUSION_HANDLER_CAPABILITY, MekCapabilities.PIGMENT_HANDLER_CAPABILITY,
-                MekCapabilities.SLURRY_HANDLER_CAPABILITY)) {
-            var contained = stack.getCapability(capability)
-                    .map(handler -> handler.extractChemical(Long.MAX_VALUE, Action.SIMULATE));
+        for (var capability : MekCapabilities.HANDLERS) {
+            var handler = stack.getCapability(capability.item());
 
-            if (contained.isPresent()) {
-                var chemical = contained.get();
+            if (handler != null) {
+                var chemical = handler.extractChemical(Long.MAX_VALUE, Action.SIMULATE);
                 var key = MekanismKey.of(chemical);
 
                 if (key != null) {
@@ -56,11 +50,10 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
     public ItemStack findCarriedContext(Player player, AbstractContainerMenu menu) {
         var carried = menu.getCarried();
 
-        if (Stream
-                .of(MekCapabilities.GAS_HANDLER_CAPABILITY, MekCapabilities.INFUSION_HANDLER_CAPABILITY,
-                        MekCapabilities.PIGMENT_HANDLER_CAPABILITY, MekCapabilities.SLURRY_HANDLER_CAPABILITY)
-                .anyMatch(capability -> carried.getCapability(capability).isPresent())) {
-            return carried;
+        for (var capability : MekCapabilities.HANDLERS) {
+            if (carried.getCapability(capability.item()) != null) {
+                return carried;
+            }
         }
 
         return null;
@@ -70,11 +63,10 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
     public @Nullable ItemStack findPlayerSlotContext(Player player, int slot) {
         var carried = player.getInventory().getItem(slot);
 
-        if (Stream
-                .of(MekCapabilities.GAS_HANDLER_CAPABILITY, MekCapabilities.INFUSION_HANDLER_CAPABILITY,
-                        MekCapabilities.PIGMENT_HANDLER_CAPABILITY, MekCapabilities.SLURRY_HANDLER_CAPABILITY)
-                .anyMatch(capability -> carried.getCapability(capability).isPresent())) {
-            return carried;
+        for (var capability : MekCapabilities.HANDLERS) {
+            if (carried.getCapability(capability.item()) != null) {
+                return carried;
+            }
         }
 
         return null;
@@ -86,17 +78,37 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
         var action = Action.fromFluidAction(mode.getFluidAction());
 
         if (stack instanceof GasStack gas) {
-            return context.getCapability(MekCapabilities.GAS_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(gas, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.GAS.item());
+
+            if (handler != null) {
+                return handler.extractChemical(gas, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else if (stack instanceof InfusionStack infusion) {
-            return context.getCapability(MekCapabilities.INFUSION_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(infusion, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.INFUSION.item());
+
+            if (handler != null) {
+                return handler.extractChemical(infusion, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else if (stack instanceof PigmentStack pigment) {
-            return context.getCapability(MekCapabilities.PIGMENT_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(pigment, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.PIGMENT.item());
+
+            if (handler != null) {
+                return handler.extractChemical(pigment, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else if (stack instanceof SlurryStack slurry) {
-            return context.getCapability(MekCapabilities.SLURRY_HANDLER_CAPABILITY)
-                    .map(handler -> handler.extractChemical(slurry, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.SLURRY.item());
+
+            if (handler != null) {
+                return handler.extractChemical(slurry, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else {
             throw new UnsupportedOperationException();
         }
@@ -108,17 +120,37 @@ public class ChemicalContainerItemStrategy implements ContainerItemStrategy<Meka
         var action = Action.fromFluidAction(mode.getFluidAction());
 
         if (stack instanceof GasStack gas) {
-            return context.getCapability(MekCapabilities.GAS_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(gas, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.GAS.item());
+
+            if (handler != null) {
+                return amount - handler.insertChemical(gas, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else if (stack instanceof InfusionStack infusion) {
-            return context.getCapability(MekCapabilities.INFUSION_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(infusion, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.INFUSION.item());
+
+            if (handler != null) {
+                return amount - handler.insertChemical(infusion, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else if (stack instanceof PigmentStack pigment) {
-            return context.getCapability(MekCapabilities.PIGMENT_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(pigment, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.PIGMENT.item());
+
+            if (handler != null) {
+                return amount - handler.insertChemical(pigment, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else if (stack instanceof SlurryStack slurry) {
-            return context.getCapability(MekCapabilities.SLURRY_HANDLER_CAPABILITY)
-                    .map(handler -> amount - handler.insertChemical(slurry, action).getAmount()).orElse(0L);
+            var handler = context.getCapability(MekCapabilities.SLURRY.item());
+
+            if (handler != null) {
+                return amount - handler.insertChemical(slurry, action).getAmount();
+            } else {
+                return 0L;
+            }
         } else {
             throw new UnsupportedOperationException();
         }

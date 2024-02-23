@@ -2,7 +2,8 @@ package me.ramidzkh.mekae2.ae2;
 
 import java.util.List;
 
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraft.core.Direction;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import me.ramidzkh.mekae2.AppliedMekanistics;
 import me.ramidzkh.mekae2.MekCapabilities;
@@ -36,15 +37,15 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
 
     public ChemicalP2PTunnelPart(IPartItem<?> partItem) {
         super(partItem, self -> List.of(
-                new CapabilitySet<>(MekCapabilities.GAS_HANDLER_CAPABILITY, new InputChemicalHandler.OfGas(self),
+                new CapabilitySet<>(MekCapabilities.GAS.block(), new InputChemicalHandler.OfGas(self),
                         new OutputChemicalHandler.OfGas(self), NullChemicalHandler.GAS),
-                new CapabilitySet<>(MekCapabilities.INFUSION_HANDLER_CAPABILITY,
+                new CapabilitySet<>(MekCapabilities.INFUSION.block(),
                         new InputChemicalHandler.OfInfusion(self), new OutputChemicalHandler.OfInfusion(self),
                         NullChemicalHandler.INFUSION),
-                new CapabilitySet<>(MekCapabilities.PIGMENT_HANDLER_CAPABILITY,
+                new CapabilitySet<>(MekCapabilities.PIGMENT.block(),
                         new InputChemicalHandler.OfPigment(self), new OutputChemicalHandler.OfPigment(self),
                         NullChemicalHandler.PIGMENT),
-                new CapabilitySet<>(MekCapabilities.SLURRY_HANDLER_CAPABILITY, new InputChemicalHandler.OfSlurry(self),
+                new CapabilitySet<>(MekCapabilities.SLURRY.block(), new InputChemicalHandler.OfSlurry(self),
                         new OutputChemicalHandler.OfSlurry(self), NullChemicalHandler.SLURRY)));
     }
 
@@ -58,12 +59,33 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
         return MODELS.getModel(this.isPowered(), this.isActive());
     }
 
+    @Override
+    protected float getPowerDrainPerTick() {
+        return 4.0f;
+    }
+
+    public IGasHandler getGasHandler() {
+        return getCapability(MekCapabilities.GAS.block());
+    }
+
+    public IInfusionHandler getInfuseHandler() {
+        return getCapability(MekCapabilities.INFUSION.block());
+    }
+
+    public IPigmentHandler getPigmentHandler() {
+        return getCapability(MekCapabilities.PIGMENT.block());
+    }
+
+    public ISlurryHandler getSlurryHandler() {
+        return getCapability(MekCapabilities.SLURRY.block());
+    }
+
     private static abstract sealed class InputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>>
             implements IChemicalHandler<C, S> {
         private final ChemicalP2PTunnelPart part;
-        private final Capability<H> capability;
+        private final BlockCapability<H, Direction> capability;
 
-        protected InputChemicalHandler(ChemicalP2PTunnelPart part, Capability<H> capability) {
+        protected InputChemicalHandler(ChemicalP2PTunnelPart part, BlockCapability<H, Direction> capability) {
             this.part = part;
             this.capability = capability;
         }
@@ -132,28 +154,28 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
         private static final class OfGas extends InputChemicalHandler<Gas, GasStack, IGasHandler>
                 implements IGasHandler {
             private OfGas(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.GAS_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.GAS.block());
             }
         }
 
         private static final class OfInfusion extends InputChemicalHandler<InfuseType, InfusionStack, IInfusionHandler>
                 implements IInfusionHandler {
             private OfInfusion(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.INFUSION_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.INFUSION.block());
             }
         }
 
         private static final class OfPigment extends InputChemicalHandler<Pigment, PigmentStack, IPigmentHandler>
                 implements IPigmentHandler {
             private OfPigment(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.PIGMENT_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.PIGMENT.block());
             }
         }
 
         private static final class OfSlurry extends InputChemicalHandler<Slurry, SlurryStack, ISlurryHandler>
                 implements ISlurryHandler {
             private OfSlurry(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.SLURRY_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.SLURRY.block());
             }
         }
     }
@@ -161,9 +183,9 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
     private static abstract sealed class OutputChemicalHandler<C extends Chemical<C>, S extends ChemicalStack<C>, H extends IChemicalHandler<C, S>>
             implements IChemicalHandler<C, S> {
         private final ChemicalP2PTunnelPart part;
-        private final Capability<H> capability;
+        private final BlockCapability<H, Direction> capability;
 
-        private OutputChemicalHandler(ChemicalP2PTunnelPart part, Capability<H> capability) {
+        private OutputChemicalHandler(ChemicalP2PTunnelPart part, BlockCapability<H, Direction> capability) {
             this.part = part;
             this.capability = capability;
         }
@@ -223,28 +245,28 @@ public class ChemicalP2PTunnelPart extends MultipleCapabilityP2PTunnelPart<Chemi
         private static final class OfGas extends OutputChemicalHandler<Gas, GasStack, IGasHandler>
                 implements IGasHandler {
             private OfGas(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.GAS_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.GAS.block());
             }
         }
 
         private static final class OfInfusion extends OutputChemicalHandler<InfuseType, InfusionStack, IInfusionHandler>
                 implements IInfusionHandler {
             private OfInfusion(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.INFUSION_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.INFUSION.block());
             }
         }
 
         private static final class OfPigment extends OutputChemicalHandler<Pigment, PigmentStack, IPigmentHandler>
                 implements IPigmentHandler {
             private OfPigment(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.PIGMENT_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.PIGMENT.block());
             }
         }
 
         private static final class OfSlurry extends OutputChemicalHandler<Slurry, SlurryStack, ISlurryHandler>
                 implements ISlurryHandler {
             private OfSlurry(ChemicalP2PTunnelPart part) {
-                super(part, MekCapabilities.SLURRY_HANDLER_CAPABILITY);
+                super(part, MekCapabilities.SLURRY.block());
             }
         }
     }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 
 import me.ramidzkh.mekae2.MekCapabilities;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
@@ -17,23 +18,20 @@ import appeng.api.behaviors.StackTransferContext;
 import appeng.api.config.Actionable;
 import appeng.api.stacks.AEKey;
 import appeng.api.storage.StorageHelper;
-import appeng.util.BlockApiCache;
 
 public class MekanismStackExportStrategy implements StackExportStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MekanismStackExportStrategy.class);
-    private final BlockApiCache<? extends IChemicalHandler>[] lookups;
-    private final Direction fromSide;
+    private final BlockCapabilityCache<? extends IChemicalHandler, Direction>[] lookups;
 
     public MekanismStackExportStrategy(ServerLevel level,
             BlockPos fromPos,
             Direction fromSide) {
-        this.lookups = new BlockApiCache[] {
-                BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos) };
-        this.fromSide = fromSide;
+        this.lookups = new BlockCapabilityCache[] {
+                BlockCapabilityCache.create(MekCapabilities.GAS.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.INFUSION.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.PIGMENT.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.SLURRY.block(), level, fromPos, fromSide) };
     }
 
     @Override
@@ -42,7 +40,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        var storage = lookups[mekanismKey.getForm()].find(fromSide);
+        var storage = lookups[mekanismKey.getForm()].getCapability();
 
         if (storage == null) {
             return 0;
@@ -91,7 +89,7 @@ public class MekanismStackExportStrategy implements StackExportStrategy {
             return 0;
         }
 
-        var storage = lookups[mekanismKey.getForm()].find(fromSide);
+        var storage = lookups[mekanismKey.getForm()].getCapability();
 
         if (storage == null) {
             return 0;

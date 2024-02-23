@@ -1,8 +1,8 @@
 package me.ramidzkh.mekae2;
 
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 import appeng.api.implementations.menuobjects.IPortableTerminal;
 import appeng.client.gui.me.common.MEStorageScreen;

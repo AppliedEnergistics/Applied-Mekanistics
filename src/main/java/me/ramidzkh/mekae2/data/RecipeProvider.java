@@ -1,16 +1,18 @@
 package me.ramidzkh.mekae2.data;
 
 import java.util.Locale;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import me.ramidzkh.mekae2.AMItems;
 import me.ramidzkh.mekae2.AppliedMekanistics;
@@ -20,12 +22,12 @@ import appeng.core.definitions.AEItems;
 
 public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
-    public RecipeProvider(PackOutput output) {
-        super(output);
+    public RecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(output, lookupProvider);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(RecipeOutput output) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AMItems.CHEMICAL_CELL_HOUSING::get)
                 .pattern("QRQ")
                 .pattern("R R")
@@ -34,7 +36,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                 .define('R', Tags.Items.DUSTS_REDSTONE)
                 .define('O', ItemTags.create(new ResourceLocation("forge", "ingots/osmium")))
                 .unlockedBy("has_dusts/redstone", has(Tags.Items.DUSTS_REDSTONE))
-                .save(consumer, AppliedMekanistics.id("chemical_cell_housing"));
+                .save(output, AppliedMekanistics.id("chemical_cell_housing"));
 
         var housing = AMItems.CHEMICAL_CELL_HOUSING.get();
 
@@ -53,15 +55,15 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                     .requires(housing)
                     .requires(cellComponent)
                     .unlockedBy("has_cell_component" + tierName, has(cellComponent))
-                    .save(consumer);
+                    .save(output);
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, AMItems.getPortableCell(tier)::get)
                     .requires(AEBlocks.CHEST)
                     .requires(cellComponent)
                     .requires(AEBlocks.ENERGY_CELL)
                     .requires(housing)
-                    .unlockedBy("has_" + housing.builtInRegistryHolder().key().location().getPath(), has(housing))
+                    .unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(housing).getPath(), has(housing))
                     .unlockedBy("has_energy_cell", has(AEBlocks.ENERGY_CELL))
-                    .save(consumer);
+                    .save(output);
         }
     }
 }

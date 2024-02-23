@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import me.ramidzkh.mekae2.util.ChemicalBridge;
-import mekanism.api.Coord4D;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.gas.Gas;
@@ -116,7 +116,7 @@ public class MekanismKey extends AEKey {
     @Override
     public void addDrops(long amount, List<ItemStack> drops, Level level, BlockPos pos) {
         if (stack instanceof GasStack gasStack) {
-            IRadiationManager.INSTANCE.dumpRadiation(new Coord4D(pos, level),
+            IRadiationManager.INSTANCE.dumpRadiation(GlobalPos.of(level.dimension(), pos),
                     ChemicalBridge.withAmount(gasStack, amount));
         }
     }

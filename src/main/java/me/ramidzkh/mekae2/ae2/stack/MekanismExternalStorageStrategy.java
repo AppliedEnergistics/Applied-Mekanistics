@@ -5,28 +5,26 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 
 import me.ramidzkh.mekae2.MekCapabilities;
 import mekanism.api.chemical.IChemicalHandler;
 
 import appeng.api.behaviors.ExternalStorageStrategy;
 import appeng.api.storage.MEStorage;
-import appeng.util.BlockApiCache;
 
 public class MekanismExternalStorageStrategy implements ExternalStorageStrategy {
 
-    private final BlockApiCache<? extends IChemicalHandler>[] lookups;
-    private final Direction fromSide;
+    private final BlockCapabilityCache<? extends IChemicalHandler, Direction>[] lookups;
 
     public MekanismExternalStorageStrategy(ServerLevel level,
             BlockPos fromPos,
             Direction fromSide) {
-        this.lookups = new BlockApiCache[] {
-                BlockApiCache.create(MekCapabilities.GAS_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.INFUSION_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.PIGMENT_HANDLER_CAPABILITY, level, fromPos),
-                BlockApiCache.create(MekCapabilities.SLURRY_HANDLER_CAPABILITY, level, fromPos) };
-        this.fromSide = fromSide;
+        this.lookups = new BlockCapabilityCache[] {
+                BlockCapabilityCache.create(MekCapabilities.GAS.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.INFUSION.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.PIGMENT.block(), level, fromPos, fromSide),
+                BlockCapabilityCache.create(MekCapabilities.SLURRY.block(), level, fromPos, fromSide) };
     }
 
     @Nullable
@@ -35,8 +33,8 @@ public class MekanismExternalStorageStrategy implements ExternalStorageStrategy 
         var handlers = new IChemicalHandler[4];
         var empty = true;
 
-        for (int i = 0; i < 4; i++) {
-            var storage = lookups[i].find(fromSide);
+        for (var i = 0; i < 4; i++) {
+            var storage = lookups[i].getCapability();
 
             if (storage == null) {
                 continue;

@@ -2,16 +2,15 @@ package me.ramidzkh.mekae2.data;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import me.ramidzkh.mekae2.AMItems;
 import me.ramidzkh.mekae2.AppliedMekanistics;
 
 import appeng.core.AppEng;
 
-public class ItemModelProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
+public class ItemModelProvider extends net.neoforged.neoforge.client.model.generators.ItemModelProvider {
 
     private static final ResourceLocation P2P_TUNNEL_BASE_ITEM = AppEng.makeId("item/p2p_tunnel_base");
     private static final ResourceLocation P2P_TUNNEL_BASE_PART = AppEng.makeId("part/p2p/p2p_tunnel_base");
@@ -50,17 +49,17 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
                 .texture("type", OSMIUM_BLOCK);
     }
 
-    private void cell(RegistryObject<Item> cell, String background) {
+    private void cell(DeferredItem<?> cell, String background) {
         singleTexture(cell.getId().getPath(), mcLoc("item/generated"), "layer0", AppliedMekanistics.id(background))
                 .texture("layer1", STORAGE_CELL_LED);
     }
 
-    private void portableCell(RegistryObject<Item> portable, String background) {
+    private void portableCell(DeferredItem<?> portable, String background) {
         singleTexture(portable.getId().getPath(), mcLoc("item/generated"), "layer0", AppliedMekanistics.id(background))
                 .texture("layer1", PORTABLE_CELL_LED);
     }
 
-    private void flatSingleLayer(RegistryObject<Item> item, String texture) {
+    private void flatSingleLayer(DeferredItem<?> item, String texture) {
         singleTexture(item.getId().getPath(), mcLoc("item/generated"), "layer0", AppliedMekanistics.id(texture));
     }
 }

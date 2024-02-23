@@ -23,12 +23,12 @@ public class AMJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
-        registration.addTooltipCollectedCallback((tooltip, accessor) -> {
+        registration.addTooltipCollectedCallback((box, accessor) -> {
             var target = accessor.getTarget();
 
             if (target instanceof InterfaceLogicHost || target instanceof PatternProviderLogicHost) {
                 for (var loc : CHEMICALS) {
-                    tooltip.remove(loc);
+                    box.getTooltip().remove(loc);
                 }
             }
         });
