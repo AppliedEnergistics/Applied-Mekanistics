@@ -50,6 +50,8 @@ repositories {
         name = "Local"
         url = file("libs").toURI()
     }
+
+    mavenLocal()
 }
 
 dependencies {
