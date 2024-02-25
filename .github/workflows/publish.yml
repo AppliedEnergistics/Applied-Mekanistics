@@ -22,7 +22,7 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: Generate data
-        run: ./gradlew downloadAssets runData --max-workers 1
+        run: ./gradlew runData --max-workers 1
         env:
           APPMEK_VERSION: ${{ github.event.release.tag_name }}
       - name: Build
