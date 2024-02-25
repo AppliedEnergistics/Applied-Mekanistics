@@ -169,7 +169,7 @@ System.getenv("CURSEFORGE")?.with { String key ->
             }
 
             addGameVersion("${minecraft_version}")
-            addGameVersion("Forge")
+            addGameVersion("NeoForge")
 
             mainArtifact(jar) {
                 displayName = "${project.version}"
@@ -201,6 +201,7 @@ modrinth {
 
     uploadFile.set(jar)
     gameVersions.add(minecraft_version)
+    loaders.add("neoforge")
 
     dependencies {
         required.project("ae2")
