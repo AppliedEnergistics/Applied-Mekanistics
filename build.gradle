@@ -47,6 +47,13 @@ repositories {
     }
 
     maven {
+        url "https://maven.terraformersmc.com"
+        content {
+            includeGroup "dev.emi"
+        }
+    }
+
+    maven {
         name = "Local"
         url = file("libs").toURI()
     }
@@ -65,8 +72,23 @@ dependencies {
         exclude(group: "com.blamejared.crafttweaker")
     }
 
-    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+    if (project.runtime_itemlist_mod == "jei") {
+        implementation "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+    } else {
+        compileOnly "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+    }
+
+    if (project.runtime_itemlist_mod == "emi") {
+        implementation "dev.emi:emi-neoforge:${project.emi_version}+${project.minecraft_version}"
+        // Add JEI so that we can use EMI's builtin compat layer
+        runtimeOnly "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+    } else {
+        compileOnly "dev.emi:emi-neoforge:${project.emi_version}+${project.minecraft_version}"
+    }
+
+    if (!(project.runtime_itemlist_mod in ["jei", "emi"])) {
+        throw new GradleException("Invalid runtime_itemlist_mod value: " + project.runtime_itemlist_mod)
+    }
 
     compileOnly("curse.maven:jade-324717:${jade_id}")
 }
