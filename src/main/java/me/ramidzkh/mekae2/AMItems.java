@@ -5,7 +5,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -22,7 +21,6 @@ import appeng.items.AEBaseItem;
 import appeng.items.materials.MaterialItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
-import appeng.items.storage.CreativeCellItem;
 import appeng.items.storage.StorageTier;
 
 public class AMItems {
@@ -67,9 +65,6 @@ public class AMItems {
 
     public static final DeferredItem<Item> CHEMICAL_CELL_HOUSING = ITEMS.register("chemical_cell_housing",
             AMItems::basic);
-
-    public static final DeferredItem<Item> CHEMICAL_CELL_CREATIVE = ITEMS.register("creative_chemical_cell",
-            () -> new CreativeCellItem(properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final DeferredItem<Item> CHEMICAL_CELL_1K = ITEMS.register("chemical_storage_cell_1k",
             () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_1K, CHEMICAL_CELL_HOUSING.get()));

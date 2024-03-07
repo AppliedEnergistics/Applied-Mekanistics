@@ -33,9 +33,6 @@ public class ItemModelProvider extends net.neoforged.neoforge.client.model.gener
         var housing = AMItems.CHEMICAL_CELL_HOUSING;
         flatSingleLayer(housing, "item/" + housing.getId().getPath());
 
-        var creative = AMItems.CHEMICAL_CELL_CREATIVE;
-        flatSingleLayer(creative, "item/" + creative.getId().getPath());
-
         for (var tier : AMItems.Tier.values()) {
             var cell = AMItems.get(tier);
             var portableCell = AMItems.getPortableCell(tier);
