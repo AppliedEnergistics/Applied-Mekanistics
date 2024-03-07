@@ -43,7 +43,6 @@ import appeng.api.storage.cells.ICellGuiHandler;
 import appeng.api.storage.cells.ICellHandler;
 import appeng.api.upgrades.Upgrades;
 import appeng.capabilities.AppEngCapabilities;
-import appeng.core.AppEng;
 import appeng.core.definitions.AEItems;
 import appeng.core.localization.GuiText;
 import appeng.menu.MenuOpener;
@@ -137,9 +136,6 @@ public class AppliedMekanistics {
                         MenuLocators.forBlockEntity((BlockEntity) chest));
             }
         });
-
-        StorageCellModels.registerModel(AMItems.CHEMICAL_CELL_CREATIVE::get,
-                AppEng.makeId("block/drive/cells/creative_cell"));
 
         for (var tier : AMItems.Tier.values()) {
             var cell = AMItems.get(tier);
