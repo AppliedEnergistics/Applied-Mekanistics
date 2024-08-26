@@ -38,6 +38,15 @@ repositories {
     }
 
     maven {
+        name = "Jared maven"
+        url = uri("https://maven.blamejared.com")
+
+        content {
+            includeGroup("mezz.jei")
+        }
+    }
+
+    maven {
         name = "Local"
         url = file("libs").toURI()
     }
@@ -52,7 +61,17 @@ dependencies {
     compileOnly("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api")
     runtimeOnly("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all")
 
-    implementation("dev.emi:emi-neoforge:${project.emi_version}")
+    if (project.runtime_itemlist_mod == "emi") {
+        implementation("dev.emi:emi-neoforge:${project.emi_version}")
+        compileOnly("mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}")
+        compileOnly("curse.maven:ae2-jei-integration-1074338:${jei_ae2_integration_id}")
+    } else if (project.runtime_itemlist_mod == "jei") {
+        compileOnly("dev.emi:emi-neoforge:${project.emi_version}")
+        implementation("mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}")
+        implementation("curse.maven:ae2-jei-integration-1074338:${jei_ae2_integration_id}")
+    } else {
+        throw new GradleException("Invalid runtime_itemlist_mod value: " + project.runtime_itemlist_mod)
+    }
 
     compileOnly("curse.maven:jade-324717:${jade_id}")
 }
