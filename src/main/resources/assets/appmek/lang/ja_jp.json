@@ -1,0 +1,21 @@
+{
+  "text.appmek.chemical": "化学物質",
+  "text.appmek.creative_tab": "Applied Mekanistics",
+  "text.appmek.qio_frequency": "QIO周波数(%s)",
+
+  "item.appmek.chemical_cell_housing": "ME化学物質セル筐体",
+
+  "item.appmek.chemical_storage_cell_1k": "1k ME化学物質ストレージセル",
+  "item.appmek.chemical_storage_cell_4k": "4k ME化学物質ストレージセル",
+  "item.appmek.chemical_storage_cell_16k": "16k ME化学物質ストレージセル",
+  "item.appmek.chemical_storage_cell_64k": "64k ME化学物質ストレージセル",
+  "item.appmek.chemical_storage_cell_256k": "256k ME化学物質ストレージセル",
+
+  "item.appmek.portable_chemical_cell_16k": "16k ポータブル化学物質セル",
+  "item.appmek.portable_chemical_cell_1k": "1k ポータブル化学物質セル",
+  "item.appmek.portable_chemical_cell_4k": "4k ポータブル化学物質セル",
+  "item.appmek.portable_chemical_cell_64k": "64k ポータブル化学物質セル",
+  "item.appmek.portable_chemical_cell_256k": "256k ポータブル化学物質セル",
+
+  "item.appmek.chemical_p2p_tunnel": "化学物質P2Pトンネル"
+}
