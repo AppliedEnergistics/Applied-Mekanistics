@@ -29,7 +29,7 @@ public class ChemicalIngredientConverter implements IngredientConverter<Chemical
     @Override
     public @Nullable ChemicalStack getIngredientFromStack(GenericStack genericStack) {
         if (genericStack.what() instanceof MekanismKey key) {
-            return key.withAmount(genericStack.amount());
+            return key.withAmount(Math.max(1, genericStack.amount()));
         }
         return null;
     }
