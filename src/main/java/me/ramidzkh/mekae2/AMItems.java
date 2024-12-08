@@ -67,16 +67,15 @@ public class AMItems {
             AMItems::basic);
 
     public static final DeferredItem<Item> CHEMICAL_CELL_1K = ITEMS.register("chemical_storage_cell_1k",
-            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_1K, CHEMICAL_CELL_HOUSING.get()));
+            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_1K));
     public static final DeferredItem<Item> CHEMICAL_CELL_4K = ITEMS.register("chemical_storage_cell_4k",
-            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_4K, CHEMICAL_CELL_HOUSING.get()));
+            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_4K));
     public static final DeferredItem<Item> CHEMICAL_CELL_16K = ITEMS.register("chemical_storage_cell_16k",
-            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_16K, CHEMICAL_CELL_HOUSING.get()));
+            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_16K));
     public static final DeferredItem<Item> CHEMICAL_CELL_64K = ITEMS.register("chemical_storage_cell_64k",
-            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_64K, CHEMICAL_CELL_HOUSING.get()));
+            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_64K));
     public static final DeferredItem<Item> CHEMICAL_CELL_256K = ITEMS.register("chemical_storage_cell_256k",
-            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_256K,
-                    CHEMICAL_CELL_HOUSING.get()));
+            () -> new ChemicalStorageCell(properties().stacksTo(1), StorageTier.SIZE_256K));
 
     public static final DeferredItem<Item> PORTABLE_CHEMICAL_CELL_1K = ITEMS.register(
             "portable_chemical_cell_1k",

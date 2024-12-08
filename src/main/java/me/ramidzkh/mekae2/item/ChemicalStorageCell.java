@@ -1,7 +1,6 @@
 package me.ramidzkh.mekae2.item;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
@@ -13,9 +12,8 @@ import appeng.items.storage.StorageTier;
 
 public class ChemicalStorageCell extends BasicStorageCell {
 
-    public ChemicalStorageCell(Properties properties, StorageTier tier, ItemLike housingItem) {
-        super(properties, tier.componentSupplier().get(), housingItem, tier.idleDrain(), tier.bytes() / 1024,
-                tier.bytes() / 128, 5, MekanismKeyType.TYPE);
+    public ChemicalStorageCell(Properties properties, StorageTier tier) {
+        super(properties, tier.idleDrain(), tier.bytes() / 1024, tier.bytes() / 128, 5, MekanismKeyType.TYPE);
     }
 
     @Override
