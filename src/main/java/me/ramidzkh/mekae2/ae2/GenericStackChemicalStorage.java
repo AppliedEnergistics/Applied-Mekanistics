@@ -77,4 +77,21 @@ public class GenericStackChemicalStorage implements IChemicalHandler {
 
         return what.withAmount(extracted);
     }
+
+    @Override
+    public ChemicalStack extractChemical(ChemicalStack stack, Action action) {
+        var key = MekanismKey.of(stack);
+        if (key == null) {
+            return ChemicalStack.EMPTY;
+        }
+        var mode = Actionable.of(action.toFluidAction());
+        for (int slot = 0; slot < inv.size(); slot++) {
+            var extracted = inv.extract(slot, key, stack.getAmount(), mode);
+            if (extracted != 0) {
+                return key.withAmount(extracted);
+            }
+        }
+        return ChemicalStack.EMPTY;
+    }
+
 }
