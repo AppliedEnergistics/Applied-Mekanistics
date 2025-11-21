@@ -1,8 +1,7 @@
 plugins {
-    id("net.neoforged.gradle") version "[6.0.18,6.2)"
-    id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.diffplug.spotless") version "6.22.0"
-    id("com.modrinth.minotaur") version "2.8.4"
+    id("net.neoforged.moddev.legacyforge") version "2.0.91"
+    id("com.diffplug.spotless") version "8.1.0"
+    id("me.modmuss50.mod-publish-plugin") version "1.0.0"
 }
 
 group = "me.ramidzkh"
@@ -36,24 +35,43 @@ repositories {
     }
 
     maven {
+        url "https://maven.terraformersmc.com"
+        content {
+            includeGroup "dev.emi"
+        }
+    }
+
+    maven {
         name = "Local"
         url = file("libs").toURI()
     }
 }
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+obfuscation {
+    createRemappingConfiguration(configurations.localRuntime)
+}
+
 dependencies {
-    minecraft("net.neoforged:forge:${minecraft_version}-${neoforge_version}")
+    compileOnly("org.jetbrains:annotations:26.0.2-1")
 
     // We depend on many AE2 internals, such as using their basic cell drive, thus not using classifier = "api"
-    implementation(fg.deobf("appeng:appliedenergistics2-forge:${ae2_version}"))
+    modImplementation("appeng:appliedenergistics2-forge:${ae2_version}")
+    modRuntimeOnly("org.appliedenergistics:guideme:${guideme_version}")
 
-    compileOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api"))
-    runtimeOnly(fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all"))
+    modCompileOnly("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:api")
+    modRuntimeOnly("mekanism:Mekanism:${minecraft_version}-${mekanism_version}:all")
 
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+    modCompileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    modCompileOnly("dev.emi:emi-forge:${emi_version}")
 
-    implementation(fg.deobf("curse.maven:jade-324717:${jade_id}"))
+    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    modRuntimeOnly("dev.emi:emi-forge:${emi_version}")
+
+    modImplementation("curse.maven:jade-324717:${jade_id}")
 }
 
 sourceSets {
@@ -64,88 +82,61 @@ sourceSets {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 ////////////////////
 // Forge/Minecraft
-minecraft {
-    mappings(channel: "official", version: "${minecraft_version}")
-
-    /**
-     * Configures properties common to all run configurations
-     */
-    def commonRunProperties = {
-        workingDirectory(project.file("run"))
-
-        property("forge.logging.console.level", "debug")
-        property("fml.earlyprogresswindow", "false")
-        jvmArgs("--add-opens", "java.base/sun.security.util=ALL-UNNAMED")
-        jvmArgs("--add-opens", "java.base/java.util.jar=ALL-UNNAMED")
-
-        // See https://github.com/Vazkii/Patchouli#mixin-troubleshooting
-        property("mixin.env.remapRefMap", "true")
-        property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-        // property "mixin.debug.export", "true"
-
-        mods {
-            appmek {
-                source(sourceSets.main)
-            }
-        }
-    }
+legacyForge {
+    version = "${project.minecraft_version}-${project.forge_version}"
 
     runs {
         client {
-            with(commonRunProperties)
+            client()
         }
 
         server {
-            with(commonRunProperties)
+            server()
         }
 
         data {
-            with(commonRunProperties)
-            args("--mod", "appmek", "--all", "--output", file("src/generated/resources/"), "--existing", file("src/main/resources"))
+            data()
+
+            programArguments.addAll("--mod", "appmek", "--all", "--output", file("src/generated/resources/").absolutePath, "--existing", file("src/main/resources").absolutePath)
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty 'fml.earlyprogresswindow', 'false'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        appmek {
+            sourceSet(sourceSets.main)
         }
     }
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-    options.release.set(17)
 }
 
-processResources {
-    inputs.property("version", project.version)
-
-    exclude(".cache")
-
-    filesMatching("META-INF/mods.toml") {
-        expand("version": project.version)
-    }
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            version: project.version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
 }
-
-jar {
-    finalizedBy("reobfJar")
-
-    from(sourceSets.main.output.classesDirs)
-    from(sourceSets.main.output.resourcesDir)
-
-    manifest {
-        attributes([
-                "Specification-Title"     : "Applied Mekanistics",
-                "Specification-Vendor"    : "ramidzkh",
-                "Specification-Version"   : "${project.version}",
-                "Implementation-Title"    : "${project.name}",
-                "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "ramidzkh",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-}
+// Include the output of "generateModMetadata" as an input directory for the build
+// this works with both building through Gradle and the IDE.
+sourceSets.main.resources.srcDir generateModMetadata
+legacyForge.ideSyncTask generateModMetadata
 
 /////////////
 // Spotless
@@ -154,7 +145,7 @@ spotless {
         target("src/main/java/**/*.java")
 
         endWithNewline()
-        indentWithSpaces()
+        leadingTabsToSpaces()
         removeUnusedImports()
         toggleOffOn()
         eclipse().configFile("codeformat/codeformat.xml")
@@ -169,64 +160,35 @@ spotless {
 }
 
 ////////////////
-// CurseForge
-System.getenv("CURSEFORGE")?.with { String key ->
-    curseforge {
-        apiKey = key
+// mod-publish-plugin
+publishMods {
+    displayName = project.version
+    changelog = "View changelog at [the release page](https://github.com/AppliedEnergistics/Applied-Mekanistics/releases/tag/${project.version})"
 
-        project {
-            id = "574300"
-            changelogType = "markdown"
-            changelog = "View changelog at [the release page](https://github.com/AppliedEnergistics/Applied-Mekanistics/releases/tag/${version})"
-
-            if (version.contains("alpha")) {
-                releaseType = "alpha"
-            } else if (version.contains("beta")) {
-                releaseType = "beta"
-            } else {
-                releaseType = "release"
-            }
-
-            addGameVersion("${minecraft_version}")
-            addGameVersion("Forge")
-
-            mainArtifact(jar) {
-                displayName = "${project.version}"
-
-                relations {
-                    requiredDependency("applied-energistics-2")
-                    requiredDependency("mekanism")
-                }
-            }
-        }
-    }
-}
-
-////////////////
-// Modrinth
-modrinth {
-    token.set(System.getenv("MODRINTH"))
-    projectId.set("applied-mekanistics")
-    changelog.set("View changelog at [the release page](https://github.com/AppliedEnergistics/Applied-Mekanistics/releases/tag/${version})")
-    versionNumber.set(project.version)
-
-    if (version.contains("alpha")) {
-        versionType.set("alpha")
-    } else if (version.contains("beta")) {
-        versionType.set("beta")
+    if (project.version.contains("alpha")) {
+        type = ALPHA
+    } else if (project.version.contains("beta")) {
+        type = BETA
     } else {
-        versionType.set("release")
+        type = STABLE
     }
 
-    uploadFile.set(jar)
-    gameVersions.add(minecraft_version)
+    file = reobfJar.archiveFile
+    modLoaders.add("forge")
 
-    dependencies {
-        required.project("ae2")
-        required.project("mekanism")
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "574300"
+        minecraftVersions.add(minecraft_version)
+        requires("applied-energistics-2")
+        requires("mekanism")
     }
-}
 
-tasks.modrinth.onlyIf {
-    System.getenv("MODRINTH")
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "IiATswDj"
+        minecraftVersions.add(minecraft_version)
+        requires("ae2")
+        requires("mekanism")
+    }
 }
